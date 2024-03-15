@@ -22,7 +22,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools>=0.1.1",
+    "pynxtools @ git+ssh://git@github.com/FAIRmat-NFDI/pynxtools",    
     "ifes_apt_tc_data_modeling>=0.2",
 ]
 
@@ -65,6 +65,9 @@ lint.ignore = [
     "PLR5501", # else-if-used
 ]
 lint.fixable = ["ALL"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.mypy]
 strict = false
