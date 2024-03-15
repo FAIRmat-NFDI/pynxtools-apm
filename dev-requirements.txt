@@ -360,7 +360,7 @@ pyfai==2024.2.0
     # via pyxem
 pygments==2.17.2
     # via ipython
-pynxtools @ git+ssh://git@github.com/FAIRmat-NFDI/pynxtools
+pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools
     # via pynxtools-apm (pyproject.toml)
 pyparsing==3.1.2
     # via matplotlib
