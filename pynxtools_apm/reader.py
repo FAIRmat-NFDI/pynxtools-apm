@@ -37,7 +37,7 @@ from pynxtools_apm.utils.apm_load_reconstruction import (
 from pynxtools_apm.utils.apm_load_ranging import (
     ApmRangingDefinitionsParser,
 )
-from pynxtools_apm.apm_create_nx_default_plots import (
+from pynxtools_apm.utils.apm_create_nx_default_plots import (
     apm_default_plot_generator,
 )
 # from pynxtools_apm.utils.apm_generate_synthetic_data import (
@@ -57,7 +57,7 @@ from pynxtools_apm.apm_create_nx_default_plots import (
 # of files which are larger than the physical main memory is currently not supported
 
 
-class ApmReader(BaseReader):
+class APMReader(BaseReader):
     """Parse content from community file formats.
 
     Specifically, (local electrode) atom probe microscopy and field-ion microscopy
@@ -145,4 +145,4 @@ class ApmReader(BaseReader):
 
 
 # This has to be set to allow the convert script to use this reader.
-READER = ApmReader
+READER = APMReader

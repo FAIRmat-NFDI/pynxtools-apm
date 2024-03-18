@@ -211,7 +211,7 @@ class ApmCreateExampleData:
 
         composition = []  # list of tuples, one for each composition
         for idx in np.arange(0, self.n_components):
-            isotope_vector = []
+            nuclide_hash = []
             mass_sum = 0.0
             # sample atoms for building the ion
             sampled_elements = np.asarray(
@@ -223,12 +223,12 @@ class ApmCreateExampleData:
 
             for val in sampled_elements:
                 symbol = value_to_pse_symbol_lookup[val]
-                isotope_vector.append(symbol)
+                nuclide_hash.append(symbol)
                 mass_sum += atomic_masses[atomic_numbers[symbol]]
 
             composition.append(
                 (
-                    isotope_vector,
+                    nuclide_hash,
                     self.charge_state[idx],
                     mass_sum / self.charge_state[idx],
                     np.float64(np.random.uniform(low=1, high=100)),
@@ -293,18 +293,15 @@ class ApmCreateExampleData:
         for tpl in self.nrm_composition:
             path = f"{trg}ION[ion{ion_id}]/"
             ivec = create_nuclide_hash(tpl[0])
-            template[f"{path}isotope_vector"] = np.reshape(
-                np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION)
-            )
-            # template[path + "isotope_vector/@units"] = ""
+            template[f"{path}nuclide_hash"] = np.asarray(ivec, np.uint16)
             template[f"{path}charge_state"] = np.int8(tpl[1])
             template[f"{path}mass_to_charge_range"] = np.reshape(
                 np.asarray([tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2)
             )
             template[f"{path}mass_to_charge_range/@units"] = "u"
-            nuclid_list = np.zeros((MAX_NUMBER_OF_ATOMS_PER_ION, 2), np.uint16)
-            nuclid_list = nuclide_hash_to_nuclide_list(ivec)
-            template[f"{path}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
+            nuclide_list = np.zeros((MAX_NUMBER_OF_ATOMS_PER_ION, 2), np.uint16)
+            nuclide_list = nuclide_hash_to_nuclide_list(ivec)
+            template[f"{path}nuclide_list"] = np.asarray(nuclide_list, np.uint16)
             template[f"{path}name"] = nuclide_hash_to_human_readable_name(ivec, tpl[1])
             ion_id += 1
 

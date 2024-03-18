@@ -63,16 +63,14 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
         f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" f"peak_identification/ION[ion0]/"
     )
     ivec = create_nuclide_hash([])
-    template[f"{trg}isotope_vector"] = np.reshape(
-        np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION)
-    )
+    template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
     template[f"{trg}charge_state"] = np.int8(0)
     template[f"{trg}mass_to_charge_range"] = np.reshape(
         np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2)
     )
     template[f"{trg}mass_to_charge_range/@units"] = "u"
-    nuclid_list = nuclide_hash_to_nuclide_list(ivec)
-    template[f"{trg}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
+    nuclide_list = nuclide_hash_to_nuclide_list(ivec)
+    template[f"{trg}nuclide_list"] = np.asarray(nuclide_list, np.uint16)
     template[f"{trg}name"] = nuclide_hash_to_human_readable_name(ivec, 0)
     return template
 
@@ -85,16 +83,13 @@ def add_standardize_molecular_ions(
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
     for ion in ion_lst:
         path = f"{trg}ION[ion{ion_id}]/"
-        template[f"{path}isotope_vector"] = np.reshape(
-            np.asarray(ion.isotope_vector.values, np.uint16),
-            (1, MAX_NUMBER_OF_ATOMS_PER_ION),
-        )
+        template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash.values, np.uint16)
         template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
         template[f"{path}mass_to_charge_range"] = np.asarray(
             ion.ranges.values, np.float32
         )
         template[f"{path}mass_to_charge_range/@units"] = "u"  # ion.ranges.unit
-        template[f"{path}nuclid_list"] = ion.nuclid_list.values
+        template[f"{path}nuclide_list"] = ion.nuclide_list.values
         template[f"{path}name"] = ion.name.values
 
         if ion.charge_state_model["n_cand"] > 0:
@@ -113,56 +108,52 @@ def add_standardize_molecular_ions(
                 ion.charge_state_model["sacrifice_isotopic_uniqueness"]
             )
             if ion.charge_state_model["n_cand"] == 1:
-                template[f"{path}isotope_matrix"] = np.asarray(
-                    ion.charge_state_model["isotope_matrix"], np.uint16
+                template[f"{path}nuclide_hash"] = np.asarray(
+                    ion.charge_state_model["nuclide_hash"], np.uint16
                 )
-                template[f"{path}charge_state_vector"] = np.int8(
-                    ion.charge_state_model["charge_state_vector"]
+                template[f"{path}charge_state"] = np.int8(
+                    ion.charge_state_model["charge_state"]
                 )
-                template[f"{path}mass_vector"] = np.float64(
-                    ion.charge_state_model["mass_vector"]
+                template[f"{path}mass"] = np.float64(ion.charge_state_model["mass"])
+                template[f"{path}mass/@units"] = "u"
+                template[f"{path}natural_abundance_product"] = np.float64(
+                    ion.charge_state_model["natural_abundance_product"]
                 )
-                template[f"{path}mass_vector/@units"] = "u"
-                template[f"{path}natural_abundance_product_vector"] = np.float64(
-                    ion.charge_state_model["nat_abun_prod_vector"]
+                template[f"{path}shortest_half_life"] = np.float64(
+                    ion.charge_state_model["shortest_half_life"]
                 )
-                template[f"{path}min_half_life_vector"] = np.float64(
-                    ion.charge_state_model["min_half_life_vector"]
-                )
-                template[f"{path}min_half_life_vector/@units"] = "s"
+                template[f"{path}shortest_half_life/@units"] = "s"
             else:
-                template[f"{path}isotope_matrix"] = {
+                template[f"{path}nuclide_hash"] = {
                     "compress": np.asarray(
-                        ion.charge_state_model["isotope_matrix"], np.uint16
+                        ion.charge_state_model["nuclide_hash"], np.uint16
                     ),
                     "strength": 1,
                 }
-                template[f"{path}charge_state_vector"] = {
+                template[f"{path}charge_state"] = {
                     "compress": np.asarray(
-                        ion.charge_state_model["charge_state_vector"], np.int8
+                        ion.charge_state_model["charge_state"], np.int8
                     ),
                     "strength": 1,
                 }
-                template[f"{path}mass_vector"] = {
+                template[f"{path}mass"] = {
+                    "compress": np.asarray(ion.charge_state_model["mass"], np.float64),
+                    "strength": 1,
+                }
+                template[f"{path}mass/@units"] = "u"
+                template[f"{path}natural_abundance_product"] = {
                     "compress": np.asarray(
-                        ion.charge_state_model["mass_vector"], np.float64
+                        ion.charge_state_model["natural_abundance_product"], np.float64
                     ),
                     "strength": 1,
                 }
-                template[f"{path}mass_vector/@units"] = "u"
-                template[f"{path}natural_abundance_product_vector"] = {
+                template[f"{path}shortest_half_life"] = {
                     "compress": np.asarray(
-                        ion.charge_state_model["nat_abun_prod_vector"], np.float64
+                        ion.charge_state_model["shortest_half_life"], np.float64
                     ),
                     "strength": 1,
                 }
-                template[f"{path}min_half_life_vector"] = {
-                    "compress": np.asarray(
-                        ion.charge_state_model["min_half_life_vector"], np.float64
-                    ),
-                    "strength": 1,
-                }
-                template[f"{path}min_half_life_vector/@units"] = "s"
+                template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
@@ -272,11 +263,11 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
             f"ranging/peak_identification/"
         )
         for ion_id in np.arange(1, number_of_ion_types):
-            trg = f"{prefix}ION[ion{ion_id}]/nuclid_list"
+            trg = f"{prefix}ION[ion{ion_id}]/nuclide_list"
             if trg in template.keys():
-                nuclid_list = template[trg][1, :]
-                # second row of NXion/nuclid_list yields atom number to decode element
-                for atom_number in nuclid_list:
+                nuclide_list = template[trg][1, :]
+                # second row of NXion/nuclide_list yields atom number to decode element
+                for atom_number in nuclide_list:
                     if 0 < atom_number <= max_atom_number:
                         unique_atom_numbers.add(atom_number)
         print(f"Unique atom numbers are: {list(unique_atom_numbers)}")
