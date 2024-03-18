@@ -15,9 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility functions for generation of atom probe NeXus datasets for dev purposes."""
-
-# pylint: disable=no-member,duplicate-code,too-many-instance-attributes,attribute-defined-outside-init
+"""Utility functions for generation of atom probe NeXus datasets for dev and testing."""
 
 # MK::2023/05/04 the code in this file can currently not be used when
 # developers have an environment which uses ase==3.19.0 and numpy>=1.2x
@@ -30,7 +28,7 @@ from typing import List
 
 import numpy as np
 
-import ase
+from ase import version
 from ase.lattice.cubic import FaceCenteredCubic
 from ase.data import atomic_numbers, atomic_masses, chemical_symbols
 
@@ -41,10 +39,6 @@ from ifes_apt_tc_data_modeling.utils.utils import (
     MAX_NUMBER_OF_ATOMS_PER_ION,
     MQ_EPSILON,
 )
-
-# do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
-# from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
-#     import isotopes
 
 from pynxtools_apm.utils.apm_versioning import (
     NX_APM_ADEF_NAME,
@@ -72,6 +66,7 @@ MULTIPLES_FACTOR = 0.6  # controls how likely multiple ions are synthesized
 MAX_CHARGE_STATE = 4  # highest allowed charge_state of an ion
 MAX_ATOMIC_NUMBER = 94  # do not include heavier atoms than Plutonium
 MAX_USERS = 4
+DETERMINISTIC = False
 
 
 class ApmCreateExampleData:
@@ -82,27 +77,30 @@ class ApmCreateExampleData:
         np.random.seed(seed=synthesis_id)
 
         self.n_entries = 1
-        print("Generating one random example NXem entry...")
+        print("Generating one random example NXapm entry...")
         self.entry_id = 1
         # reconstructed dataset and mass-to-charge state ratio values
         # like what is traditionally available via the POS file format
         self.xyz: List[float] = []
         self.m_z: List[float] = []
 
-        # synthesizing realistic datasets for atom probe tomography
-        # would require a physical model of the field evaporation process,
-        # a model of the detector, and the reconstruction and ranging algorithms.
-        # A cutting edge view of such simulations is described here
-        # https://arxiv.org/abs/2209.05997, this demands very costly HPC computing
-        # As this goes beyond what is numerically feasible, strong assumptions are made:
+        # synthesizing realistic datasets for atom probe tomography requires a physics-based
+        # model of the field evaporation process, a model of the detector, and a model for
+        # reconstruction and ranging algorithms. A cutting-edge example for some of the
+        # complexity involved in this is described here: https://arxiv.org/abs/2209.05997
+        # In short, very costly HPC computing is required, as this goes beyond the aim
+        # of having test cases, we make strong assumptions:
         # we are interested in having positions on a grid (real specimen geometry)
-        #     details do not matter, positions are assumed exact without noise
+        #    details do not matter, positions are assumed exact without noise
         # reflect that signal comes from elementary and molecular ions
-        #     details do not matter but sample from the entire periodic table
+        #    details do not matter but sample from the entire periodic table or
+        #    specific idealized bulk single crystals with random distribution of
+        #    specific assumed (molecular) ions
         # we wish to have a histogram of mass-to-charge-state ratio values
         # this is called a mass spectrum in the field of atom probe microscopy
-        #     no tails in peaks are modelled as this depends on the pulser, physics
-        #     and is in fact not yet well understood physically for general materials
+        #    no tails in peaks are modelled as this depends on the pulser, physics,
+        #    and is in fact not yet well understood physically for general materials
+        #    yet anyhow
 
     def create_reconstructed_positions(self):
         """Create aggregate of specifically oriented
@@ -127,25 +125,18 @@ class ApmCreateExampleData:
             ).get_positions(),
             np.float32,
         )
-        # Cu will be ignored, only the lattice with positions is relevant
+        # Cu will be ignored, only the lattice with positions will be taken
         centre_of_mass = np.asarray(
             [np.mean(xyz[:, 0]), np.mean(xyz[:, 1]), np.mean(xyz[:, 2])], np.float32
         )
         # print("Centre of mass of ASE lattice is (with coordinates in angstroem)")
-        # print(centre_of_mass)
         xyz = xyz - centre_of_mass
         centre_of_mass = np.asarray(
             [np.mean(xyz[:, 0]), np.mean(xyz[:, 1]), np.mean(xyz[:, 2])], np.float32
         )
         # print("Updated centre of mass")
-        # print(centre_of_mass)
-        # axis_aligned_bbox = np.asarray([np.min(xyz[:, 0]), np.max(xyz[:, 0]),
-        #                                 np.min(xyz[:, 1]), np.max(xyz[:, 1]),
-        #                                 np.min(xyz[:, 2]), np.max(xyz[:, 2])])
         # displace origin
         origin = centre_of_mass
-        # print("Building a cylinder of radius " + str(RECON_RADIUS * 0.1) + " nm"
-        #       + " and height " + str(RECON_HEIGHT * 0.1) + " nm")
         mask = None
         mask = xyz[:, 2] <= (origin[2] + 0.5 * RECON_HEIGHT)
         mask &= xyz[:, 2] >= (origin[2] - 0.5 * RECON_HEIGHT)
@@ -157,11 +148,7 @@ class ApmCreateExampleData:
         for idx in np.arange(0, 3):
             self.xyz[:, idx] += shift[idx]
         self.xyz *= 0.1  # from angstroem to nm
-        print("Created a geometry for a reconstructed dataset, shape is")
-        print(np.shape(self.xyz))
-        # self.aabb3d = np.asarray([np.min(self.xyz[:, 0]), np.max(self.xyz[:, 0]),
-        #                           np.min(self.xyz[:, 1]), np.max(self.xyz[:, 1]),
-        #                           np.min(self.xyz[:, 2]), np.max(self.xyz[:, 2])])
+        print(f"Created reconstructed dataset with shape {np.shape(self.xyz)}")
 
     def place_atoms_from_periodic_table(self):
         """Sample elements from the periodic table
@@ -258,11 +245,8 @@ class ApmCreateExampleData:
         for idx in self.nrm_composition:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
-        assert (
-            self.xyz != []
-        ), "self.xyz must not be an empty dataset, create a geometry first!"
-        # print("Accept/reject sampling m/q values for "
-        #       + str(np.shape(self.xyz)[0]) + " ions")
+        if self.xyz == []:
+            raise ValueError("self.xyz must not be an empty dataset!")
 
         unifrnd = np.random.uniform(low=0.0, high=1.0, size=(np.shape(self.xyz)[0],))
         self.m_z = np.empty((np.shape(self.xyz)[0],))
@@ -280,12 +264,12 @@ class ApmCreateExampleData:
         """Create ranging definitions based on composition."""
         assert len(self.nrm_composition) > 0, "Composition is not defined!"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
-        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        # template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        # template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
-        template[f"{trg}PROGRAM[program1]/program"] = "synthetic"
-        template[f"{trg}PROGRAM[program1]/program/@version"] = "synthetic data"
+        # template[f"{trg}PROGRAM[program1]/program"] = "synthetic"
+        # template[f"{trg}PROGRAM[program1]/program/@version"] = "synthetic data"
 
         add_unknown_iontype(template, self.entry_id)
 
@@ -306,9 +290,8 @@ class ApmCreateExampleData:
             ion_id += 1
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
-        template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
-        template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
-
+        # template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
+        # template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
         return template
 
     def emulate_entry(self, template: dict) -> dict:
@@ -317,17 +300,14 @@ class ApmCreateExampleData:
         # print("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
         template[f"{trg}definition"] = NX_APM_ADEF_NAME
-        template[f"{trg}@version"] = NX_APM_ADEF_VERSION
+        template[f"{trg}definition/@version"] = NX_APM_ADEF_VERSION
         template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
         template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
-        msg = """
-              WARNING: These are mocked data !!
-              They are meant to be used exclusively
-              for verifying NOMAD search capabilities.
-              """
-        template[f"{trg}experiment_description"] = msg
+        template[f"{trg}experiment_description"] = (
+            "WARNING::These synthetic data - meant to be used for debugging only!"
+        )
         experiment_identifier = str(
             f"R{np.random.choice(100, 1)[0]}-{np.random.choice(100000, 1)[0]}"
         )
@@ -392,19 +372,9 @@ class ApmCreateExampleData:
                     unique_elements.add(str(symbol))
         print(f"Unique elements are: {list(unique_elements)}")
         template[f"{trg}atom_types"] = ", ".join(list(unique_elements))
-
-        specimen_name = str(
+        template[f"{trg}name"] = (
             f"Mocked atom probe specimen {np.random.choice(1000, 1)[0]}"
         )
-        template[f"{trg}name"] = specimen_name
-        template[f"{trg}sample_history"] = "n/a"
-        template[f"{trg}preparation_date"] = (
-            datetime.datetime.now().astimezone().isoformat()
-        )
-        template[f"{trg}short_title"] = specimen_name.replace(
-            "Mocked atom probe specimen ", ""
-        )
-        template[f"{trg}description"] = "n/a"
         return template
 
     def emulate_control_software(self, template: dict) -> dict:
