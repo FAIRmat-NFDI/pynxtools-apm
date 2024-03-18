@@ -1,5 +1,5 @@
 """
-Basic example based test for the stm reader
+Basic example based test for the apm reader
 """
 import os
 import xml.etree.ElementTree as ET
