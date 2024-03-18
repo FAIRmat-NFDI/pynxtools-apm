@@ -25,9 +25,9 @@ import numpy as np
 
 from ase.data import chemical_symbols
 from ifes_apt_tc_data_modeling.utils.utils import (
-    create_isotope_vector,
-    isotope_vector_to_nuclid_list,
-    isotope_vector_to_human_readable_name,
+    create_nuclide_hash,
+    nuclide_hash_to_nuclide_list,
+    nuclide_hash_to_human_readable_name,
 )
 from ifes_apt_tc_data_modeling.utils.definitions import (
     MAX_NUMBER_OF_ATOMS_PER_ION,
@@ -41,11 +41,11 @@ from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
 )
 from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+from pynxtools_apm.utils.apm_versioning import (
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases import (
+from pynxtools_apm.utils.apm_define_io_cases import (
     VALID_FILE_NAME_SUFFIX_RANGE,
 )
 
@@ -62,7 +62,7 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" f"peak_identification/ION[ion0]/"
     )
-    ivec = create_isotope_vector([])
+    ivec = create_nuclide_hash([])
     template[f"{trg}isotope_vector"] = np.reshape(
         np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION)
     )
@@ -71,9 +71,9 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
         np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2)
     )
     template[f"{trg}mass_to_charge_range/@units"] = "u"
-    nuclid_list = isotope_vector_to_nuclid_list(ivec)
+    nuclid_list = nuclide_hash_to_nuclide_list(ivec)
     template[f"{trg}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-    template[f"{trg}name"] = isotope_vector_to_human_readable_name(ivec, 0)
+    template[f"{trg}name"] = nuclide_hash_to_human_readable_name(ivec, 0)
     return template
 
 

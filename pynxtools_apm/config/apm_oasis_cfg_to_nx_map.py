@@ -42,7 +42,7 @@
 
 import datetime as dt
 
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+from pynxtools_apm.utils.apm_versioning import (
     NX_APM_ADEF_NAME,
     NX_APM_ADEF_VERSION,
 )

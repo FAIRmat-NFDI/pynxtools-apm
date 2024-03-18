@@ -21,10 +21,10 @@
 
 from typing import Tuple, Dict, List
 
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+from pynxtools_apm.shared.mapping_functors import (
     variadic_path_to_specific_path,
 )
-from pynxtools.dataconverter.readers.shared.shared_utils import (
+from pynxtools_apm.shared.shared_utils import (
     get_sha256_of_file_content,
 )
 

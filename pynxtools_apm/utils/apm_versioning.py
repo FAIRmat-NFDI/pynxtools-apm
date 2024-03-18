@@ -19,7 +19,7 @@
 
 # pylint: disable=no-member
 
-from pynxtools.dataconverter.readers.shared.shared_utils import get_repo_last_commit
+from pynxtools_apm.shared.shared_utils import get_repo_last_commit
 
 
 NX_APM_ADEF_NAME = "NXapm"

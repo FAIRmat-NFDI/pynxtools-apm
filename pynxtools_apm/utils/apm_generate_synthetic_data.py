@@ -35,9 +35,9 @@ from ase.lattice.cubic import FaceCenteredCubic
 from ase.data import atomic_numbers, atomic_masses, chemical_symbols
 
 from ifes_apt_tc_data_modeling.utils.utils import (
-    create_isotope_vector,
-    isotope_vector_to_nuclid_list,
-    isotope_vector_to_human_readable_name,
+    create_nuclide_hash,
+    nuclide_hash_to_nuclide_list,
+    nuclide_hash_to_human_readable_name,
     MAX_NUMBER_OF_ATOMS_PER_ION,
     MQ_EPSILON,
 )
@@ -46,14 +46,14 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
 
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+from pynxtools_apm.utils.apm_versioning import (
     NX_APM_ADEF_NAME,
     NX_APM_ADEF_VERSION,
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )
 
-from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging import (
+from pynxtools_apm.utils.apm_load_ranging import (
     add_unknown_iontype,
 )
 
@@ -292,7 +292,7 @@ class ApmCreateExampleData:
         ion_id = 1
         for tpl in self.nrm_composition:
             path = f"{trg}ION[ion{ion_id}]/"
-            ivec = create_isotope_vector(tpl[0])
+            ivec = create_nuclide_hash(tpl[0])
             template[f"{path}isotope_vector"] = np.reshape(
                 np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION)
             )
@@ -302,12 +302,10 @@ class ApmCreateExampleData:
                 np.asarray([tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2)
             )
             template[f"{path}mass_to_charge_range/@units"] = "u"
-            nuclid_list = np.zeros([2, 32], np.uint16)
-            nuclid_list = isotope_vector_to_nuclid_list(ivec)
+            nuclid_list = np.zeros((MAX_NUMBER_OF_ATOMS_PER_ION, 2), np.uint16)
+            nuclid_list = nuclide_hash_to_nuclide_list(ivec)
             template[f"{path}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
-            template[path + "name"] = isotope_vector_to_human_readable_name(
-                ivec, tpl[1]
-            )
+            template[f"{path}name"] = nuclide_hash_to_human_readable_name(ivec, tpl[1])
             ion_id += 1
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"

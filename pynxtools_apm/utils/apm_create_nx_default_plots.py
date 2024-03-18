@@ -21,10 +21,10 @@
 
 import numpy as np
 
-from pynxtools.dataconverter.readers.shared.shared_utils import (
+from pynxtools_apm.shared.shared_utils import (
     decorate_path_to_default_plot,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+from pynxtools_apm.utils.apm_versioning import (
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
     MASS_SPECTRUM_DEFAULT_BINNING,

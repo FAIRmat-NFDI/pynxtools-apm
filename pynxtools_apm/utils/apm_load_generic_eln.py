@@ -23,17 +23,17 @@ import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map import (
+from pynxtools_apm.config.apm_example_eln_to_nx_map import (
     APM_EXAMPLE_OTHER_TO_NEXUS,
     APM_EXAMPLE_USER_TO_NEXUS,
 )
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+from pynxtools_apm.shared.mapping_functors import (
     variadic_path_to_specific_path,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table import (
+from pynxtools_apm.utils.apm_parse_composition_table import (
     parse_composition_table,
 )
-from pynxtools.dataconverter.readers.shared.shared_utils import (
+from pynxtools_apm.shared.shared_utils import (
     get_sha256_of_file_content,
 )
 

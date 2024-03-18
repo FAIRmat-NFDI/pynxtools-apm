@@ -30,7 +30,7 @@ from ifes_apt_tc_data_modeling.csv.csv_reader import ReadCsvFileFormat
 from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptCalibrationFileFormat,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases import (
+from pynxtools_apm.utils.apm_define_io_cases import (
     VALID_FILE_NAME_SUFFIX_RECON,
 )
 

@@ -22,11 +22,11 @@
 import flatdict as fd
 import yaml
 
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_oasis_cfg_to_nx_map import (
+from pynxtools_apm.config.apm_oasis_cfg_to_nx_map import (
     APM_OASIS_TO_NEXUS_CFG,
     APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG,
 )
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+from pynxtools_apm.shared.mapping_functors import (
     variadic_path_to_specific_path,
 )
 

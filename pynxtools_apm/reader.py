@@ -22,49 +22,46 @@
 from typing import Tuple, Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases import (
+from pynxtools_apm.utils.apm_define_io_cases import (
     ApmUseCaseSelector,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_load_deployment_specifics import (
+from pynxtools_apm.utils.apm_load_deployment_specifics import (
     NxApmNomadOasisConfigurationParser,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_load_generic_eln import (
+from pynxtools_apm.utils.apm_load_generic_eln import (
     NxApmNomadOasisElnSchemaParser,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_load_reconstruction import (
+from pynxtools_apm.utils.apm_load_reconstruction import (
     ApmReconstructionParser,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_load_ranging import (
+from pynxtools_apm.utils.apm_load_ranging import (
     ApmRangingDefinitionsParser,
 )
-from pynxtools.dataconverter.readers.apm.utils.apm_create_nx_default_plots import (
+from pynxtools_apm.apm_create_nx_default_plots import (
     apm_default_plot_generator,
 )
-# from pynxtools.dataconverter.readers.apm.utils.apm_generate_synthetic_data \
-#     import ApmCreateExampleData
+# from pynxtools_apm.utils.apm_generate_synthetic_data import (
+#     ApmCreateExampleData,
+# )
 
 # this apm parser combines multiple sub-parsers
 # so we need the following input:
-# logical analysis which use case
-# data input from an ELN (e.g. NOMAD OASIS)
-# data input from technology partner files
-# functionalities for creating default plots
-# developer functionalities for creating synthetic data
+# > logical analysis which use case
+# > data input from an ELN (currently NOMAD Oasis, eLabFTW, openBIS in the future)
+# > data input from technology partner files
+# > functionalities for creating default plots
+# > developer functionalities for creating synthetic data
 
-# each reconstruction should be stored as an own file because for commercial
-# atom probe microscopes it is currently impossible to get less processed data
-# from the microscopes
-# for development purposes synthetic datasets can be created which are
-# for now stored all in the same file. As these use the same dictionary
-# the template variable analyses of files larger than the physical main memory
-# can currently not be handled
+# for development purposes synthetic datasets can be created which that are for now stored
+# all in the same file. As these use the same dictionary, the template variable analyses
+# of files which are larger than the physical main memory is currently not supported
 
 
 class ApmReader(BaseReader):
     """Parse content from community file formats.
 
     Specifically, (local electrode) atom probe microscopy and field-ion microscopy
-    towards a NXapm.nxdl-compliant NeXus file.
+    into a NXapm.nxdl-compliant NeXus file.
 
     """
 
@@ -112,11 +109,12 @@ class ApmReader(BaseReader):
                 print("No input file defined for eln data !")
                 return {}
 
-            print("Parse (meta)data coming from a configuration that specific OASIS...")
+            print("Parse (meta)data coming from a configuration of an RDM...")
+            # currently this example shows how to using the NOMAD Oasis RDM
             if len(case.cfg) == 1:
                 nx_apm_cfg = NxApmNomadOasisConfigurationParser(case.cfg[0], entry_id)
                 nx_apm_cfg.report(template)
-            # having and or using a deployment-specific configuration is optional
+            # having or using a deployment-specific configuration is optional
 
             print(
                 "Parse (numerical) data and metadata from ranging definitions file..."
