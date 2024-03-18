@@ -66,7 +66,7 @@ class APMReader(BaseReader):
     """
 
     # Whitelist for the NXDLs that the reader supports and can process
-    supported_nxdls = ["NXapm", "NXroot"]
+    supported_nxdls = ["NXapm"]
 
     def read(
         self,
