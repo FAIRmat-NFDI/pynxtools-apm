@@ -42,17 +42,24 @@
 
 import datetime as dt
 
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
-    import NX_APM_ADEF_NAME, NX_APM_ADEF_VERSION
+from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+    NX_APM_ADEF_NAME,
+    NX_APM_ADEF_VERSION,
+)
 
 
-APM_OASIS_TO_NEXUS_CFG \
-    = [("/ENTRY[entry*]/@version", f"{NX_APM_ADEF_VERSION}"),
-       ("/ENTRY[entry*]/definition", f"{NX_APM_ADEF_NAME}"),
-       ("/ENTRY[entry*]/operation_mode", "ignore", "operation_mode"),
-       ("/ENTRY[entry*]/start_time", f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}")]
+APM_OASIS_TO_NEXUS_CFG = [
+    ("/ENTRY[entry*]/@version", f"{NX_APM_ADEF_VERSION}"),
+    ("/ENTRY[entry*]/definition", f"{NX_APM_ADEF_NAME}"),
+    ("/ENTRY[entry*]/operation_mode", "ignore", "operation_mode"),
+    (
+        "/ENTRY[entry*]/start_time",
+        f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
+    ),
+]
 
 
-APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG \
-    = [("/ENTRY[entry*]/CITE[cite*]/doi", "load_from", "doi"),
-       ("/ENTRY[entry*]/CITE[cite*]/description", "load_from", "description")]
+APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG = [
+    ("/ENTRY[entry*]/CITE[cite*]/doi", "load_from", "doi"),
+    ("/ENTRY[entry*]/CITE[cite*]/description", "load_from", "description"),
+]

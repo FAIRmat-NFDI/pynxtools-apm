@@ -19,17 +19,17 @@
 
 # pylint: disable=no-member
 
-from pynxtools.dataconverter.readers.shared.shared_utils \
-    import get_repo_last_commit
+from pynxtools.dataconverter.readers.shared.shared_utils import get_repo_last_commit
 
 
 NX_APM_ADEF_NAME = "NXapm"
-NX_APM_ADEF_VERSION = "nexus-fairmat-proposal successor of " \
-                      "9636feecb79bb32b828b1a9804269573256d7696"
+NX_APM_ADEF_VERSION = (
+    "nexus-fairmat-proposal successor of " "9636feecb79bb32b828b1a9804269573256d7696"
+)
 # based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
 NX_APM_EXEC_NAME = "pynxtools/dataconverter/readers/apm/reader.py"
 NX_APM_EXEC_VERSION = get_repo_last_commit()
 
 # numerics
 MASS_SPECTRUM_DEFAULT_BINNING = 0.01  # u
-NAIVE_GRID_DEFAULT_VOXEL_SIZE = 1.  # nm
+NAIVE_GRID_DEFAULT_VOXEL_SIZE = 1.0  # nm

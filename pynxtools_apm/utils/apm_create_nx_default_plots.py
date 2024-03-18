@@ -21,18 +21,22 @@
 
 import numpy as np
 
-from pynxtools.dataconverter.readers.shared.shared_utils import \
-    decorate_path_to_default_plot
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning import \
-    NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION, \
-    MASS_SPECTRUM_DEFAULT_BINNING, NAIVE_GRID_DEFAULT_VOXEL_SIZE
+from pynxtools.dataconverter.readers.shared.shared_utils import (
+    decorate_path_to_default_plot,
+)
+from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+    NX_APM_EXEC_NAME,
+    NX_APM_EXEC_VERSION,
+    MASS_SPECTRUM_DEFAULT_BINNING,
+    NAIVE_GRID_DEFAULT_VOXEL_SIZE,
+)
 
 
 def iedge(imi, imx, resolution):
     """Generate linearly space support position."""
-    return np.linspace(imi, imx,
-                       num=int(np.ceil((imx - imi) / resolution)) + 1,
-                       endpoint=True)
+    return np.linspace(
+        imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1, endpoint=True
+    )
 
 
 def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
@@ -42,12 +46,14 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
 
     print(f"\tEnter histogram computation, np.shape(xyz) {np.shape(xyz)}")
     # make the bounding box a quadric prism, discretized using cubic voxel edge in nm
-    aabb: dict = {"x": [0., 0.],
-                  "y": [0., 0.],
-                  "z": [0., 0.],
-                  "xedge": None,
-                  "yedge": None,
-                  "zedge": None}
+    aabb: dict = {
+        "x": [0.0, 0.0],
+        "y": [0.0, 0.0],
+        "z": [0.0, 0.0],
+        "xedge": None,
+        "yedge": None,
+        "zedge": None,
+    }
     col = 0
     for dim in ["x", "y", "z"]:
         aabb[f"{dim}"] = [np.min(xyz[:, col]), np.max(xyz[:, col])]
@@ -56,8 +62,10 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)
         col += 1
 
-    hist3d = np.histogramdd((xyz[:, 0], xyz[:, 1], xyz[:, 2]),
-                            bins=(aabb["xedge"], aabb["yedge"], aabb["zedge"]))
+    hist3d = np.histogramdd(
+        (xyz[:, 0], xyz[:, 1], xyz[:, 2]),
+        bins=(aabb["xedge"], aabb["yedge"], aabb["zedge"]),
+    )
     del xyz
     if isinstance(hist3d[0], np.ndarray) is False:
         raise ValueError("Hist3d computation from the reconstruction failed!")
@@ -70,8 +78,10 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/naive_discretization/"
     template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
     template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/" \
-          f"naive_discretization/DATA[data]/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
+        f"naive_discretization/DATA[data]/"
+    )
     template[f"{trg}title"] = "Discretized reconstruction space"
     # template[f"{trg}@long_name"] = "Discretized reconstruction space"
     template[f"{trg}@signal"] = "intensity"
@@ -86,12 +96,16 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
 
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the appdef
-    template[f"{trg}intensity"] \
-        = {"compress": np.asarray(hist3d[0], np.uint32), "strength": 1}
+    template[f"{trg}intensity"] = {
+        "compress": np.asarray(hist3d[0], np.uint32),
+        "strength": 1,
+    }
     col = 0
     for dim in dims:
-        template[f"{trg}AXISNAME[axis_{dim}]"] \
-            = {"compress": np.asarray(hist3d[1][col][1::], np.float32), "strength": 1}
+        template[f"{trg}AXISNAME[axis_{dim}]"] = {
+            "compress": np.asarray(hist3d[1][col][1::], np.float32),
+            "strength": 1,
+        }
         template[f"{trg}AXISNAME[axis_{dim}]/@units"] = "nm"
         template[f"{trg}AXISNAME[axis_{dim}]/@long_name"] = f"{dim} (nm)"
         col += 1
@@ -112,9 +126,10 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
 
     hist1d = np.histogram(
         m_z[:],
-        np.linspace(mqmin, mqmax,
-                    num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1,
-                    endpoint=True))
+        np.linspace(
+            mqmin, mqmax, num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1, endpoint=True
+        ),
+    )
     del m_z
     if isinstance(hist1d[0], np.ndarray) is False:
         raise ValueError("Hist1d computation from the mass spectrum failed!")
@@ -130,22 +145,33 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
 
     template[f"{trg}min_incr_max"] = np.asarray([mqmin, mqincr, mqmax], np.float32)
     template[f"{trg}min_incr_max/@units"] = "u"
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" \
-          f"mass_to_charge_distribution/mass_spectrum/"
-    template[f"{trg}title"] = f"Mass spectrum ({MASS_SPECTRUM_DEFAULT_BINNING} u binning)"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
+        f"mass_to_charge_distribution/mass_spectrum/"
+    )
+    template[f"{trg}title"] = (
+        f"Mass spectrum ({MASS_SPECTRUM_DEFAULT_BINNING} u binning)"
+    )
     template[f"{trg}@signal"] = "intensity"
     template[f"{trg}@axes"] = "axis_mass_to_charge"
     template[f"{trg}@AXISNAME_indices[axis_mass_to_charge]"] = np.uint32(0)
-    template[f"{trg}DATA[intensity]"] \
-        = {"compress": np.asarray(hist1d[0], np.uint32), "strength": 1}
+    template[f"{trg}DATA[intensity]"] = {
+        "compress": np.asarray(hist1d[0], np.uint32),
+        "strength": 1,
+    }
     template[f"{trg}DATA[intensity]/@long_name"] = "Intensity (1)"  # Counts (1)"
-    template[f"{trg}AXISNAME[axis_mass_to_charge]"] \
-        = {"compress": np.asarray(hist1d[1][1::], np.float32), "strength": 1}
+    template[f"{trg}AXISNAME[axis_mass_to_charge]"] = {
+        "compress": np.asarray(hist1d[1][1::], np.float32),
+        "strength": 1,
+    }
     del hist1d
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "u"
-    template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] \
-        = "Mass-to-charge-state-ratio (u)"
-    print(f"Plot mass spectrum at {MASS_SPECTRUM_DEFAULT_BINNING} u binning was created.")
+    template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] = (
+        "Mass-to-charge-state-ratio (u)"
+    )
+    print(
+        f"Plot mass spectrum at {MASS_SPECTRUM_DEFAULT_BINNING} u binning was created."
+    )
     return template
 
 
@@ -180,7 +206,8 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
         decorate_path_to_default_plot(
             template,
             f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
-            f"mass_to_charge_distribution/mass_spectrum")
+            f"mass_to_charge_distribution/mass_spectrum",
+        )
 
     if has_valid_xyz is True:
         create_default_plot_reconstruction(template, entry_id)
@@ -188,5 +215,6 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
             decorate_path_to_default_plot(
                 template,
                 f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
-                f"naive_discretization/DATA[data]")
+                f"naive_discretization/DATA[data]",
+            )
     return template

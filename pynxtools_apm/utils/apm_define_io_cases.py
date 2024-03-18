@@ -21,9 +21,12 @@
 
 from typing import Tuple, Dict, List
 
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import variadic_path_to_specific_path
-from pynxtools.dataconverter.readers.shared.shared_utils import get_sha256_of_file_content
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+    variadic_path_to_specific_path,
+)
+from pynxtools.dataconverter.readers.shared.shared_utils import (
+    get_sha256_of_file_content,
+)
 
 VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
 VALID_FILE_NAME_SUFFIX_RANGE = [".rng", ".rrng", ".env", ".fig.txt", "range_.h5"]
@@ -49,8 +52,11 @@ class ApmUseCaseSelector:
         self.reconstruction: List[str] = []
         self.ranging: List[str] = []
         self.is_valid = False
-        self.supported_file_name_suffixes = VALID_FILE_NAME_SUFFIX_RECON \
-            + VALID_FILE_NAME_SUFFIX_RANGE + VALID_FILE_NAME_SUFFIX_CONFIG
+        self.supported_file_name_suffixes = (
+            VALID_FILE_NAME_SUFFIX_RECON
+            + VALID_FILE_NAME_SUFFIX_RANGE
+            + VALID_FILE_NAME_SUFFIX_CONFIG
+        )
         print(f"self.supported_file_name_suffixes: {self.supported_file_name_suffixes}")
         self.sort_files_by_file_name_suffix(file_paths)
         self.check_validity_of_file_combinations()
@@ -62,7 +68,9 @@ class ApmUseCaseSelector:
         for fpath in file_paths:
             for suffix in self.supported_file_name_suffixes:
                 if suffix not in [".h5", "range_.h5"]:
-                    if (fpath.lower().endswith(suffix)) and (fpath not in self.case[suffix]):
+                    if (fpath.lower().endswith(suffix)) and (
+                        fpath not in self.case[suffix]
+                    ):
                         self.case[suffix].append(fpath)
                         break
                 else:
@@ -110,27 +118,34 @@ class ApmUseCaseSelector:
             for suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
                 yml += self.case[suffix]
             for entry in yml:
-                if entry.endswith(".oasis.specific.yaml") \
-                        or entry.endswith(".oasis.specific.yml"):
+                if entry.endswith(".oasis.specific.yaml") or entry.endswith(
+                    ".oasis.specific.yml"
+                ):
                     self.cfg += [entry]
                 else:
                     self.eln += [entry]
-            print(f"recon_results: {self.reconstruction}\n"
-                  f"range_results: {self.ranging}\n"
-                  f"OASIS ELN: {self.eln}\n"
-                  f"OASIS local config: {self.cfg}\n")
+            print(
+                f"recon_results: {self.reconstruction}\n"
+                f"range_results: {self.ranging}\n"
+                f"OASIS ELN: {self.eln}\n"
+                f"OASIS local config: {self.cfg}\n"
+            )
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""
-        steps = ["/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]",
-                 "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]",
-                 "/ENTRY[entry*]/atom_probe/reconstruction/config",
-                 "/ENTRY[entry*]/atom_probe/reconstruction/results",
-                 "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]"]
-        defaults = [("type", "file"),
-                    ("path", ""),
-                    ("checksum", ""),
-                    ("algorithm", "SHA256")]
+        steps = [
+            "/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]",
+            "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]",
+            "/ENTRY[entry*]/atom_probe/reconstruction/config",
+            "/ENTRY[entry*]/atom_probe/reconstruction/results",
+            "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]",
+        ]
+        defaults = [
+            ("type", "file"),
+            ("path", ""),
+            ("checksum", ""),
+            ("algorithm", "SHA256"),
+        ]
         identifier = [entry_id]
         # populate workflow first with default steps to communicate in the NeXus file
         # which usually recommended files have not been provided for an NXentry
@@ -146,13 +161,15 @@ class ApmUseCaseSelector:
         # rely on assumption made in check_validity_of_file_combination
         for fpath in self.reconstruction:
             prfx = variadic_path_to_specific_path(
-                "/ENTRY[entry*]/atom_probe/reconstruction/results", identifier)
+                "/ENTRY[entry*]/atom_probe/reconstruction/results", identifier
+            )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/path"] = f"{fpath}"
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
         for fpath in self.ranging:
             prfx = variadic_path_to_specific_path(
-                "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]", identifier)
+                "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]", identifier
+            )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/path"] = f"{fpath}"
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)

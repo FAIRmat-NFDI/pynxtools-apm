@@ -2,6 +2,7 @@ from typing import Any, Tuple
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
+
 class APMReader(BaseReader):
     """
     Reader for my method....

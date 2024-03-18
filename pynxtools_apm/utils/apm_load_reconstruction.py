@@ -27,10 +27,12 @@ from ifes_apt_tc_data_modeling.epos.epos_reader import ReadEposFileFormat
 from ifes_apt_tc_data_modeling.pos.pos_reader import ReadPosFileFormat
 from ifes_apt_tc_data_modeling.ato.ato_reader import ReadAtoFileFormat
 from ifes_apt_tc_data_modeling.csv.csv_reader import ReadCsvFileFormat
-from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader \
-    import ReadPyccaptCalibrationFileFormat
-from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases \
-    import VALID_FILE_NAME_SUFFIX_RECON
+from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
+    ReadPyccaptCalibrationFileFormat,
+)
+from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases import (
+    VALID_FILE_NAME_SUFFIX_RECON,
+)
 
 
 def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> dict:
@@ -40,15 +42,19 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}reconstruction/"
     xyz = posfile.get_reconstructed_positions()
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.asarray(xyz.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = posfile.get_mass_to_charge_state_ratio()
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.asarray(m_z.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -61,15 +67,19 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
 
     trg = f"{prefix}reconstruction/"
     xyz = eposfile.get_reconstructed_positions()
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.asarray(xyz.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = eposfile.get_mass_to_charge_state_ratio()
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.asarray(m_z.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
 
@@ -134,15 +144,19 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}reconstruction/"
     xyz = aptfile.get_named_quantity("Position")
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.asarray(xyz.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = aptfile.get_named_quantity("Mass")
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.asarray(m_z.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     # all less explored optional branches in an APT6 file can also already
@@ -160,15 +174,19 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}reconstruction/"
     xyz = atofile.get_reconstructed_positions()
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.asarray(xyz.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = atofile.get_mass_to_charge_state_ratio()
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.asarray(m_z.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -181,15 +199,19 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}reconstruction/"
     xyz = csvfile.get_reconstructed_positions()
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.asarray(xyz.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = csvfile.get_mass_to_charge_state_ratio()
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.asarray(m_z.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -202,15 +224,19 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}reconstruction/"
     xyz = pycfile.get_reconstructed_positions()
-    template[f"{trg}reconstructed_positions"] \
-        = {"compress": np.asarray(xyz.values, np.float32), "strength": 1}
+    template[f"{trg}reconstructed_positions"] = {
+        "compress": np.asarray(xyz.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}reconstructed_positions/@units"] = xyz.unit
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = pycfile.get_mass_to_charge_state_ratio()
-    template[f"{trg}mass_to_charge"] \
-        = {"compress": np.asarray(m_z.values, np.float32), "strength": 1}
+    template[f"{trg}mass_to_charge"] = {
+        "compress": np.asarray(m_z.values, np.float32),
+        "strength": 1,
+    }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
     del m_z
     return template
@@ -220,9 +246,11 @@ class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
-        self.meta: Dict[str, Any] = {"file_format": None,
-                                     "file_path": file_path,
-                                     "entry_id": entry_id}
+        self.meta: Dict[str, Any] = {
+            "file_format": None,
+            "file_path": file_path,
+            "entry_id": entry_id,
+        }
         for suffix in VALID_FILE_NAME_SUFFIX_RECON:
             if file_path.lower().endswith(suffix) is True:
                 self.meta["file_format"] = suffix
@@ -239,21 +267,15 @@ class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
         prfx = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
         if self.meta["file_path"] != "" and self.meta["file_format"] is not None:
             if self.meta["file_format"] == ".apt":
-                extract_data_from_apt_file(
-                    self.meta["file_path"], prfx, template)
+                extract_data_from_apt_file(self.meta["file_path"], prfx, template)
             if self.meta["file_format"] == ".epos":
-                extract_data_from_epos_file(
-                    self.meta["file_path"], prfx, template)
+                extract_data_from_epos_file(self.meta["file_path"], prfx, template)
             if self.meta["file_format"] == ".pos":
-                extract_data_from_pos_file(
-                    self.meta["file_path"], prfx, template)
+                extract_data_from_pos_file(self.meta["file_path"], prfx, template)
             if self.meta["file_format"] == ".ato":
-                extract_data_from_ato_file(
-                    self.meta["file_path"], prfx, template)
+                extract_data_from_ato_file(self.meta["file_path"], prfx, template)
             if self.meta["file_format"] == ".csv":
-                extract_data_from_csv_file(
-                    self.meta["file_path"], prfx, template)
+                extract_data_from_csv_file(self.meta["file_path"], prfx, template)
             if self.meta["file_format"] == ".h5":
-                extract_data_from_pyc_file(
-                    self.meta["file_path"], prfx, template)
+                extract_data_from_pyc_file(self.meta["file_path"], prfx, template)
         return template

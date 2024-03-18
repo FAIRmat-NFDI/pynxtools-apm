@@ -24,38 +24,52 @@ from typing import Dict, Any
 import numpy as np
 
 from ase.data import chemical_symbols
-from ifes_apt_tc_data_modeling.utils.utils \
-    import create_isotope_vector, isotope_vector_to_nuclid_list, \
-    isotope_vector_to_human_readable_name
-from ifes_apt_tc_data_modeling.utils.definitions \
-    import MAX_NUMBER_OF_ATOMS_PER_ION, MQ_EPSILON, MAX_NUMBER_OF_ION_SPECIES
+from ifes_apt_tc_data_modeling.utils.utils import (
+    create_isotope_vector,
+    isotope_vector_to_nuclid_list,
+    isotope_vector_to_human_readable_name,
+)
+from ifes_apt_tc_data_modeling.utils.definitions import (
+    MAX_NUMBER_OF_ATOMS_PER_ION,
+    MQ_EPSILON,
+    MAX_NUMBER_OF_ION_SPECIES,
+)
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
-from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import ReadPyccaptRangingFileFormat
+from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
+    ReadPyccaptRangingFileFormat,
+)
 from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
-from pynxtools.dataconverter.readers.apm.utils.apm_versioning \
-    import NX_APM_EXEC_NAME, NX_APM_EXEC_VERSION
-from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases \
-    import VALID_FILE_NAME_SUFFIX_RANGE
+from pynxtools.dataconverter.readers.apm.utils.apm_versioning import (
+    NX_APM_EXEC_NAME,
+    NX_APM_EXEC_VERSION,
+)
+from pynxtools.dataconverter.readers.apm.utils.apm_define_io_cases import (
+    VALID_FILE_NAME_SUFFIX_RANGE,
+)
 
-WARNING_TOO_MANY_DEFINITIONS \
-    = f"WARNING::Range file contains more than {MAX_NUMBER_OF_ION_SPECIES} " \
-      f"WARNING::definitions! This is often a signature of duplicates or " \
-      f"WARNING::contradicting definitions."
+WARNING_TOO_MANY_DEFINITIONS = (
+    f"WARNING::Range file contains more than {MAX_NUMBER_OF_ION_SPECIES} "
+    f"WARNING::definitions! This is often a signature of duplicates or "
+    f"WARNING::contradicting definitions."
+)
 
 
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on the unknown type
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" \
-          f"peak_identification/ION[ion0]/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" f"peak_identification/ION[ion0]/"
+    )
     ivec = create_isotope_vector([])
-    template[f"{trg}isotope_vector"] \
-        = np.reshape(np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION))
+    template[f"{trg}isotope_vector"] = np.reshape(
+        np.asarray(ivec, np.uint16), (1, MAX_NUMBER_OF_ATOMS_PER_ION)
+    )
     template[f"{trg}charge_state"] = np.int8(0)
-    template[f"{trg}mass_to_charge_range"] \
-        = np.reshape(np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2))
+    template[f"{trg}mass_to_charge_range"] = np.reshape(
+        np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2)
+    )
     template[f"{trg}mass_to_charge_range/@units"] = "u"
     nuclid_list = isotope_vector_to_nuclid_list(ivec)
     template[f"{trg}nuclid_list"] = np.asarray(nuclid_list, np.uint16)
@@ -63,7 +77,9 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     return template
 
 
-def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int) -> dict:
+def add_standardize_molecular_ions(
+    ion_lst: list, template: dict, entry_id: int
+) -> dict:
     """Added standard formatted molecular ion entries."""
     ion_id = 1
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
@@ -71,65 +87,88 @@ def add_standardize_molecular_ions(ion_lst: list, template: dict, entry_id: int)
         path = f"{trg}ION[ion{ion_id}]/"
         template[f"{path}isotope_vector"] = np.reshape(
             np.asarray(ion.isotope_vector.values, np.uint16),
-            (1, MAX_NUMBER_OF_ATOMS_PER_ION))
+            (1, MAX_NUMBER_OF_ATOMS_PER_ION),
+        )
         template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
-        template[f"{path}mass_to_charge_range"] \
-            = np.asarray(ion.ranges.values, np.float32)
+        template[f"{path}mass_to_charge_range"] = np.asarray(
+            ion.ranges.values, np.float32
+        )
         template[f"{path}mass_to_charge_range/@units"] = "u"  # ion.ranges.unit
         template[f"{path}nuclid_list"] = ion.nuclid_list.values
         template[f"{path}name"] = ion.name.values
 
         if ion.charge_state_model["n_cand"] > 0:
             path = f"{trg}ION[ion{ion_id}]/charge_state_analysis/"
-            template[f"{path}min_abundance"] \
-                = np.float64(ion.charge_state_model["min_abundance"])
-            template[f"{path}min_abundance_product"] \
-                = np.float64(ion.charge_state_model["min_abundance_product"])
-            template[f"{path}min_half_life"] \
-                = np.float64(ion.charge_state_model["min_half_life"])
+            template[f"{path}min_abundance"] = np.float64(
+                ion.charge_state_model["min_abundance"]
+            )
+            template[f"{path}min_abundance_product"] = np.float64(
+                ion.charge_state_model["min_abundance_product"]
+            )
+            template[f"{path}min_half_life"] = np.float64(
+                ion.charge_state_model["min_half_life"]
+            )
             template[f"{path}min_half_life/@units"] = "s"
-            template[f"{path}sacrifice_isotopic_uniqueness"] \
-                = np.uint8(ion.charge_state_model["sacrifice_isotopic_uniqueness"])
+            template[f"{path}sacrifice_isotopic_uniqueness"] = np.uint8(
+                ion.charge_state_model["sacrifice_isotopic_uniqueness"]
+            )
             if ion.charge_state_model["n_cand"] == 1:
-                template[f"{path}isotope_matrix"] \
-                    = np.asarray(ion.charge_state_model["isotope_matrix"], np.uint16)
-                template[f"{path}charge_state_vector"] \
-                    = np.int8(ion.charge_state_model["charge_state_vector"])
-                template[f"{path}mass_vector"] \
-                    = np.float64(ion.charge_state_model["mass_vector"])
-                template[f"{path}mass_vector/@units"] \
-                    = "u"
-                template[f"{path}natural_abundance_product_vector"] \
-                    = np.float64(ion.charge_state_model["nat_abun_prod_vector"])
-                template[f"{path}min_half_life_vector"] \
-                    = np.float64(ion.charge_state_model["min_half_life_vector"])
-                template[f"{path}min_half_life_vector/@units"] \
-                    = "s"
+                template[f"{path}isotope_matrix"] = np.asarray(
+                    ion.charge_state_model["isotope_matrix"], np.uint16
+                )
+                template[f"{path}charge_state_vector"] = np.int8(
+                    ion.charge_state_model["charge_state_vector"]
+                )
+                template[f"{path}mass_vector"] = np.float64(
+                    ion.charge_state_model["mass_vector"]
+                )
+                template[f"{path}mass_vector/@units"] = "u"
+                template[f"{path}natural_abundance_product_vector"] = np.float64(
+                    ion.charge_state_model["nat_abun_prod_vector"]
+                )
+                template[f"{path}min_half_life_vector"] = np.float64(
+                    ion.charge_state_model["min_half_life_vector"]
+                )
+                template[f"{path}min_half_life_vector/@units"] = "s"
             else:
-                template[f"{path}isotope_matrix"] \
-                    = {"compress": np.asarray(ion.charge_state_model["isotope_matrix"],
-                                              np.uint16), "strength": 1}
-                template[f"{path}charge_state_vector"] \
-                    = {"compress": np.asarray(ion.charge_state_model["charge_state_vector"],
-                                              np.int8), "strength": 1}
-                template[f"{path}mass_vector"] \
-                    = {"compress": np.asarray(ion.charge_state_model["mass_vector"],
-                                              np.float64), "strength": 1}
-                template[f"{path}mass_vector/@units"] \
-                    = "u"
-                template[f"{path}natural_abundance_product_vector"] \
-                    = {"compress": np.asarray(ion.charge_state_model["nat_abun_prod_vector"],
-                                              np.float64), "strength": 1}
-                template[f"{path}min_half_life_vector"] \
-                    = {"compress": np.asarray(ion.charge_state_model["min_half_life_vector"],
-                                              np.float64), "strength": 1}
-                template[f"{path}min_half_life_vector/@units"] \
-                    = "s"
+                template[f"{path}isotope_matrix"] = {
+                    "compress": np.asarray(
+                        ion.charge_state_model["isotope_matrix"], np.uint16
+                    ),
+                    "strength": 1,
+                }
+                template[f"{path}charge_state_vector"] = {
+                    "compress": np.asarray(
+                        ion.charge_state_model["charge_state_vector"], np.int8
+                    ),
+                    "strength": 1,
+                }
+                template[f"{path}mass_vector"] = {
+                    "compress": np.asarray(
+                        ion.charge_state_model["mass_vector"], np.float64
+                    ),
+                    "strength": 1,
+                }
+                template[f"{path}mass_vector/@units"] = "u"
+                template[f"{path}natural_abundance_product_vector"] = {
+                    "compress": np.asarray(
+                        ion.charge_state_model["nat_abun_prod_vector"], np.float64
+                    ),
+                    "strength": 1,
+                }
+                template[f"{path}min_half_life_vector"] = {
+                    "compress": np.asarray(
+                        ion.charge_state_model["min_half_life_vector"], np.float64
+                    ),
+                    "strength": 1,
+                }
+                template[f"{path}min_half_life_vector/@units"] = "s"
         ion_id += 1
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
     template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
     return template
+
 
 # modify the template to take into account ranging
 # ranging is currently not resolved recursively because
@@ -146,32 +185,33 @@ def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) ->
     if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         print(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(
-        rangefile.env["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.env["molecular_ions"], template, entry_id)
     return template
 
 
-def extract_data_from_fig_txt_file(file_path: str, template: dict, entry_id: int) -> dict:
+def extract_data_from_fig_txt_file(
+    file_path: str, template: dict, entry_id: int
+) -> dict:
     """Add those required information which a FIG.TXT file has."""
     print(f"Extracting data from FIG.TXT file: {file_path}")
     rangefile = ReadFigTxtFileFormat(file_path)
     if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         print(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(
-        rangefile.fig["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.fig["molecular_ions"], template, entry_id)
     return template
 
 
-def extract_data_from_pyccapt_file(file_path: str, template: dict, entry_id: int) -> dict:
+def extract_data_from_pyccapt_file(
+    file_path: str, template: dict, entry_id: int
+) -> dict:
     """Add those required information which a pyccapt/ranging HDF5 file has."""
     print(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
     rangefile = ReadPyccaptRangingFileFormat(file_path)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         print(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(
-        rangefile.rng["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
     return template
 
 
@@ -182,8 +222,7 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         print(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(
-        rangefile.rng["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
     return template
 
 
@@ -194,8 +233,7 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         print(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(
-        rangefile.rrng["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.rrng["molecular_ions"], template, entry_id)
     return template
 
 
@@ -203,15 +241,19 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
-        self.meta: Dict[str, Any] = {"file_format": None,
-                                     "file_path": file_path,
-                                     "entry_id": entry_id}
+        self.meta: Dict[str, Any] = {
+            "file_format": None,
+            "file_path": file_path,
+            "entry_id": entry_id,
+        }
         for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
             if file_path.lower().endswith(suffix) is True:
                 self.meta["file_format"] = suffix
                 break
         if self.meta["file_format"] is None:
-            raise ValueError(f"{file_path} is not a supported ranging definitions file!")
+            raise ValueError(
+                f"{file_path} is not a supported ranging definitions file!"
+            )
 
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
@@ -219,12 +261,16 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
         prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
         if f"{prefix}number_of_ion_types" in template.keys():
             number_of_ion_types = template[f"{prefix}number_of_ion_types"]
-        print(f"Auto-detecting elements from ranging {number_of_ion_types} ion types...")
+        print(
+            f"Auto-detecting elements from ranging {number_of_ion_types} ion types..."
+        )
 
         unique_atom_numbers = set()
         max_atom_number = len(chemical_symbols) - 1
-        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/" \
-                 f"ranging/peak_identification/"
+        prefix = (
+            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+            f"ranging/peak_identification/"
+        )
         for ion_id in np.arange(1, number_of_ion_types):
             trg = f"{prefix}ION[ion{ion_id}]/nuclid_list"
             if trg in template.keys():
@@ -254,15 +300,18 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
         """
         # resolve the next two program references more informatively
         trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
-        template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] \
-            = np.uint32(MAX_NUMBER_OF_ATOMS_PER_ION)
+        template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(
+            MAX_NUMBER_OF_ATOMS_PER_ION
+        )
 
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
 
-        trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/" \
-              f"ranging/peak_identification/"
+        trg = (
+            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+            f"ranging/peak_identification/"
+        )
         template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
         template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
@@ -270,20 +319,25 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
 
         if self.meta["file_path"] != "" and self.meta["file_format"] is not None:
             if self.meta["file_format"] == ".env":
-                extract_data_from_env_file(self.meta["file_path"],
-                                           template, self.meta["entry_id"])
+                extract_data_from_env_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
             elif self.meta["file_format"] == ".fig.txt":
-                extract_data_from_fig_txt_file(self.meta["file_path"],
-                                               template, self.meta["entry_id"])
+                extract_data_from_fig_txt_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
             elif self.meta["file_format"] == "range_.h5":
-                extract_data_from_pyccapt_file(self.meta["file_path"],
-                                               template, self.meta["entry_id"])
+                extract_data_from_pyccapt_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
             elif self.meta["file_format"] == ".rng":
-                extract_data_from_rng_file(self.meta["file_path"],
-                                           template, self.meta["entry_id"])
+                extract_data_from_rng_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
             elif self.meta["file_format"] == ".rrng":
-                extract_data_from_rrng_file(self.meta["file_path"],
-                                            template, self.meta["entry_id"])
+                extract_data_from_rrng_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
             else:
                 trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
                 template[f"{trg}number_of_ion_types"] = 1

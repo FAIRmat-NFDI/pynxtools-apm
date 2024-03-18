@@ -23,14 +23,19 @@ import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map \
-    import APM_EXAMPLE_OTHER_TO_NEXUS, APM_EXAMPLE_USER_TO_NEXUS
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import variadic_path_to_specific_path
-from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table \
-    import parse_composition_table
-from pynxtools.dataconverter.readers.shared.shared_utils \
-    import get_sha256_of_file_content
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_example_eln_to_nx_map import (
+    APM_EXAMPLE_OTHER_TO_NEXUS,
+    APM_EXAMPLE_USER_TO_NEXUS,
+)
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+    variadic_path_to_specific_path,
+)
+from pynxtools.dataconverter.readers.apm.utils.apm_parse_composition_table import (
+    parse_composition_table,
+)
+from pynxtools.dataconverter.readers.shared.shared_utils import (
+    get_sha256_of_file_content,
+)
 
 
 class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
@@ -53,8 +58,10 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
 
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
         print(f"Extracting data from ELN file: {file_path}")
-        if (file_path.rsplit('/', 1)[-1].startswith("eln_data")
-                or file_path.startswith("eln_data")) and entry_id > 0:
+        if (
+            file_path.rsplit("/", 1)[-1].startswith("eln_data")
+            or file_path.startswith("eln_data")
+        ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
@@ -74,11 +81,20 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
             if isinstance(self.yml[src], list):
                 dct = parse_composition_table(self.yml[src])
 
-                prfx = f"/ENTRY[entry{self.entry_id}]/sample/" \
-                       f"CHEMICAL_COMPOSITION[chemical_composition]"
+                prfx = (
+                    f"/ENTRY[entry{self.entry_id}]/sample/"
+                    f"CHEMICAL_COMPOSITION[chemical_composition]"
+                )
                 unit = "at.-%"  # the assumed default unit
                 if "normalization" in dct:
-                    if dct["normalization"] in ["%", "at%", "at-%", "at.-%", "ppm", "ppb"]:
+                    if dct["normalization"] in [
+                        "%",
+                        "at%",
+                        "at-%",
+                        "at.-%",
+                        "ppm",
+                        "ppb",
+                    ]:
                         unit = "at.-%"
                         template[f"{prfx}/normalization"] = "atom_percent"
                     elif dct["normalization"] in ["wt%", "wt-%", "wt.-%"]:
@@ -119,7 +135,8 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                                 if isinstance(tpl, tuple) and (len(tpl) == 3):
                                     if (tpl[1] == "load_from") and (key == tpl[2]):
                                         trg = variadic_path_to_specific_path(
-                                            tpl[0], identifier)
+                                            tpl[0], identifier
+                                        )
                                         # res = apply_modifier(modifier, user_dict)
                                         # res is not None
                                         template[trg] = user_dict[tpl[2]]
@@ -140,8 +157,10 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                     laser_id = 1
                     # custom schema delivers a list of dictionaries...
                     for ldct in self.yml[src]:
-                        trg_sta = f"/ENTRY[entry{self.entry_id}]/measurement/" \
-                                  f"instrument/pulser/SOURCE[source{laser_id}]"
+                        trg_sta = (
+                            f"/ENTRY[entry{self.entry_id}]/measurement/"
+                            f"instrument/pulser/SOURCE[source{laser_id}]"
+                        )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
                         quantities = ["wavelength"]
@@ -150,15 +169,19 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                                 template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
                                 template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
 
-                        trg_dyn = f"/ENTRY[entry{self.entry_id}]/measurement/" \
-                                  f"event_data_apm_set/EVENT_DATA_APM[event_data_apm]/" \
-                                  f"instrument/pulser/SOURCE[source{laser_id}]"
+                        trg_dyn = (
+                            f"/ENTRY[entry{self.entry_id}]/measurement/"
+                            f"event_data_apm_set/EVENT_DATA_APM[event_data_apm]/"
+                            f"instrument/pulser/SOURCE[source{laser_id}]"
+                        )
                         quantities = ["power", "pulse_energy"]
                         for qnt in quantities:
                             if isinstance(ldct[qnt], dict):
                                 if ("value" in ldct[qnt]) and ("unit" in ldct[qnt]):
                                     template[f"{trg_dyn}/{qnt}"] = ldct[qnt]["value"]
-                                    template[f"{trg_dyn}/{qnt}/@units"] = ldct[qnt]["unit"]
+                                    template[f"{trg_dyn}/{qnt}/@units"] = ldct[qnt][
+                                        "unit"
+                                    ]
                         laser_id += 1
                     return template
         print("WARNING: pulse_mode != voltage but no laser details specified!")
@@ -180,15 +203,21 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                             if tpl[2] in self.yml.keys():
                                 template[trg] = self.yml[tpl[2]]
                             else:
-                                raise ValueError(f"tpl2 {tpl[2]} not in self.yml.keys()!")
+                                raise ValueError(
+                                    f"tpl2 {tpl[2]} not in self.yml.keys()!"
+                                )
                         elif tpl[1] == "sha256":
                             if tpl[2] in self.yml.keys():
                                 with open(self.yml[tpl[2]], "rb") as fp:
                                     template[trg] = get_sha256_of_file_content(fp)
                             else:
-                                raise ValueError(f"tpl2 {tpl[2]} not in self.yml.keys()!")
+                                raise ValueError(
+                                    f"tpl2 {tpl[2]} not in self.yml.keys()!"
+                                )
                         else:
-                            raise ValueError(f"tpl1 {tpl[1]} is an modifier (function)!")
+                            raise ValueError(
+                                f"tpl1 {tpl[1]} is an modifier (function)!"
+                            )
         return template
 
     def report(self, template: dict) -> dict:

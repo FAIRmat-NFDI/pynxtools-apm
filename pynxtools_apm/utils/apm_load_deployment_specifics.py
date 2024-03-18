@@ -22,19 +22,26 @@
 import flatdict as fd
 import yaml
 
-from pynxtools.dataconverter.readers.apm.map_concepts.apm_oasis_cfg_to_nx_map \
-    import APM_OASIS_TO_NEXUS_CFG, APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG
-from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors \
-    import variadic_path_to_specific_path
+from pynxtools.dataconverter.readers.apm.map_concepts.apm_oasis_cfg_to_nx_map import (
+    APM_OASIS_TO_NEXUS_CFG,
+    APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG,
+)
+from pynxtools.dataconverter.readers.shared.map_concepts.mapping_functors import (
+    variadic_path_to_specific_path,
+)
 
 
 class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-methods
     """Parse deployment specific configuration."""
 
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
-        print(f"Extracting data from deployment specific configuration file: {file_path}")
-        if (file_path.rsplit('/', 1)[-1].endswith(".oasis.specific.yaml")
-                or file_path.endswith(".oasis.specific.yml")) and entry_id > 0:
+        print(
+            f"Extracting data from deployment specific configuration file: {file_path}"
+        )
+        if (
+            file_path.rsplit("/", 1)[-1].endswith(".oasis.specific.yaml")
+            or file_path.endswith(".oasis.specific.yml")
+        ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
@@ -78,7 +85,8 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
                                 if isinstance(tpl, tuple) and (len(tpl) == 3):
                                     if (tpl[1] == "load_from") and (key == tpl[2]):
                                         trg = variadic_path_to_specific_path(
-                                            tpl[0], identifier)
+                                            tpl[0], identifier
+                                        )
                                         # res = apply_modifier(modifier, user_dict)
                                         # res is not None
                                         template[trg] = cite_dict[tpl[2]]
