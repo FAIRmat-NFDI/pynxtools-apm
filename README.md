@@ -30,9 +30,7 @@ If you would like to implement a parser for your data, feel free to get in conta
 Install the package with its dependencies:
 
 ```shell
-git clone https://github.com/FAIRmat-NFDI/pynxtools-apm.git \\
-    --branch master \\
-    --recursive pynxtools_apm
+git clone https://github.com/FAIRmat-NFDI/pynxtools-apm.git --branch main --recursive pynxtools_apm
 cd pynxtools_apm
 python -m pip install --upgrade pip
 python -m pip install -e .
