@@ -167,10 +167,10 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     del hist1d
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "Da"
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] = (
-        "Mass-to-charge-state-ratio (u)"
+        "Mass-to-charge-state-ratio (Da)"
     )
     print(
-        f"Plot mass spectrum at {MASS_SPECTRUM_DEFAULT_BINNING} u binning was created."
+        f"Plot mass spectrum at {MASS_SPECTRUM_DEFAULT_BINNING} Da binning was created."
     )
     return template
 
