@@ -39,8 +39,8 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
             f"Extracting data from deployment specific configuration file: {file_path}"
         )
         if (
-            file_path.rsplit("/", 1)[-1].endswith(".oasis.specific.yaml")
-            or file_path.endswith(".oasis.specific.yml")
+            file_path.rsplit("/", 1)[-1].endswith(".Oasis.specific.yaml")
+            or file_path.endswith(".Oasis.specific.yml")
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
@@ -69,7 +69,7 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
                         if (tpl[1] == "load_from") and (tpl[2] in self.yml):
                             template[trg] = self.yml[tpl[2]]
 
-        # related to joint paper https://arxiv.org/abs/2205.13510 and NOMAD OASIS
+        # related to joint paper https://arxiv.org/abs/2205.13510 and NOMAD Oasis
         src = "citation"
         if src in self.yml:
             if isinstance(self.yml[src], list):

@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Wrapping multiple parsers for vendor files with NOMAD OASIS/ELN/YAML metadata."""
+"""Wrapping multiple parsers for vendor files with NOMAD Oasis/ELN/YAML metadata."""
 
 # pylint: disable=no-member,duplicate-code,too-many-nested-blocks
 
@@ -27,6 +27,7 @@ from pynxtools_apm.config.apm_example_eln_to_nx_map import (
     APM_EXAMPLE_OTHER_TO_NEXUS,
     APM_EXAMPLE_USER_TO_NEXUS,
 )
+from pynxtools_apm.shared.shared_utils import rchop
 from pynxtools_apm.shared.mapping_functors import (
     variadic_path_to_specific_path,
 )
@@ -39,7 +40,7 @@ from pynxtools_apm.shared.shared_utils import (
 
 
 class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
-    """Parse eln_data.yaml dump file content generated from a NOMAD OASIS YAML.
+    """Parse eln_data.yaml dump file content generated from a NOMAD Oasis YAML.
 
     This parser implements a design where an instance of a specific NOMAD
     custom schema ELN template is used to fill pieces of information which
@@ -109,7 +110,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
                             trg = f"{prfx}/ION[ion{ion_id}]"
-                            template[f"{trg}/name"] = symbol
+                            template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
                             if dct[symbol][1] is not None:
@@ -191,33 +192,39 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
         """Copy data from custom schema into template."""
         identifier = [self.entry_id]
         for tpl in APM_EXAMPLE_OTHER_TO_NEXUS:
-            if isinstance(tpl, tuple) and len(tpl) >= 2:
-                if tpl[1] not in ("ignore"):
+            if isinstance(tpl, tuple):
+                if len(tpl) == 2:
                     trg = variadic_path_to_specific_path(tpl[0], identifier)
-                    # print(f"processing tpl {tpl} ... trg {trg}")
-                    if len(tpl) == 2:
-                        template[trg] = tpl[1]
-                    if len(tpl) == 3:
+                    template[trg] = tpl[1]
+                if len(tpl) == 3:
+                    if tpl[1] not in ("ignore"):
                         # nxpath, modifier, value, modifier (function) evaluates value to use
                         if tpl[1] == "load_from":
                             if tpl[2] in self.yml.keys():
+                                trg = variadic_path_to_specific_path(tpl[0], identifier)
                                 template[trg] = self.yml[tpl[2]]
                             else:
                                 raise ValueError(
                                     f"tpl2 {tpl[2]} not in self.yml.keys()!"
                                 )
-                        elif tpl[1] == "sha256":
+                        if tpl[1] == "sha256":
                             if tpl[2] in self.yml.keys():
+                                trg = variadic_path_to_specific_path(tpl[0], identifier)
                                 with open(self.yml[tpl[2]], "rb") as fp:
-                                    template[trg] = get_sha256_of_file_content(fp)
+                                    template[f"{rchop(trg, 'checksum')}checksum"] = (
+                                        get_sha256_of_file_content(fp)
+                                    )
+                                    template[f"{rchop(trg, 'checksum')}file"] = "file"
+                                    template[f"{rchop(trg, 'checksum')}path"] = (
+                                        f"{self.yml[tpl[2]]}"
+                                    )
+                                    template[f"{rchop(trg, 'checksum')}algorithm"] = (
+                                        "SHA256"
+                                    )
                             else:
                                 raise ValueError(
                                     f"tpl2 {tpl[2]} not in self.yml.keys()!"
                                 )
-                        else:
-                            raise ValueError(
-                                f"tpl1 {tpl[1]} is an modifier (function)!"
-                            )
         return template
 
     def report(self, template: dict) -> dict:

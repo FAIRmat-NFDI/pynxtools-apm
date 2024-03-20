@@ -48,7 +48,6 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 
 from pynxtools_apm.utils.apm_versioning import (
     NX_APM_ADEF_NAME,
-    NX_APM_ADEF_VERSION,
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )
@@ -317,7 +316,6 @@ class ApmCreateExampleData:
         # print("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
         template[f"{trg}definition"] = NX_APM_ADEF_NAME
-        template[f"{trg}@version"] = NX_APM_ADEF_VERSION
         template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
         template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()

@@ -37,7 +37,7 @@ formatting and mapping of concepts on the here shown NeXus vocabulary.
 If you use this dataconverter/apm parser as a standalone tool,
 1. You should follow the interactive jupyter notebook that is stored in
    *pynxtools/examples/apm*.
-2. As the standalone usage of this parser does not require a NOMAD OASIS instance,
+2. As the standalone usage of this parser does not require a NOMAD Oasis instance,
    you have to edit the ELN manually or via another ELN. For this you can edit the
    example eln_data_apm.yaml which comes shipped with this example. Alternatively,
    you can at this point copy or place your own datasets into the working directory
@@ -46,31 +46,31 @@ If you use this dataconverter/apm parser as a standalone tool,
    executing the jupyter tutorial. This should create an instance of a NeXus/HDF5 file
    which is formatted according to the NXem application definition.
 
-## Getting started - usage related to NOMAD OASIS
+## Getting started - usage related to NOMAD Oasis
 This parser can be used to map numerical data and metadata inside frequently
 used file formats of atom probe tomography and related field-ion microscopy
 software tools into a NeXus HDF5 file which complies with a specific version
 of the NXapm application definition.
 
-If you are using a NOMAD OASIS, you can use this tool as follows.
-1. Log-in to a NOMAD OASIS and navigate to the *Create Uploads* tab.
+If you are using a NOMAD Oasis, you can use this tool as follows.
+1. Log-in to a NOMAD Oasis and navigate to the *Create Uploads* tab.
 2. Select apm example from the list of available options.
 3. Drag-and-drop the file with your reconstructed dataset via pos, epos, or apt,
    and add your ranging definitions file via rrng, or rng, or the fig files from
    Peter Felfer's Erlangen atom-probe-toolbox.
-3. Edit the electronic lab notebook (ELN) schema inside the NOMAD OASIS and click the
-   save button in the NOMAD OASIS GUI to save the data that you have entered into
+3. Edit the electronic lab notebook (ELN) schema inside the NOMAD Oasis and click the
+   save button in the NOMAD Oasis GUI to save the data that you have entered into
    the ELN template. Clicking *save* will trigger the automatic generation
    of an eln_data.yaml file. Second, the clicking will trigger a run of the
    dataconverter/apm parser which generates a NXapm NeXus file based on the data
    in the reconstruction and ranging file and the eln_data.yaml file. Afterwards,
-   the file will be displayed in the GUI and show up in the upload section of your OASIS.
+   the file will be displayed in the GUI and show up in the upload section of your Oasis.
    By default the converter performs a strong loss-less compression on the input
    as many of the stack data store integers with a low entropy. The compression may
    take some time. You can inspect the progress of the conversion in the console from
-   which you started the NOMAD OASIS appworker.
+   which you started the NOMAD Oasis appworker.
 4. If successful, a NeXus (nxs) file will appear in your upload. You can explore
-   its content with the H5Web tools inside the NOMAD OASIS GUI and click interactively
+   its content with the H5Web tools inside the NOMAD Oasis GUI and click interactively
    through the data including default plots. For atom probe these are a 3D discretized
    view of your reconstruction using 1nm rectangular binning and the mass spectrum
    with a default 0.01 Da binning an no additional corrections.
@@ -102,7 +102,7 @@ When the ranging definitions have molecular ions which are composed from many at
 and using elements with many isotopes it is possible that the interpretation
 of the ranging definitions can take long. The situation is highly case dependent.
 The reason for this is that the apm reader internally uses a combinatorial
-algorithm via the ifes_apt_tc_data_modeling library. Using this library has the 
+algorithm via the ifes_apt_tc_data_modeling library. Using this library has the
 benefit that it is automatically capable to identify charge states but for
 complex molecular ions it may take a while evaluate all possible isotopic
 combinations.

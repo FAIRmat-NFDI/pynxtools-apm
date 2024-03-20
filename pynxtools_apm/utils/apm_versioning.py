@@ -23,12 +23,20 @@ from pynxtools_apm.shared.shared_utils import get_repo_last_commit
 
 
 NX_APM_ADEF_NAME = "NXapm"
-NX_APM_ADEF_VERSION = (
-    "nexus-fairmat-proposal successor of " "9636feecb79bb32b828b1a9804269573256d7696"
-)
-# based on https://fairmat-experimental.github.io/nexus-fairmat-proposal
-NX_APM_EXEC_NAME = "pynxtools/dataconverter/readers/apm/reader.py"
-NX_APM_EXEC_VERSION = get_repo_last_commit()
+NX_APM_EXEC_NAME = "pynxtools-apm/reader.py"
+
+
+def get_apm_exec_version() -> str:
+    tag = get_repo_last_commit()
+    if tag is not None:
+        return f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/{tag}"
+    else:
+        return (
+            f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/ UNKNOWN COMMIT !!"
+        )
+
+
+NX_APM_EXEC_VERSION = get_apm_exec_version()
 
 # numerics
 MASS_SPECTRUM_DEFAULT_BINNING = 0.01  # u

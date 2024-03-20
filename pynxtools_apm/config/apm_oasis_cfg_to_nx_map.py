@@ -15,11 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Dict mapping values for a specifically configured NOMAD OASIS."""
+"""Dict mapping values for a specifically configured NOMAD Oasis."""
 
 # pylint: disable=line-too-long
 
-# currently by virtue of design NOMAD OASIS specific examples show how different tools and
+# currently by virtue of design NOMAD Oasis specific examples show how different tools and
 # services can be specifically coupled and implemented so that they work together
 # currently we assume that the ELN provides all those pieces of information to instantiate
 # a NeXus data artifact which technology-partner-specific files or database blobs can not
@@ -31,7 +31,7 @@
 # just to assure that all information are included in the ELN output and thus consumable
 # by the dataconverter
 # taking the perspective of a specific lab where a specific version of an ELN provided by
-# or running in addition to NOMAD OASIS is used many pieces of information might not change
+# or running in addition to NOMAD Oasis is used many pieces of information might not change
 # or administrators do not wish to expose this via the end user ELN in an effort to reduce
 # the complexity for end users and make entering of repetitiv information obsolete
 
@@ -44,12 +44,10 @@ import datetime as dt
 
 from pynxtools_apm.utils.apm_versioning import (
     NX_APM_ADEF_NAME,
-    NX_APM_ADEF_VERSION,
 )
 
 
 APM_OASIS_TO_NEXUS_CFG = [
-    ("/ENTRY[entry*]/@version", f"{NX_APM_ADEF_VERSION}"),
     ("/ENTRY[entry*]/definition", f"{NX_APM_ADEF_NAME}"),
     ("/ENTRY[entry*]/operation_mode", "ignore", "operation_mode"),
     (

@@ -19,7 +19,9 @@
 
 # pylint: disable=no-member,too-few-public-methods,pointless-string-statement
 
+from time import perf_counter_ns
 from typing import Tuple, Any
+import numpy as np
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 from pynxtools_apm.utils.apm_define_io_cases import (
@@ -75,6 +77,7 @@ class APMReader(BaseReader):
         objects: Tuple[Any] = None,
     ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
+        tic = perf_counter_ns()
         template.clear()
 
         entry_id = 1
@@ -96,18 +99,10 @@ class APMReader(BaseReader):
         else:  # eln_data, and ideally recon and ranging definitions from technology partner file
             print("Parse ELN and technology partner file(s)...")
             case = ApmUseCaseSelector(file_paths)
-            if case.is_valid is False:
+            if not case.is_valid:
                 print("Such a combination of input-file(s, if any) is not supported !")
                 return {}
             case.report_workflow(template, entry_id)
-
-            print("Parse (meta)data coming from an ELN...")
-            if len(case.eln) == 1:
-                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
-                nx_apm_eln.report(template)
-            else:
-                print("No input file defined for eln data !")
-                return {}
 
             print("Parse (meta)data coming from a configuration of an RDM...")
             # currently this example shows how to using the NOMAD Oasis RDM
@@ -116,16 +111,22 @@ class APMReader(BaseReader):
                 nx_apm_cfg.report(template)
             # having or using a deployment-specific configuration is optional
 
-            print(
-                "Parse (numerical) data and metadata from ranging definitions file..."
-            )
+            print("Parse (meta)data coming from an ELN...")
+            if len(case.eln) == 1:
+                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id, True)
+                nx_apm_eln.report(template)
+            else:
+                print("No input file defined for eln data !")
+
             if len(case.reconstruction) == 1:
+                print("Parse (meta)data from a reconstructed dataset file...")
                 nx_apm_recon = ApmReconstructionParser(case.reconstruction[0], entry_id)
                 nx_apm_recon.report(template)
             else:
                 print("No input-file defined for reconstructed dataset!")
                 return {}
             if len(case.ranging) == 1:
+                print("Parse (meta)data from a ranging definitions file...")
                 nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0], entry_id)
                 nx_apm_range.report(template)
             else:
@@ -141,6 +142,13 @@ class APMReader(BaseReader):
         # exit(1)
 
         print("Forward instantiated template to the NXS writer...")
+        toc = perf_counter_ns()
+        trg = f"/entry{entry_id}/profiling"
+        template[f"{trg}/@NX_class"] = "NXcs_profiling"
+        template[f"{trg}/template_filling_elapsed_time"] = np.float64(
+            (toc - tic) / 1.0e9
+        )
+        template[f"{trg}/template_filling_elapsed_time/@units"] = "s"
         return template
 
 

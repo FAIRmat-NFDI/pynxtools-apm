@@ -22,6 +22,7 @@ APM_EXAMPLE_OTHER_TO_NEXUS = [
     ("/ENTRY[entry*]/start_time", "load_from", "entry/start_time"),
     ("/ENTRY[entry*]/end_time", "load_from", "entry/end_time"),
     ("/ENTRY[entry*]/operation_mode", "load_from", "entry/operation_mode"),
+    ("/ENTRY[entry*]/specimen/method", "load_from", "entry/method"),
     (
         "/ENTRY[entry*]/experiment_description",
         "load_from",
@@ -266,29 +267,14 @@ APM_EXAMPLE_OTHER_TO_NEXUS = [
         "reconstruction/field_of_view/unit",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/path",
-        "load_from",
-        "workflow/raw_dat_file",
-    ),
-    (
         "/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/checksum",
         "sha256",
         "workflow/raw_dat_file",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/path",
-        "load_from",
-        "workflow/hit_dat_file",
-    ),
-    (
         "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/checksum",
         "sha256",
         "workflow/hit_dat_file",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/config/path",
-        "load_from",
-        "workflow/recon_cfg_file",
     ),
     (
         "/ENTRY[entry*]/atom_probe/reconstruction/config/checksum",
@@ -324,7 +310,7 @@ APM_EXAMPLE_WORKFLOW_TO_NEXUS \
 """
 
 # NeXus concept specific mapping tables which require special treatment as the current
-# NOMAD OASIS custom schema implementation delivers them as a list of dictionaries instead
+# NOMAD Oasis custom schema implementation delivers them as a list of dictionaries instead
 # of a directly flattenable list of key, value pairs
 
 
@@ -333,8 +319,13 @@ APM_EXAMPLE_USER_TO_NEXUS = [
     ("/ENTRY[entry*]/USER[user*]/affiliation", "load_from", "affiliation"),
     ("/ENTRY[entry*]/USER[user*]/address", "load_from", "address"),
     ("/ENTRY[entry*]/USER[user*]/email", "load_from", "email"),
-    ("/ENTRY[entry*]/USER[user*]/orcid", "load_from", "orcid"),
-    ("/ENTRY[entry*]/USER[user*]/orcid_platform", "load_from", "orcid_platform"),
+    (
+        "/ENTRY[entry*]/USER[user*]/IDENTIFIER[identifier]/identifier",
+        "load_from",
+        "orcid",
+    ),
+    ("/ENTRY[entry*]/USER[user*]/IDENTIFIER[identifier]/service", "orcid"),
+    ("/ENTRY[entry*]/USER[user*]/IDENTIFIER[identifier]/is_persistent", False),
     ("/ENTRY[entry*]/USER[user*]/telephone_number", "load_from", "telephone_number"),
     ("/ENTRY[entry*]/USER[user*]/role", "load_from", "role"),
     ("/ENTRY[entry*]/USER[user*]/social_media_name", "load_from", "social_media_name"),

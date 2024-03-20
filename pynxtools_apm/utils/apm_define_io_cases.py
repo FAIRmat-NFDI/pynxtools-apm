@@ -88,7 +88,7 @@ class ApmUseCaseSelector:
         """Check if this combination of types of files is supported."""
         recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT, ATO, CSV
         range_input = 0  # ranging definition file, e.g. RNG, RRNG, ENV, FIG.TXT
-        other_input = 0  # generic ELN or OASIS-specific configurations
+        other_input = 0  # generic ELN or Oasis-specific configurations
         for suffix, value in self.case.items():
             if suffix not in [".h5", "range_.h5"]:
                 if suffix in VALID_FILE_NAME_SUFFIX_RECON:
@@ -127,12 +127,18 @@ class ApmUseCaseSelector:
             print(
                 f"recon_results: {self.reconstruction}\n"
                 f"range_results: {self.ranging}\n"
-                f"OASIS ELN: {self.eln}\n"
-                f"OASIS local config: {self.cfg}\n"
+                f"Oasis ELN: {self.eln}\n"
+                f"Oasis local config: {self.cfg}\n"
             )
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""
+        """
+        # whether to populate the workflow first with default steps or not is something the
+        # community has to decide already in 2013, D. Larson et al. documented clearly
+        # in their APT book which files one should ideally be documented to enable as best
+        # as possible a repeatable analysis up to the reconstruction and ranging
+        # stage when using IVAS/APSuite !
         steps = [
             "/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]",
             "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]",
@@ -146,17 +152,12 @@ class ApmUseCaseSelector:
             ("checksum", ""),
             ("algorithm", "SHA256"),
         ]
-        identifier = [entry_id]
-        # populate workflow first with default steps to communicate in the NeXus file
-        # which usually recommended files have not been provided for an NXentry
-        # keep in mind that already in 2013 D. Larson et al. documented clearly
-        # in their book which files one should ideally document to enable as best as
-        # possible the repeating of an analysis until the reconstruction and ranging
-        # when using IVAS/APSuite !
         for step in steps:
             trg = variadic_path_to_specific_path(step, identifier)
             for dflt in defaults:
                 template[f"{trg}/{dflt[0]}"] = f"{dflt[1]}"
+        """
+        identifier = [entry_id]
         # populate automatically input-files used
         # rely on assumption made in check_validity_of_file_combination
         for fpath in self.reconstruction:
@@ -164,15 +165,19 @@ class ApmUseCaseSelector:
                 "/ENTRY[entry*]/atom_probe/reconstruction/results", identifier
             )
             with open(fpath, "rb") as fp:
-                template[f"{prfx}/path"] = f"{fpath}"
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
+                template[f"{prfx}/path"] = f"{fpath}"
+                template[f"{prfx}/type"] = "file"
+                template[f"{prfx}/algorithm"] = "SHA256"
         for fpath in self.ranging:
             prfx = variadic_path_to_specific_path(
                 "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]", identifier
             )
             with open(fpath, "rb") as fp:
-                template[f"{prfx}/path"] = f"{fpath}"
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
+                template[f"{prfx}/path"] = f"{fpath}"
+                template[f"{prfx}/type"] = "file"
+                template[f"{prfx}/algorithm"] = "SHA256"
         # FAU/Erlangen's pyccapt control and calibration file have not functional
         # distinction which makes it non-trivial to decide if a given HDF5 qualifies
         # as control or calibration file TODO::for this reason it is currently ignored

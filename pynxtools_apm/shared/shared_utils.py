@@ -25,17 +25,31 @@
 # import git
 import hashlib
 import numpy as np
+import os
+from subprocess import CalledProcessError, run
+
+
+def rchop(s, suffix):
+    if suffix and s.endswith(suffix):
+        return s[: -len(suffix)]
+    return s
 
 
 def get_repo_last_commit() -> str:
     """Identify the last commit to the repository."""
-    # repo = git.Repo(search_parent_directories=True)
-    # sha = str(repo.head.object.hexsha)
-    # if sha != "":
-    #    return sha
-    # currently update-north-markus branch on nomad-FAIR does not pick up
-    # git even though git in the base image and gitpython in pynxtools deps
-    return "unknown git commit id or unable to parse git reverse head"
+    try:
+        return (
+            run(
+                ["git", "describe", "--always"],
+                cwd=os.getcwd(),
+                check=True,
+                capture_output=True,
+            )
+            .stdout.decode("utf-8")
+            .strip()
+        )
+    except (FileNotFoundError, CalledProcessError):
+        return None
 
 
 def get_sha256_of_file_content(file_hdl) -> str:
