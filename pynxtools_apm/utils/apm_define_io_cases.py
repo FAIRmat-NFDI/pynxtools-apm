@@ -144,7 +144,7 @@ class ApmUseCaseSelector:
             "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]",
             "/ENTRY[entry*]/atom_probe/reconstruction/config",
             "/ENTRY[entry*]/atom_probe/reconstruction/results",
-            "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]",
+            "/ENTRY[entry*]/atom_probe/ranging/definitions",
         ]
         defaults = [
             ("type", "file"),
@@ -171,7 +171,7 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/algorithm"] = "SHA256"
         for fpath in self.ranging:
             prfx = variadic_path_to_specific_path(
-                "/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]", identifier
+                "/ENTRY[entry*]/atom_probe/ranging/definitions", identifier
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)

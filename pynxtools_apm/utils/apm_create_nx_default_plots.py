@@ -144,7 +144,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
     template[f"{trg}min_incr_max"] = np.asarray([mqmin, mqincr, mqmax], np.float32)
-    template[f"{trg}min_incr_max/@units"] = "u"
+    template[f"{trg}min_incr_max/@units"] = "Da"
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
         f"mass_to_charge_distribution/mass_spectrum/"
@@ -165,7 +165,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
         "strength": 1,
     }
     del hist1d
-    template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "u"
+    template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "Da"
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] = (
         "Mass-to-charge-state-ratio (u)"
     )

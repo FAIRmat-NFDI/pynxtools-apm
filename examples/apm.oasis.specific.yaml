@@ -1,1 +1,5 @@
-location: Leoben
+citation:
+- doi: https://doi.org/repo
+  description: DOI to the respective entry in a data repository.
+- doi: https://doi.org/paper
+  description: DOI to the respective publication.

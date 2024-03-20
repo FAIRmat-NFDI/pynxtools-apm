@@ -68,7 +68,7 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     template[f"{trg}mass_to_charge_range"] = np.reshape(
         np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2)
     )
-    template[f"{trg}mass_to_charge_range/@units"] = "u"
+    template[f"{trg}mass_to_charge_range/@units"] = "Da"
     nuclide_list = nuclide_hash_to_nuclide_list(ivec)
     template[f"{trg}nuclide_list"] = np.asarray(nuclide_list, np.uint16)
     template[f"{trg}name"] = nuclide_hash_to_human_readable_name(ivec, 0)
@@ -88,7 +88,7 @@ def add_standardize_molecular_ions(
         template[f"{path}mass_to_charge_range"] = np.asarray(
             ion.ranges.values, np.float32
         )
-        template[f"{path}mass_to_charge_range/@units"] = "u"  # ion.ranges.unit
+        template[f"{path}mass_to_charge_range/@units"] = "Da"  # ion.ranges.unit
         template[f"{path}nuclide_list"] = ion.nuclide_list.values
         template[f"{path}name"] = ion.name.values
 
@@ -115,7 +115,7 @@ def add_standardize_molecular_ions(
                     ion.charge_state_model["charge_state"]
                 )
                 template[f"{path}mass"] = np.float64(ion.charge_state_model["mass"])
-                template[f"{path}mass/@units"] = "u"
+                template[f"{path}mass/@units"] = "Da"
                 template[f"{path}natural_abundance_product"] = np.float64(
                     ion.charge_state_model["natural_abundance_product"]
                 )
@@ -140,7 +140,7 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(ion.charge_state_model["mass"], np.float64),
                     "strength": 1,
                 }
-                template[f"{path}mass/@units"] = "u"
+                template[f"{path}mass/@units"] = "Da"
                 template[f"{path}natural_abundance_product"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["natural_abundance_product"], np.float64
@@ -265,7 +265,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
         for ion_id in np.arange(1, number_of_ion_types):
             trg = f"{prefix}ION[ion{ion_id}]/nuclide_list"
             if trg in template.keys():
-                nuclide_list = template[trg][1, :]
+                nuclide_list = template[trg][:, 1]
                 # second row of NXion/nuclide_list yields atom number to decode element
                 for atom_number in nuclide_list:
                     if 0 < atom_number <= max_atom_number:

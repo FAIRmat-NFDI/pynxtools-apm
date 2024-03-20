@@ -303,10 +303,10 @@ APM_EXAMPLE_WORKFLOW_TO_NEXUS \
        ("/ENTRY[entry*]/atom_probe/reconstruction/results/path", "load_from", "workflow/recon_res_file"),
        ("/ENTRY[entry*]/atom_probe/reconstruction/results/checksum", "sha256", "workflow/recon_res_file"),
        ("/ENTRY[entry*]/atom_probe/reconstruction/results/algorithm", "SHA256"),
-       ("/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]/type", "file"),
-       ("/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]/path", "load_from", "workflow/range_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]/checksum", "sha256", "workflow/range_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/ranging/SERIALIZED[serialized]/algorithm", "SHA256")]
+       ("/ENTRY[entry*]/atom_probe/ranging/definitions/type", "file"),
+       ("/ENTRY[entry*]/atom_probe/ranging/definitions/path", "load_from", "workflow/range_dat_file"),
+       ("/ENTRY[entry*]/atom_probe/ranging/definitions/checksum", "sha256", "workflow/range_dat_file"),
+       ("/ENTRY[entry*]/atom_probe/ranging/definitions/algorithm", "SHA256")]
 """
 
 # NeXus concept specific mapping tables which require special treatment as the current

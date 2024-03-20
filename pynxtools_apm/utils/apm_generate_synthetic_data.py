@@ -297,7 +297,7 @@ class ApmCreateExampleData:
             template[f"{path}mass_to_charge_range"] = np.reshape(
                 np.asarray([tpl[2], tpl[2] + MQ_EPSILON], np.float32), (1, 2)
             )
-            template[f"{path}mass_to_charge_range/@units"] = "u"
+            template[f"{path}mass_to_charge_range/@units"] = "Da"
             nuclide_list = np.zeros((MAX_NUMBER_OF_ATOMS_PER_ION, 2), np.uint16)
             nuclide_list = nuclide_hash_to_nuclide_list(ivec)
             template[f"{path}nuclide_list"] = np.asarray(nuclide_list, np.uint16)
@@ -634,6 +634,6 @@ class ApmCreateExampleData:
                 "compress": np.asarray(self.m_z, np.float32),
                 "strength": 1,
             }
-            template[f"{trg}mass_to_charge/@units"] = "u"
+            template[f"{trg}mass_to_charge/@units"] = "Da"
 
         return template
