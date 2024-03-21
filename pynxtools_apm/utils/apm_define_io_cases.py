@@ -58,6 +58,7 @@ class ApmUseCaseSelector:
             + VALID_FILE_NAME_SUFFIX_CONFIG
         )
         print(f"self.supported_file_name_suffixes: {self.supported_file_name_suffixes}")
+        print(f"{file_paths}")
         self.sort_files_by_file_name_suffix(file_paths)
         self.check_validity_of_file_combinations()
 

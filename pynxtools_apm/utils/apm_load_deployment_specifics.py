@@ -36,7 +36,7 @@ class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-meth
 
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
         print(
-            f"Extracting data from deployment specific configuration file: {file_path}"
+            f"Extracting data from deployment-specific configuration file: {file_path}"
         )
         if (
             file_path.rsplit("/", 1)[-1].endswith(".Oasis.specific.yaml")

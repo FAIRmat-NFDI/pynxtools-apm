@@ -55,8 +55,10 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         "zedge": None,
     }
     col = 0
+    print("reconstruction aabb3d")
     for dim in ["x", "y", "z"]:
         aabb[f"{dim}"] = [np.min(xyz[:, col]), np.max(xyz[:, col])]
+        print(f"\t{dim}: {aabb[f'''{dim}''']}")
         imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE
         imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE
         aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)
@@ -150,7 +152,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
         f"mass_to_charge_distribution/mass_spectrum/"
     )
     template[f"{trg}title"] = (
-        f"Mass spectrum ({MASS_SPECTRUM_DEFAULT_BINNING} u binning)"
+        f"Mass spectrum ({MASS_SPECTRUM_DEFAULT_BINNING} Da binning)"
     )
     template[f"{trg}@signal"] = "intensity"
     template[f"{trg}@axes"] = "axis_mass_to_charge"
