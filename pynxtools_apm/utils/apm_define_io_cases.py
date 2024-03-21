@@ -29,7 +29,14 @@ from pynxtools_apm.shared.shared_utils import (
 )
 
 VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
-VALID_FILE_NAME_SUFFIX_RANGE = [".rng", ".rrng", ".env", ".fig.txt", "range_.h5"]
+VALID_FILE_NAME_SUFFIX_RANGE = [
+    ".rng",
+    ".rrng",
+    ".env",
+    ".fig.txt",
+    "range_.h5",
+    ".analysis",
+]
 VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
 
 

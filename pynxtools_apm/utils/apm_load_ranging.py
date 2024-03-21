@@ -39,6 +39,7 @@ from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
 from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptRangingFileFormat,
 )
+from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
 from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
 from pynxtools_apm.utils.apm_versioning import (
@@ -206,6 +207,19 @@ def extract_data_from_pyccapt_file(
     return template
 
 
+def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) -> dict:
+    """Add those required information from XML-serialized IVAS state dumps."""
+    print(f"Extracting data from XML-serialized IVAS analysis file: {file_path}")
+    rangefile = ReadImagoAnalysisFileFormat(file_path)
+    if len(rangefile.imago["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        print(WARNING_TOO_MANY_DEFINITIONS)
+
+    add_standardize_molecular_ions(
+        rangefile.imago["molecular_ions"], template, entry_id
+    )
+    return template
+
+
 def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which an RNG file has."""
     print(f"Extracting data from RNG file: {file_path}")
@@ -319,6 +333,10 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
                 )
             elif self.meta["file_format"] == "range_.h5":
                 extract_data_from_pyccapt_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
+            elif self.meta["file_format"] == ".analysis":
+                extract_data_from_imago_file(
                     self.meta["file_path"], template, self.meta["entry_id"]
                 )
             elif self.meta["file_format"] == ".rng":
