@@ -109,7 +109,7 @@ hyperspy==1.7.6
     #   pyxem
 idna==3.6
     # via requests
-ifes-apt-tc-data-modeling==0.2
+ifes-apt-tc-data-modeling==0.2.1
     # via pynxtools-apm (pyproject.toml)
 imageio==2.27.0
     # via

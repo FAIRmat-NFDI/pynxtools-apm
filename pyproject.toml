@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@apm-em-plugins-nxdefs-tracking",    
-    "ifes_apt_tc_data_modeling>=0.2",
+    "ifes_apt_tc_data_modeling>=0.2.1",
 ]
 
 [project.optional-dependencies]
