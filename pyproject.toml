@@ -22,14 +22,14 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@apm-em-plugins-nxdefs-tracking",    
+    "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@fix-nexus-parsing",
     "ifes_apt_tc_data_modeling>=0.2.1",
 ]
 
 [project.optional-dependencies]
 dev = [
     "mypy",
-    "ruff",
+    "ruff==0.3.4",
     "pytest",
     "types-pyyaml",
     "pip-tools",
