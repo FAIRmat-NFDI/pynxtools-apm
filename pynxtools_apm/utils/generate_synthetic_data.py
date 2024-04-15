@@ -17,8 +17,6 @@
 #
 """Utility functions for generation of atom probe NeXus datasets for dev purposes."""
 
-# pylint: disable=no-member,duplicate-code,too-many-instance-attributes,attribute-defined-outside-init
-
 # MK::2023/05/04 the code in this file can currently not be used when
 # developers have an environment which uses ase==3.19.0 and numpy>=1.2x
 
@@ -46,13 +44,13 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
 
-from pynxtools_apm.utils.apm_versioning import (
+from pynxtools_apm.utils.versioning import (
     NX_APM_ADEF_NAME,
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )
 
-from pynxtools_apm.utils.apm_load_ranging import (
+from pynxtools_apm.utils.load_ranging import (
     add_unknown_iontype,
 )
 

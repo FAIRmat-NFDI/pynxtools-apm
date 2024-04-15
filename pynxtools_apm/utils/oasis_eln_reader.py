@@ -17,29 +17,27 @@
 #
 """Wrapping multiple parsers for vendor files with NOMAD Oasis/ELN/YAML metadata."""
 
-# pylint: disable=no-member,duplicate-code,too-many-nested-blocks
-
 import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools_apm.config.apm_example_eln_to_nx_map import (
+from pynxtools_apm.config.eln_cfg import (
     APM_EXAMPLE_OTHER_TO_NEXUS,
     APM_EXAMPLE_USER_TO_NEXUS,
 )
-from pynxtools_apm.shared.shared_utils import rchop
-from pynxtools_apm.shared.mapping_functors import (
+from pynxtools_apm.concepts.shared_utils import rchop
+from pynxtools_apm.concepts.mapping_functors import (
     variadic_path_to_specific_path,
 )
-from pynxtools_apm.utils.apm_parse_composition_table import (
+from pynxtools_apm.utils.parse_composition_table import (
     parse_composition_table,
 )
-from pynxtools_apm.shared.shared_utils import (
+from pynxtools_apm.concepts.shared_utils import (
     get_sha256_of_file_content,
 )
 
 
-class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
+class NxApmNomadOasisElnSchemaParser:
     """Parse eln_data.yaml dump file content generated from a NOMAD Oasis YAML.
 
     This parser implements a design where an instance of a specific NOMAD

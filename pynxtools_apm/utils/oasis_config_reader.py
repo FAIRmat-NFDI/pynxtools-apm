@@ -17,21 +17,19 @@
 #
 """Load deployment-specific quantities."""
 
-# pylint: disable=no-member,too-many-branches,too-many-nested-blocks
-
 import flatdict as fd
 import yaml
 
-from pynxtools_apm.config.apm_oasis_cfg_to_nx_map import (
+from pynxtools_apm.config.oasis_cfg import (
     APM_OASIS_TO_NEXUS_CFG,
     APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG,
 )
-from pynxtools_apm.shared.mapping_functors import (
+from pynxtools_apm.concepts.mapping_functors import (
     variadic_path_to_specific_path,
 )
 
 
-class NxApmNomadOasisConfigurationParser:  # pylint: disable=too-few-public-methods
+class NxApmNomadOasisConfigurationParser:
     """Parse deployment specific configuration."""
 
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):

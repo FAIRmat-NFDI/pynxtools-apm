@@ -20,9 +20,6 @@
 # limitations under the License.
 #
 
-# pylint: disable=E1101, R0801
-
-# import git
 import hashlib
 import numpy as np
 import os
@@ -62,7 +59,7 @@ def get_sha256_of_file_content(file_hdl) -> str:
     return str(sha256_hash.hexdigest())
 
 
-class NxObject:  # pylint: disable=R0903
+class NxObject:
     """An object in a graph e.g. a field or group in NeXus."""
 
     def __init__(

@@ -17,29 +17,27 @@
 #
 """Generic parser for loading atom probe microscopy data into NXapm."""
 
-# pylint: disable=no-member,too-few-public-methods,pointless-string-statement
-
 from time import perf_counter_ns
 from typing import Tuple, Any
 import numpy as np
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools_apm.utils.apm_define_io_cases import (
+from pynxtools_apm.utils.io_case_logic import (
     ApmUseCaseSelector,
 )
-from pynxtools_apm.utils.apm_load_deployment_specifics import (
+from pynxtools_apm.utils.oasis_config_reader import (
     NxApmNomadOasisConfigurationParser,
 )
-from pynxtools_apm.utils.apm_load_generic_eln import (
+from pynxtools_apm.utils.oasis_eln_reader import (
     NxApmNomadOasisElnSchemaParser,
 )
-from pynxtools_apm.utils.apm_load_reconstruction import (
+from pynxtools_apm.utils.load_reconstruction import (
     ApmReconstructionParser,
 )
-from pynxtools_apm.utils.apm_load_ranging import (
+from pynxtools_apm.utils.load_ranging import (
     ApmRangingDefinitionsParser,
 )
-from pynxtools_apm.utils.apm_create_nx_default_plots import (
+from pynxtools_apm.utils.create_nx_default_plots import (
     apm_default_plot_generator,
 )
 # from pynxtools_apm.utils.apm_generate_synthetic_data import (

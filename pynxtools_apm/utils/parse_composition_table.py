@@ -17,8 +17,6 @@
 #
 """Parse human-readable composition infos from set of ELN string text fields."""
 
-# pylint: disable=no-member,too-many-branches
-
 import re
 import numpy as np
 

@@ -18,8 +18,6 @@
 
 """Wrapping multiple parsers for vendor files with ranging definition files."""
 
-# pylint: disable=no-member
-
 from typing import Dict, Any
 import numpy as np
 
@@ -42,11 +40,11 @@ from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
 from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
-from pynxtools_apm.utils.apm_versioning import (
+from pynxtools_apm.utils.versioning import (
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )
-from pynxtools_apm.utils.apm_define_io_cases import (
+from pynxtools_apm.utils.io_case_logic import (
     VALID_FILE_NAME_SUFFIX_RANGE,
 )
 
@@ -242,7 +240,7 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     return template
 
 
-class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
+class ApmRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):

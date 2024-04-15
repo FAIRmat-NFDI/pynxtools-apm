@@ -17,8 +17,6 @@
 #
 """Dict mapping values for a specifically configured NOMAD Oasis."""
 
-# pylint: disable=line-too-long
-
 # currently by virtue of design NOMAD Oasis specific examples show how different tools and
 # services can be specifically coupled and implemented so that they work together
 # currently we assume that the ELN provides all those pieces of information to instantiate
@@ -42,7 +40,7 @@
 
 import datetime as dt
 
-from pynxtools_apm.utils.apm_versioning import (
+from pynxtools_apm.utils.versioning import (
     NX_APM_ADEF_NAME,
 )
 

@@ -17,14 +17,12 @@
 #
 """Utility class to analyze which vendor/community files are passed to apm reader."""
 
-# pylint: disable=no-member,duplicate-code,too-many-branches
-
 from typing import Tuple, Dict, List
 
-from pynxtools_apm.shared.mapping_functors import (
+from pynxtools_apm.concepts.mapping_functors import (
     variadic_path_to_specific_path,
 )
-from pynxtools_apm.shared.shared_utils import (
+from pynxtools_apm.concepts.shared_utils import (
     get_sha256_of_file_content,
 )
 
