@@ -216,7 +216,7 @@ class NxApmNomadOasisElnSchemaParser:
                                 )
         return template
 
-    def report(self, template: dict) -> dict:
+    def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_sample_composition(template)
         self.parse_user(template)

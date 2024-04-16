@@ -105,8 +105,10 @@ class APMReader(BaseReader):
             print("Parse (meta)data coming from a configuration of an RDM...")
             # currently this example shows how to using the NOMAD Oasis RDM
             if len(case.cfg) == 1:
-                nx_apm_cfg = NxApmNomadOasisConfigurationParser(case.cfg[0], entry_id)
-                nx_apm_cfg.report(template)
+                nx_apm_cfg = NxApmNomadOasisConfigurationParser(
+                    case.cfg[0], entry_id, verbose=True
+                )
+                nx_apm_cfg.parse(template)
             # having or using a deployment-specific configuration is optional
 
             print("Parse (meta)data coming from an ELN...")
@@ -114,7 +116,7 @@ class APMReader(BaseReader):
                 nx_apm_eln = NxApmNomadOasisElnSchemaParser(
                     case.eln[0], entry_id, False
                 )
-                nx_apm_eln.report(template)
+                nx_apm_eln.parse(template)
             else:
                 print("No input file defined for eln data !")
 

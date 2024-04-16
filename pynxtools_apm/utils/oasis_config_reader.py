@@ -37,14 +37,14 @@ class NxApmNomadOasisConfigurationParser:
             f"Extracting data from deployment-specific configuration file: {file_path}"
         )
         if (
-            file_path.rsplit("/", 1)[-1].endswith(".Oasis.specific.yaml")
-            or file_path.endswith(".Oasis.specific.yml")
+            file_path.rsplit("/", 1)[-1].endswith(".oasis.specific.yaml")
+            or file_path.endswith(".oasis.specific.yml")
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
-                if verbose is True:
+                if verbose:
                     for key, val in self.yml.items():
                         print(f"key: {key}, val: {val}")
         else:
@@ -52,7 +52,7 @@ class NxApmNomadOasisConfigurationParser:
             self.file_path = ""
             self.yml = {}
 
-    def report(self, template: dict) -> dict:
+    def parse(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         identifier = [self.entry_id]
         for tpl in APM_OASIS_TO_NEXUS_CFG:
@@ -66,27 +66,34 @@ class NxApmNomadOasisConfigurationParser:
                         # nxpath, modifier, value, modifier (function) evaluates value to use
                         if (tpl[1] == "load_from") and (tpl[2] in self.yml):
                             template[trg] = self.yml[tpl[2]]
-
-        # related to joint paper https://arxiv.org/abs/2205.13510 and NOMAD Oasis
-        src = "citation"
-        if src in self.yml:
-            if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
-                    ref_id = 1
-                    # custom schema delivers a list of dictionaries...
-                    for cite_dict in self.yml[src]:
-                        if cite_dict == {}:
-                            continue
-                        identifier = [self.entry_id, ref_id]
-                        for key in cite_dict:
-                            for tpl in APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG:
-                                if isinstance(tpl, tuple) and (len(tpl) == 3):
-                                    if (tpl[1] == "load_from") and (key == tpl[2]):
-                                        trg = variadic_path_to_specific_path(
-                                            tpl[0], identifier
-                                        )
-                                        # res = apply_modifier(modifier, user_dict)
-                                        # res is not None
-                                        template[trg] = cite_dict[tpl[2]]
-                        ref_id += 1
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/alias"
+        ] = "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen."
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/type"
+        ] = "cartesian"
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/handedness"
+        ] = "right_handed"
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/x_direction"
+        ] = "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian"
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/x_alias"
+        ] = "x-axis"
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/y_direction"
+        ] = "Direction 2 that is perpendicular to the xaxis_direction and the z_direction for a right_handed cartesian"
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/y_alias"
+        ] = "y-axis"
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/z_direction"
+        ] = "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen."
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/z_alias"
+        ] = "z-axis"
+        template[
+            "/ENTRY[entry1]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/origin"
+        ] = "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else."
         return template
