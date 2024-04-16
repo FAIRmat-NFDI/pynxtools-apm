@@ -18,6 +18,7 @@
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
 APM_EXAMPLE_OTHER_TO_NEXUS = [
+    ("/ENTRY[entry*]/experiment_alias", "load_from", "entry/run_number"),
     ("/ENTRY[entry*]/run_number", "load_from", "entry/run_number"),
     ("/ENTRY[entry*]/start_time", "load_from", "entry/start_time"),
     ("/ENTRY[entry*]/end_time", "load_from", "entry/end_time"),

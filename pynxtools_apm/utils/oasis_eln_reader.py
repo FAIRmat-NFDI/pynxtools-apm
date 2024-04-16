@@ -74,10 +74,7 @@ class NxApmNomadOasisElnSchemaParser:
             if isinstance(self.yml[src], list):
                 dct = parse_composition_table(self.yml[src])
 
-                prfx = (
-                    f"/ENTRY[entry{self.entry_id}]/sample/"
-                    f"CHEMICAL_COMPOSITION[chemical_composition]"
-                )
+                prfx = f"/ENTRY[entry{self.entry_id}]/sample/chemical_composition"
                 unit = "at.-%"  # the assumed default unit
                 if "normalization" in dct:
                     if dct["normalization"] in [
@@ -101,7 +98,7 @@ class NxApmNomadOasisElnSchemaParser:
                     # to use ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ionID[ion{ion_id}]"
+                            trg = f"{prfx}/ION[ion{ion_id}]"  # TODO make ionID
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
