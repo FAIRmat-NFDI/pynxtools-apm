@@ -19,15 +19,30 @@
 
 import numpy as np
 
-from pynxtools_apm.concepts.shared_utils import (
-    decorate_path_to_default_plot,
-)
 from pynxtools_apm.utils.versioning import (
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
 )
+
+
+def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
+    """Write @default attribute to point to the default plot."""
+    # an example for nxpath
+    # "/ENTRY[entry1]/atom_probe/ranging/mass_to_charge_distribution/mass_spectrum"
+    path = nxpath.split("/")
+    trg = "/"
+    for idx in np.arange(0, len(path) - 1):
+        symbol_s = path[idx + 1].find("[")
+        symbol_e = path[idx + 1].find("]")
+        if 0 <= symbol_s < symbol_e:
+            template[f"{trg}@default"] = f"{path[idx + 1][symbol_s + 1:symbol_e]}"
+            trg += f"{path[idx + 1][symbol_s + 1:symbol_e]}/"
+        else:
+            template[f"{trg}@default"] = f"{path[idx + 1]}"
+            trg += f"{path[idx + 1]}/"
+    return template
 
 
 def iedge(imi, imx, resolution):

@@ -59,7 +59,8 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on the unknown type
     trg = (
-        f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" f"peak_identification/ionID[ion0]/"
+        f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
+        f"peak_identification/ionID[ion0]/"
     )
     ivec = create_nuclide_hash([])
     template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
