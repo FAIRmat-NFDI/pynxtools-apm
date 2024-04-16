@@ -15,27 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility tool constants and versioning."""
-
-from pynxtools_apm.utils.get_gitrepo_commit import get_repo_last_commit
+"""Utility functions to work with strings."""
 
 
-NX_APM_ADEF_NAME = "NXapm"
-NX_APM_EXEC_NAME = "pynxtools-apm/reader.py"
-
-
-def get_apm_exec_version() -> str:
-    tag = get_repo_last_commit()
-    if tag is not None:
-        return f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/{tag}"
-    else:
-        return (
-            f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/ UNKNOWN COMMIT !!"
-        )
-
-
-NX_APM_EXEC_VERSION = get_apm_exec_version()
-
-# numerics
-MASS_SPECTRUM_DEFAULT_BINNING = 0.01  # u
-NAIVE_GRID_DEFAULT_VOXEL_SIZE = 1.0  # nm
+def rchop(s, suffix):
+    if suffix and s.endswith(suffix):
+        return s[: -len(suffix)]
+    return s

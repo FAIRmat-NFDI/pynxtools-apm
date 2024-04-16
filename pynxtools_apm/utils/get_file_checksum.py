@@ -15,27 +15,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility tool constants and versioning."""
+"""Get a digital fingerprint (hash) of a file."""
 
-from pynxtools_apm.utils.get_gitrepo_commit import get_repo_last_commit
-
-
-NX_APM_ADEF_NAME = "NXapm"
-NX_APM_EXEC_NAME = "pynxtools-apm/reader.py"
+import hashlib
 
 
-def get_apm_exec_version() -> str:
-    tag = get_repo_last_commit()
-    if tag is not None:
-        return f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/{tag}"
-    else:
-        return (
-            f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/ UNKNOWN COMMIT !!"
-        )
+DEFAULT_CHECKSUM_ALGORITHM = "sha256"
 
 
-NX_APM_EXEC_VERSION = get_apm_exec_version()
-
-# numerics
-MASS_SPECTRUM_DEFAULT_BINNING = 0.01  # u
-NAIVE_GRID_DEFAULT_VOXEL_SIZE = 1.0  # nm
+def get_sha256_of_file_content(file_hdl) -> str:
+    """Compute a hashvalue of given file, here SHA256."""
+    file_hdl.seek(0)
+    # Read and update hash string value in blocks of 4K
+    sha256_hash = hashlib.sha256()
+    for byte_block in iter(lambda: file_hdl.read(4096), b""):
+        sha256_hash.update(byte_block)
+    return str(sha256_hash.hexdigest())

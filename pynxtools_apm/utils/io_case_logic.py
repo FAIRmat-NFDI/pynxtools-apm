@@ -22,7 +22,7 @@ from typing import Tuple, Dict, List
 from pynxtools_apm.concepts.mapping_functors import (
     variadic_path_to_specific_path,
 )
-from pynxtools_apm.concepts.shared_utils import (
+from pynxtools_apm.utils.get_file_checksum import (
     get_sha256_of_file_content,
 )
 
@@ -139,30 +139,6 @@ class ApmUseCaseSelector:
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""
-        """
-        # whether to populate the workflow first with default steps or not is something the
-        # community has to decide already in 2013, D. Larson et al. documented clearly
-        # in their APT book which files one should ideally be documented to enable as best
-        # as possible a repeatable analysis up to the reconstruction and ranging
-        # stage when using IVAS/APSuite !
-        steps = [
-            "/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]",
-            "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]",
-            "/ENTRY[entry*]/atom_probe/reconstruction/config",
-            "/ENTRY[entry*]/atom_probe/reconstruction/results",
-            "/ENTRY[entry*]/atom_probe/ranging/definitions",
-        ]
-        defaults = [
-            ("type", "file"),
-            ("path", ""),
-            ("checksum", ""),
-            ("algorithm", "SHA256"),
-        ]
-        for step in steps:
-            trg = variadic_path_to_specific_path(step, identifier)
-            for dflt in defaults:
-                template[f"{trg}/{dflt[0]}"] = f"{dflt[1]}"
-        """
         identifier = [entry_id]
         # populate automatically input-files used
         # rely on assumption made in check_validity_of_file_combination

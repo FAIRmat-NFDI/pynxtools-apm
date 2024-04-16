@@ -76,8 +76,8 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
             raise ValueError(f"Dimensions {idx} has no length!")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/naive_discretization/"
-    template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-    template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+    template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
+    template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
         f"naive_discretization/DATA[data]/"
@@ -140,8 +140,8 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
             raise ValueError(f"Dimensions {idx} has no length!")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/mass_to_charge_distribution/"
-    template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-    template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+    template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
+    template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
     template[f"{trg}min_incr_max"] = np.asarray([mqmin, mqincr, mqmax], np.float32)
     template[f"{trg}min_incr_max/@units"] = "Da"

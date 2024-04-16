@@ -15,27 +15,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility tool constants and versioning."""
+"""Get (last) commit of the git repository."""
 
-from pynxtools_apm.utils.get_gitrepo_commit import get_repo_last_commit
-
-
-NX_APM_ADEF_NAME = "NXapm"
-NX_APM_EXEC_NAME = "pynxtools-apm/reader.py"
+import os
+from subprocess import CalledProcessError, run
 
 
-def get_apm_exec_version() -> str:
-    tag = get_repo_last_commit()
-    if tag is not None:
-        return f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/{tag}"
-    else:
+def get_repo_last_commit() -> str:
+    """Identify the last commit to the repository."""
+    try:
         return (
-            f"https://github.com/FAIRmat-NFDI/pynxtools-apm/commit/ UNKNOWN COMMIT !!"
+            run(
+                ["git", "describe", "--always"],
+                cwd=os.getcwd(),
+                check=True,
+                capture_output=True,
+            )
+            .stdout.decode("utf-8")
+            .strip()
         )
-
-
-NX_APM_EXEC_VERSION = get_apm_exec_version()
-
-# numerics
-MASS_SPECTRUM_DEFAULT_BINNING = 0.01  # u
-NAIVE_GRID_DEFAULT_VOXEL_SIZE = 1.0  # nm
+    except (FileNotFoundError, CalledProcessError):
+        return None

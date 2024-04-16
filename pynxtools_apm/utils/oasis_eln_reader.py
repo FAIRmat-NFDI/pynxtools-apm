@@ -25,16 +25,10 @@ from pynxtools_apm.config.eln_cfg import (
     APM_EXAMPLE_OTHER_TO_NEXUS,
     APM_EXAMPLE_USER_TO_NEXUS,
 )
-from pynxtools_apm.concepts.shared_utils import rchop
-from pynxtools_apm.concepts.mapping_functors import (
-    variadic_path_to_specific_path,
-)
-from pynxtools_apm.utils.parse_composition_table import (
-    parse_composition_table,
-)
-from pynxtools_apm.concepts.shared_utils import (
-    get_sha256_of_file_content,
-)
+from pynxtools_apm.concepts.mapping_functors import variadic_path_to_specific_path
+from pynxtools_apm.utils.string_conversions import rchop
+from pynxtools_apm.utils.parse_composition_table import parse_composition_table
+from pynxtools_apm.utils.get_file_checksum import get_sha256_of_file_content
 
 
 class NxApmNomadOasisElnSchemaParser:
@@ -107,7 +101,7 @@ class NxApmNomadOasisElnSchemaParser:
                     # to use ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ION[ion{ion_id}]"
+                            trg = f"{prfx}/ionID[ion{ion_id}]"
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
