@@ -40,19 +40,23 @@
 
 import datetime as dt
 
-from pynxtools_apm.utils.apm_versioning import NX_APM_ADEF_NAME
+from pynxtools_apm.utils.versioning import NX_APM_ADEF_NAME
 
 
 APM_OASIS_TO_NEXUS_CFG = {
     "prefix_trg": "/ENTRY[entry*]",
-    "use": [("definition", f"{NX_APM_ADEF_NAME}"),
-            ("start_time", f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}")],
+    "use": [
+        ("definition", f"{NX_APM_ADEF_NAME}"),
+        (
+            "start_time",
+            f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
+        ),
+    ],
     "map_to_str": [("operation_mode", "operation_mode")],
 }
 
 
 APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG = {
     "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
-    "map_to_str": [("doi"),
-                   ("description")],
+    "map_to_str": [("doi"), ("description")],
 }
