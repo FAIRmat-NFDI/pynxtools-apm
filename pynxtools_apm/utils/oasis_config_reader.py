@@ -71,17 +71,30 @@ class NxApmNomadOasisConfigurationParser:
     def parse_reference_frames(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         identifier = [self.entry_id]
-        trg = variadic_path_to_specific_path("/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]", identifier)
-        template[f"{trg}/alias"] = "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen."
+        trg = variadic_path_to_specific_path(
+            "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]",
+            identifier,
+        )
+        template[f"{trg}/alias"] = (
+            "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen."
+        )
         template[f"{trg}/type"] = "cartesian"
         template[f"{trg}/handedness"] = "right_handed"
-        template[f"{trg}/x_direction"] = "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian"
+        template[f"{trg}/x_direction"] = (
+            "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian"
+        )
         template[f"{trg}/x_alias"] = "x-axis"
-        template[f"{trg}/y_direction"] = "Direction 2 that is perpendicular to the xaxis_direction and the z_direction for a right_handed cartesian"
+        template[f"{trg}/y_direction"] = (
+            "Direction 2 that is perpendicular to the xaxis_direction and the z_direction for a right_handed cartesian"
+        )
         template[f"{trg}/y_alias"] = "y-axis"
-        template[f"{trg}/z_direction"] = "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen."
+        template[f"{trg}/z_direction"] = (
+            "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen."
+        )
         template[f"{trg}/z_alias"] = "z-axis"
-        template[f"{trg}/origin"] = "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else."
+        template[f"{trg}/origin"] = (
+            "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else."
+        )
         return template
 
     def parse(self, template: dict) -> dict:
