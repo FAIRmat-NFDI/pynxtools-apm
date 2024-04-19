@@ -22,7 +22,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@sprint19-apm-tracking-01",
+    "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools",
     "ifes_apt_tc_data_modeling>=0.2.1",
 ]
 
