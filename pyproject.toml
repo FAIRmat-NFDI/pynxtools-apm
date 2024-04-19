@@ -27,6 +27,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocs-material-extensions",
+    "mkdocs-macros-plugin",
+]
 dev = [
     "mypy",
     "ruff==0.3.4",
