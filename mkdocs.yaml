@@ -14,7 +14,20 @@ nav:
     - explanation/learn.md
   - Reference:
     - reference/contextualization.md
+    - reference/apt.md
+    - reference/epos.md
     - reference/pos.md
+    - reference/rng.md
+    - reference/rrng.md
+    - reference/faufig.md
+    - reference/pyccapt.md
+    - reference/ato.md
+    - reference/env.md
+    - reference/csv.md
+    - reference/inspico.md
+    - reference/camecaroot.md
+    - reference/mqanalysis.md
+    - reference/atomtypes.md
 theme:
   name: material
   features:

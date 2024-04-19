@@ -49,17 +49,20 @@ Here you can learn which specific pieces of information and concepts the plugin 
 respective file formats of the atom probe tomography and field-ion microscopy communities.
 
 - [How to map pieces of information to NeXus](reference/contextualization.md)
-<!-- - [APT](reference/apt.md)-->
+- [APT file format](reference/apt.md)
+- [ePOS file format](reference/epos.md)
 - [POS file format](reference/pos.md)
-<!-- - [ePOS](reference/pos.md)-->
-<!-- - [RNG](reference/rng.md)-->
-<!-- - [RRNG](reference/rrng.md)-->
-<!-- - [FAU Erlangen Matlab Atom Probe Toolbox Ranging definitions](reference/faufig.md)-->
-<!-- -[FAU Erlangen OXCART instrument and pyccapt](reference/pycapt.md)-->
-<!-- - [ATO](reference/ato.md)-->
-<!-- - [ENV](reference/env.md)-->
-<!-- -[CSV](reference/csv.md)-->
-<!-- -[AMETEK/Cameca ROOT-based formats](reference/camecaroot.md)-->
+- [RNG file format](reference/rng.md)
+- [RRNG file format](reference/rrng.md)
+- [Matlab Atom Probe Toolbox ranging definitions](reference/faufig.md)
+- [OXCART instrument and pyccapt](reference/pyccapt.md)
+- [ATO file format](reference/ato.md)
+- [ENV file format](reference/env.md)
+- [CSV file format](reference/csv.md)
+- [Inspico file formats](reference/inspico.md)
+- [AMETEK/Cameca ROOT-based formats](reference/camecaroot.md)
+- [Automated charge state analysis](reference/mqanalysis.md)
+- [Automated extraction of elements](reference/atomtypes.md)
 
 </div>
 </div>
