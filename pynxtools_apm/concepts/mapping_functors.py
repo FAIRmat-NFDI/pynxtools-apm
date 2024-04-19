@@ -17,8 +17,6 @@
 #
 """Utilities for working with NeXus concepts encoded as Python dicts in the concepts dir."""
 
-# pylint: disable=no-member
-
 import pytz
 
 from datetime import datetime

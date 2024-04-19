@@ -17,29 +17,21 @@
 #
 """Wrapping multiple parsers for vendor files with NOMAD Oasis/ELN/YAML metadata."""
 
-# pylint: disable=no-member,duplicate-code,too-many-nested-blocks
-
 import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools_apm.config.apm_example_eln_to_nx_map import (
+from pynxtools_apm.config.eln_cfg import (
     APM_EXAMPLE_OTHER_TO_NEXUS,
     APM_EXAMPLE_USER_TO_NEXUS,
 )
-from pynxtools_apm.shared.shared_utils import rchop
-from pynxtools_apm.shared.mapping_functors import (
-    variadic_path_to_specific_path,
-)
-from pynxtools_apm.utils.apm_parse_composition_table import (
-    parse_composition_table,
-)
-from pynxtools_apm.shared.shared_utils import (
-    get_sha256_of_file_content,
-)
+from pynxtools_apm.concepts.mapping_functors import variadic_path_to_specific_path
+from pynxtools_apm.utils.string_conversions import rchop
+from pynxtools_apm.utils.parse_composition_table import parse_composition_table
+from pynxtools_apm.utils.get_file_checksum import get_sha256_of_file_content
 
 
-class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
+class NxApmNomadOasisElnSchemaParser:
     """Parse eln_data.yaml dump file content generated from a NOMAD Oasis YAML.
 
     This parser implements a design where an instance of a specific NOMAD
@@ -82,10 +74,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
             if isinstance(self.yml[src], list):
                 dct = parse_composition_table(self.yml[src])
 
-                prfx = (
-                    f"/ENTRY[entry{self.entry_id}]/sample/"
-                    f"CHEMICAL_COMPOSITION[chemical_composition]"
-                )
+                prfx = f"/ENTRY[entry{self.entry_id}]/sample/chemical_composition"
                 unit = "at.-%"  # the assumed default unit
                 if "normalization" in dct:
                     if dct["normalization"] in [
@@ -109,7 +98,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                     # to use ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ION[ion{ion_id}]"
+                            trg = f"{prfx}/ION[ion{ion_id}]"  # TODO make ionID
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
@@ -227,7 +216,7 @@ class NxApmNomadOasisElnSchemaParser:  # pylint: disable=too-few-public-methods
                                 )
         return template
 
-    def report(self, template: dict) -> dict:
+    def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_sample_composition(template)
         self.parse_user(template)

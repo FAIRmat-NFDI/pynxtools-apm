@@ -17,8 +17,6 @@
 #
 """Utility functions for generation of atom probe NeXus datasets for dev purposes."""
 
-# pylint: disable=no-member,duplicate-code,too-many-instance-attributes,attribute-defined-outside-init
-
 # MK::2023/05/04 the code in this file can currently not be used when
 # developers have an environment which uses ase==3.19.0 and numpy>=1.2x
 
@@ -46,13 +44,13 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
 
-from pynxtools_apm.utils.apm_versioning import (
+from pynxtools_apm.utils.versioning import (
     NX_APM_ADEF_NAME,
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )
 
-from pynxtools_apm.utils.apm_load_ranging import (
+from pynxtools_apm.utils.load_ranging import (
     add_unknown_iontype,
 )
 
@@ -279,18 +277,18 @@ class ApmCreateExampleData:
         """Create ranging definitions based on composition."""
         assert len(self.nrm_composition) > 0, "Composition is not defined!"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
-        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
-        template[f"{trg}PROGRAM[program1]/program"] = "synthetic"
-        template[f"{trg}PROGRAM[program1]/program/@version"] = "synthetic data"
+        template[f"{trg}programID[program1]/program"] = "synthetic"
+        template[f"{trg}programID[program1]/program/@version"] = "synthetic data"
 
         add_unknown_iontype(template, self.entry_id)
 
         ion_id = 1
         for tpl in self.nrm_composition:
-            path = f"{trg}ION[ion{ion_id}]/"
+            path = f"{trg}ionID[ion{ion_id}]/"
             ivec = create_nuclide_hash(tpl[0])
             template[f"{path}nuclide_hash"] = np.asarray(ivec, np.uint16)
             template[f"{path}charge_state"] = np.int8(tpl[1])
@@ -316,8 +314,8 @@ class ApmCreateExampleData:
         # print("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
         template[f"{trg}definition"] = NX_APM_ADEF_NAME
-        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
         msg = """
@@ -409,8 +407,8 @@ class ApmCreateExampleData:
         """Copy data in control software section."""
         # print("Parsing control software...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}PROGRAM[program1]/program"] = "IVAS"
-        template[f"{trg}PROGRAM[program1]/program/@version"] = str(
+        template[f"{trg}programID[program1]/program"] = "IVAS"
+        template[f"{trg}programID[program1]/program/@version"] = str(
             f"3.{np.random.choice(9, 1)[0]}.{np.random.choice(9, 1)[0]}"
         )
         return template
@@ -552,11 +550,11 @@ class ApmCreateExampleData:
         # print("Parsing reconstruction...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/reconstruction/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}PROGRAM[program1]/program"] = template[
-            f"{src}PROGRAM[program1]/program"
+        template[f"{trg}programID[program1]/program"] = template[
+            f"{src}programID[program1]/program"
         ]
-        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
-            f"{src}PROGRAM[program1]/program/@version"
+        template[f"{trg}programID[program1]/program/@version"] = template[
+            f"{src}programID[program1]/program/@version"
         ]
         template[f"{trg}protocol_name"] = str(
             np.random.choice(["bas", "geiser", "gault", "cameca", "other"], 1)[0]
@@ -570,11 +568,11 @@ class ApmCreateExampleData:
         # print("Parsing ranging...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}PROGRAM[program1]/program"] = template[
-            f"{src}PROGRAM[program1]/program"
+        template[f"{trg}programID[program1]/program"] = template[
+            f"{src}programID[program1]/program"
         ]
-        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
-            f"{src}PROGRAM[program1]/program/@version"
+        template[f"{trg}programID[program1]/program/@version"] = template[
+            f"{src}programID[program1]/program/@version"
         ]
         return template
 

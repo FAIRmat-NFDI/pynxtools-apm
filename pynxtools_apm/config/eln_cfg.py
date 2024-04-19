@@ -18,6 +18,7 @@
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
 APM_EXAMPLE_OTHER_TO_NEXUS = [
+    ("/ENTRY[entry*]/experiment_alias", "load_from", "entry/run_number"),
     ("/ENTRY[entry*]/run_number", "load_from", "entry/run_number"),
     ("/ENTRY[entry*]/start_time", "load_from", "entry/start_time"),
     ("/ENTRY[entry*]/end_time", "load_from", "entry/end_time"),
@@ -222,22 +223,22 @@ APM_EXAMPLE_OTHER_TO_NEXUS = [
         "atom_probe/base_temperature/unit",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/ranging/PROGRAM[program1]/program",
+        "/ENTRY[entry*]/atom_probe/ranging/programID[program1]/program",
         "load_from",
         "ranging/program",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/ranging/PROGRAM[program1]/program/@version",
+        "/ENTRY[entry*]/atom_probe/ranging/programID[program1]/program/@version",
         "load_from",
         "ranging/program_version",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/reconstruction/PROGRAM[program1]/program",
+        "/ENTRY[entry*]/atom_probe/reconstruction/programID[program1]/program",
         "load_from",
         "reconstruction/program",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/reconstruction/PROGRAM[program1]/program/@version",
+        "/ENTRY[entry*]/atom_probe/reconstruction/programID[program1]/program/@version",
         "load_from",
         "reconstruction/program_version",
     ),
@@ -267,12 +268,12 @@ APM_EXAMPLE_OTHER_TO_NEXUS = [
         "reconstruction/field_of_view/unit",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/checksum",
+        "/ENTRY[entry*]/atom_probe/raw_data/serialized/checksum",
         "sha256",
         "workflow/raw_dat_file",
     ),
     (
-        "/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/checksum",
+        "/ENTRY[entry*]/atom_probe/hit_finding/serialized/checksum",
         "sha256",
         "workflow/hit_dat_file",
     ),
@@ -282,32 +283,6 @@ APM_EXAMPLE_OTHER_TO_NEXUS = [
         "workflow/recon_cfg_file",
     ),
 ]
-
-"""
-# depending on the case some of these are populated by the I/O logic resolver
-# some of them will be loaded by the ELN parser
-APM_EXAMPLE_WORKFLOW_TO_NEXUS \
-    = [("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/type", "file"),
-       ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/path", "load_from", "workflow/raw_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/checksum", "sha256", "workflow/raw_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/raw_data/SERIALIZED[serialized]/algorithm", "SHA256"),
-       ("/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/type", "file"),
-       ("/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/path", "load_from", "workflow/hit_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/checksum", "sha256", "workflow/hit_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/hit_finding/SERIALIZED[serialized]/algorithm", "SHA256"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/config/type", "file"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/config/path", "load_from", "workflow/recon_cfg_file"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/config/checksum", "sha256", "workflow/recon_cfg_file"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/config/algorithm", "SHA256"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/results/type", "file"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/results/path", "load_from", "workflow/recon_res_file"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/results/checksum", "sha256", "workflow/recon_res_file"),
-       ("/ENTRY[entry*]/atom_probe/reconstruction/results/algorithm", "SHA256"),
-       ("/ENTRY[entry*]/atom_probe/ranging/definitions/type", "file"),
-       ("/ENTRY[entry*]/atom_probe/ranging/definitions/path", "load_from", "workflow/range_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/ranging/definitions/checksum", "sha256", "workflow/range_dat_file"),
-       ("/ENTRY[entry*]/atom_probe/ranging/definitions/algorithm", "SHA256")]
-"""
 
 # NeXus concept specific mapping tables which require special treatment as the current
 # NOMAD Oasis custom schema implementation delivers them as a list of dictionaries instead
@@ -335,10 +310,3 @@ APM_EXAMPLE_USER_TO_NEXUS = [
         "social_media_platform",
     ),
 ]
-
-# LEAP6000 can use up to two lasers and voltage pulsing (both at the same time?)
-# ("/ENTRY[entry*]/measurement/instrument/pulser/SOURCE[source*]/name", "load_from", "atom_probe/pulser/source_name"),
-# ("/ENTRY[entry*]/measurement/instrument/pulser/SOURCE[source*]/wavelength", "load_from", "atom_probe/pulser/source_wavelength/value"),
-# ("/ENTRY[entry*]/measurement/instrument/pulser/SOURCE[source*]/wavelength/@units", "load_from", "atom_probe/pulser/source_wavelength/unit"),
-# ("/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/pulser/SOURCE[source*]/pulse_energy", "load_from", "atom_probe/pulser/source_pulse_energy/value"),
-# ("/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/pulser/SOURCE[source*]/pulse_energy/@units", "load_from", "atom_probe/pulser/source_pulse_energy/unit"),

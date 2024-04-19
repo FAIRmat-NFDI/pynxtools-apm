@@ -17,9 +17,7 @@
 #
 """Utility tool constants and versioning."""
 
-# pylint: disable=no-member
-
-from pynxtools_apm.shared.shared_utils import get_repo_last_commit
+from pynxtools_apm.utils.get_gitrepo_commit import get_repo_last_commit
 
 
 NX_APM_ADEF_NAME = "NXapm"

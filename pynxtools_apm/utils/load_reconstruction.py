@@ -17,8 +17,6 @@
 #
 """Wrapping multiple parsers for vendor files with reconstructed dataset files."""
 
-# pylint: disable=no-member
-
 from typing import Dict, Any
 import numpy as np
 
@@ -30,7 +28,7 @@ from ifes_apt_tc_data_modeling.csv.csv_reader import ReadCsvFileFormat
 from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptCalibrationFileFormat,
 )
-from pynxtools_apm.utils.apm_define_io_cases import (
+from pynxtools_apm.utils.io_case_logic import (
     VALID_FILE_NAME_SUFFIX_RECON,
 )
 
@@ -242,7 +240,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     return template
 
 
-class ApmReconstructionParser:  # pylint: disable=too-few-public-methods
+class ApmReconstructionParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):

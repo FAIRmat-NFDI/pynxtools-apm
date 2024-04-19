@@ -17,8 +17,6 @@
 #
 """Dict mapping values for a specifically configured NOMAD Oasis."""
 
-# pylint: disable=line-too-long
-
 # currently by virtue of design NOMAD Oasis specific examples show how different tools and
 # services can be specifically coupled and implemented so that they work together
 # currently we assume that the ELN provides all those pieces of information to instantiate
@@ -42,7 +40,7 @@
 
 import datetime as dt
 
-from pynxtools_apm.utils.apm_versioning import (
+from pynxtools_apm.utils.versioning import (
     NX_APM_ADEF_NAME,
 )
 
@@ -60,4 +58,54 @@ APM_OASIS_TO_NEXUS_CFG = [
 APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG = [
     ("/ENTRY[entry*]/CITE[cite*]/doi", "load_from", "doi"),
     ("/ENTRY[entry*]/CITE[cite*]/description", "load_from", "description"),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/alias",
+        "load_from",
+        "coordinate_system_set/alias",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/type",
+        "load_from",
+        "coordinate_system_set/type",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/handedness",
+        "load_from",
+        "coordinate_system_set/handedness",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/x_direction",
+        "load_from",
+        "coordinate_system_set/x_direction",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/x_alias",
+        "load_from",
+        "coordinate_system_set/x_alias",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/y_direction",
+        "load_from",
+        "coordinate_system_set/y_direction",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/y_alias",
+        "load_from",
+        "coordinate_system_set/y_alias",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/z_direction",
+        "load_from",
+        "coordinate_system_set/z_direction",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/z_alias",
+        "load_from",
+        "coordinate_system_set/z_alias",
+    ),
+    (
+        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/origin",
+        "load_from",
+        "coordinate_system_set/origin",
+    ),
 ]

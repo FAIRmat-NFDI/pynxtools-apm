@@ -18,8 +18,6 @@
 
 """Wrapping multiple parsers for vendor files with ranging definition files."""
 
-# pylint: disable=no-member
-
 from typing import Dict, Any
 import numpy as np
 
@@ -42,11 +40,11 @@ from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
 from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
-from pynxtools_apm.utils.apm_versioning import (
+from pynxtools_apm.utils.versioning import (
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )
-from pynxtools_apm.utils.apm_define_io_cases import (
+from pynxtools_apm.utils.io_case_logic import (
     VALID_FILE_NAME_SUFFIX_RANGE,
 )
 
@@ -61,7 +59,8 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on the unknown type
     trg = (
-        f"/ENTRY[entry{entry_id}]/atom_probe/ranging/" f"peak_identification/ION[ion0]/"
+        f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
+        f"peak_identification/ionID[ion0]/"
     )
     ivec = create_nuclide_hash([])
     template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
@@ -83,7 +82,7 @@ def add_standardize_molecular_ions(
     ion_id = 1
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
     for ion in ion_lst:
-        path = f"{trg}ION[ion{ion_id}]/"
+        path = f"{trg}ionID[ion{ion_id}]/"
         template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash.values, np.uint16)
         template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
         template[f"{path}mass_to_charge_range"] = np.asarray(
@@ -94,7 +93,7 @@ def add_standardize_molecular_ions(
         template[f"{path}name"] = ion.name.values
 
         if ion.charge_state_model["n_cand"] > 0:
-            path = f"{trg}ION[ion{ion_id}]/charge_state_analysis/"
+            path = f"{trg}ionID[ion{ion_id}]/charge_state_analysis/"
             template[f"{path}min_abundance"] = np.float64(
                 ion.charge_state_model["min_abundance"]
             )
@@ -242,7 +241,7 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     return template
 
 
-class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
+class ApmRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
@@ -277,7 +276,7 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
             f"ranging/peak_identification/"
         )
         for ion_id in np.arange(1, number_of_ion_types):
-            trg = f"{prefix}ION[ion{ion_id}]/nuclide_list"
+            trg = f"{prefix}ionID[ion{ion_id}]/nuclide_list"
             if trg in template.keys():
                 nuclide_list = template[trg][:, 1]
                 # second row of NXion/nuclide_list yields atom number to decode element
@@ -317,8 +316,8 @@ class ApmRangingDefinitionsParser:  # pylint: disable=too-few-public-methods
             f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
             f"ranging/peak_identification/"
         )
-        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         add_unknown_iontype(template, self.meta["entry_id"])
 

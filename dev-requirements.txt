@@ -98,7 +98,7 @@ py-cpuinfo==9.0.0
     # via
     #   blosc2
     #   tables
-pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@fix-nexus-parsing
+pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools
     # via pynxtools-apm (pyproject.toml)
 pyparsing==3.1.2
     # via matplotlib
