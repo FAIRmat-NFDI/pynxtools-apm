@@ -1,3 +1,4 @@
+operation_mode: apt
 citation:
 - doi: https://doi.org/repo
   description: DOI to the respective entry in a data repository.
@@ -14,4 +15,3 @@ coordinate_system_set:
   z_direction: Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen.
   z_alias: z-axis
   origin: E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else.
-
