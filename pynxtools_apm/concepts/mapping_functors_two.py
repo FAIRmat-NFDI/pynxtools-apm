@@ -107,7 +107,8 @@ def add_specific_metadata(
                             f"{variadic_prefix_trg}/{entry[0]}", identifier
                         )
                         template[f"{trg}"] = try_interpret_as_boolean(
-                            orgmeta[f"{prefix_src}{entry[0]}"])
+                            orgmeta[f"{prefix_src}{entry[0]}"]
+                        )
                 elif len(entry) == 2:
                     if isinstance(entry[0], str) and isinstance(entry[1], str):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
@@ -116,7 +117,8 @@ def add_specific_metadata(
                             f"{variadic_prefix_trg}/{entry[0]}", identifier
                         )
                         template[f"{trg}"] = try_interpret_as_boolean(
-                            orgmeta[f"{prefix_src}{entry[1]}"])
+                            orgmeta[f"{prefix_src}{entry[1]}"]
+                        )
     if "map_to_real" in concept_mapping:
         for entry in concept_mapping["map_to_real"]:
             if isinstance(entry, tuple):
@@ -140,7 +142,10 @@ def add_specific_metadata(
                         )
                     elif isinstance(entry[1], list):
                         if not all(
-                            (isinstance(value, str) and f"{prefix_src}{value}" in orgmeta)
+                            (
+                                isinstance(value, str)
+                                and f"{prefix_src}{value}" in orgmeta
+                            )
                             for value in entry[1]
                         ):
                             continue
@@ -149,7 +154,9 @@ def add_specific_metadata(
                         )
                         res = []
                         for value in entry[1]:
-                            res.append(string_to_number(orgmeta[f"{prefix_src}{value}"]))
+                            res.append(
+                                string_to_number(orgmeta[f"{prefix_src}{value}"])
+                            )
                         template[f"{trg}"] = np.asarray(res, np.float64)
     if "map_to_real_and_multiply" in concept_mapping:
         for entry in concept_mapping["map_to_real_and_multiply"]:

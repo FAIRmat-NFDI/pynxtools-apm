@@ -25,7 +25,7 @@ HUMAN_BOOLEAN_STATEMENT = {
     "no": False,
     "yes": True,
     "false": False,
-    "true": True
+    "true": True,
 }
 
 
@@ -33,4 +33,6 @@ def try_interpret_as_boolean(arg: str) -> bool:
     """Try to interpret a human string statement if boolean be strict."""
     if arg.lower() in HUMAN_BOOLEAN_STATEMENT:
         return HUMAN_BOOLEAN_STATEMENT[arg.lower()]
-    raise KeyError(f"try_to_interpret_as_boolean argument {arg} does not yield key even for {arg.lower()}!")
+    raise KeyError(
+        f"try_to_interpret_as_boolean argument {arg} does not yield key even for {arg.lower()}!"
+    )

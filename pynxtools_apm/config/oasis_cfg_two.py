@@ -64,14 +64,31 @@ APM_EXAMPLE_TO_NEXUS_CFG = {
 
 APM_CSYS_MCSTASLIKE_TO_NEXUS_CFG = {
     "prefix_trg": "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]",
-    "use": [("alias", "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen"),
-            ("type", "cartesian"),
-            ("handedness", "right_handed"),
-            ("x_direction", "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian"),
-            ("x_alias", "x-axis"),
-            ("y_direction", "Direction 2 that is perpendicular to the x_direction and the z_direction for a right_handed cartesian"),
-            ("y_alias", "y-axis"),
-            ("z_direction", "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen"),
-            ("z_alias", "z-axis"),
-            ("origin", "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else")]
+    "use": [
+        (
+            "alias",
+            "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen",
+        ),
+        ("type", "cartesian"),
+        ("handedness", "right_handed"),
+        (
+            "x_direction",
+            "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian",
+        ),
+        ("x_alias", "x-axis"),
+        (
+            "y_direction",
+            "Direction 2 that is perpendicular to the x_direction and the z_direction for a right_handed cartesian",
+        ),
+        ("y_alias", "y-axis"),
+        (
+            "z_direction",
+            "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen",
+        ),
+        ("z_alias", "z-axis"),
+        (
+            "origin",
+            "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else",
+        ),
+    ],
 }
