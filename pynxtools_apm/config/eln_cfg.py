@@ -21,13 +21,13 @@ APM_ENTRY_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "entry/",
     "map_to_str": [
+        "run_number",
+        "operation_mode",
+        "method",
+        "start_time",
+        "end_time",
+        "experiment_description",
         ("experiment_alias", "run_number"),
-        ("run_number"),
-        ("operation_mode"),
-        ("method"),
-        ("start_time"),
-        ("end_time"),
-        ("experiment_description"),
     ],
 }
 
@@ -36,7 +36,7 @@ APM_SAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
     "use": [("method", "experiment")],
-    "map_to_real": [
+    "map": [
         ("grain_diameter", "grain_diameter/value"),
         ("grain_diameter_error", "grain_diameter_error/value"),
         ("heat_treatment_temperature", "heat_treatment_temperature/value"),
@@ -48,8 +48,8 @@ APM_SAMPLE_TO_NEXUS = {
         ),
     ],
     "map_to_str": [
-        ("alias"),
-        ("description"),
+        "alias",
+        "description",
         ("grain_diameter/@units", "grain_diameter/unit"),
         ("grain_diameter_error/@units", "grain_diameter/unit"),
         ("heat_treatment_temperature/@units", "heat_treatment_temperature/unit"),
@@ -69,17 +69,17 @@ APM_SAMPLE_TO_NEXUS = {
 APM_SPECIMEN_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "specimen/",
-    "map_to_str": [
-        ("alias"),
-        ("preparation_date"),
-        ("description"),
-        ("initial_radius/@units", "initial_radius/unit"),
-        ("shank_angle/@units", "shank_angle/unit"),
-    ],
-    "map_to_bool": [("is_polycrystalline"), ("is_amorphous")],
-    "map_to_real": [
+    "map": [
         ("initial_radius", "initial_radius/value"),
         ("shank_angle", "shank_angle/value"),
+    ],
+    "map_to_bool": [("is_polycrystalline"), ("is_amorphous")],
+    "map_to_str": [
+        "alias",
+        "preparation_date",
+        "description",
+        ("initial_radius/@units", "initial_radius/unit"),
+        ("shank_angle/@units", "shank_angle/unit"),
     ],
 }
 
@@ -87,10 +87,11 @@ APM_SPECIMEN_TO_NEXUS = {
 APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
     "prefix_src": "atom_probe/",
+    "map": [("analysis_chamber/flight_path", "nominal_flight_path/value")],
     "map_to_str": [
-        ("status"),
-        ("instrument_name"),
-        ("location"),
+        "status",
+        "instrument_name",
+        "location",
         ("FABRICATION[fabrication]/vendor", "fabrication_vendor"),
         ("FABRICATION[fabrication]/model", "fabrication_model"),
         ("FABRICATION[fabrication]/identifier", "fabrication_identifier"),
@@ -99,7 +100,6 @@ APM_INSTRUMENT_STATIC_TO_NEXUS = {
         ("pulser/pulse_mode", "pulser/pulse_mode"),
         ("analysis_chamber/flight_path/@units", "nominal_flight_path/unit"),
     ],
-    "map_to_real": [("analysis_chamber/flight_path", "nominal_flight_path/value")],
 }
 
 
@@ -107,18 +107,18 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument",
     "prefix_src": "atom_probe/",
     "use": [("control/target_detection_rate/@units", "ions/pulse")],
+    "map": [
+        ("control/target_detection_rate", "target_detection_rate"),
+        ("pulser/pulse_frequency", "pulser/pulse_frequency/value"),
+        ("pulser/pulse_fraction", "pulser/pulse_fraction"),
+        ("analysis_chamber/chamber_pressure", "chamber_pressure/value"),
+        ("stage_lab/base_temperature", "base_temperature/value"),
+    ],
     "map_to_str": [
         ("control/evaporation_control", "evaporation_control"),
         ("pulser/pulse_frequency/@units", "pulser/pulse_frequency/unit"),
         ("analysis_chamber/chamber_pressure/@units", "chamber_pressure/unit"),
         ("stage_lab/base_temperature/@units", "stage_lab/base_temperature/unit"),
-    ],
-    "map_to_real": [
-        ("control/target_detection_rate", "target_detection_rate"),
-        ("pulser/pulse_frequency", "pulser/pulse_frequency/value"),
-        ("pulser/pulse_fraction", "pulser/pulse_fraction/value"),
-        ("analysis_chamber/chamber_pressure", "chamber_pressure/value"),
-        ("stage_lab/base_temperature", "base_temperature/value"),
     ],
 }
 
@@ -136,6 +136,7 @@ APM_RANGE_TO_NEXUS = {
 APM_RECON_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
     "prefix_src": "reconstruction/",
+    "map": [("field_of_view", "field_of_view/value")],
     "map_to_str": [
         ("programID[program1]/program", "program"),
         ("programID[program1]/program/@version", "program_version"),
@@ -144,7 +145,6 @@ APM_RECON_TO_NEXUS = {
         ("crystallographic_calibration"),
         ("parameter"),
     ],
-    "map_to_real": [("field_of_view", "field_of_view/value")],
 }
 
 
@@ -178,10 +178,3 @@ APM_USER_TO_NEXUS = {
         ("IDENTIFIER[identifier]/service", "orcid"),
     ],
 }
-
-# LEAP6000 can use up to two lasers and voltage pulsing (both at the same time?)
-# ("/ENTRY[entry*]/measurement/instrument/pulser/SOURCE[source*]/name", "load_from", "atom_probe/pulser/source_name"),
-# ("/ENTRY[entry*]/measurement/instrument/pulser/SOURCE[source*]/wavelength", "load_from", "atom_probe/pulser/source_wavelength/value"),
-# ("/ENTRY[entry*]/measurement/instrument/pulser/SOURCE[source*]/wavelength/@units", "load_from", "atom_probe/pulser/source_wavelength/unit"),
-# ("/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/pulser/SOURCE[source*]/pulse_energy", "load_from", "atom_probe/pulser/source_pulse_energy/value"),
-# ("/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/pulser/SOURCE[source*]/pulse_energy/@units", "load_from", "atom_probe/pulser/source_pulse_energy/unit"),

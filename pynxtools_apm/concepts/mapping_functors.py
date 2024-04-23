@@ -79,6 +79,25 @@ def add_specific_metadata(
                         f"{variadic_prefix_trg}/{entry[0]}", identifier
                     )
                     template[f"{trg}"] = entry[1]
+    if "map" in concept_mapping:
+        for entry in concept_mapping["map"]:
+            print(f">>>>>>>>>>>>>entry {entry}")
+            if isinstance(entry, str):
+                if f"{prefix_src}{entry}" not in orgmeta:
+                    continue
+                trg = variadic_path_to_specific_path(
+                    f"{variadic_prefix_trg}/{entry}", identifier
+                )
+                template[f"{trg}"] = orgmeta[f"{prefix_src}{entry}"]
+            if isinstance(entry, tuple):
+                if len(entry) == 2:
+                    if isinstance(entry[0], str):
+                        if f"{prefix_src}{entry[1]}" not in orgmeta:
+                            continue
+                        trg = variadic_path_to_specific_path(
+                            f"{variadic_prefix_trg}/{entry[0]}", identifier
+                        )
+                        template[f"{trg}"] = orgmeta[f"{prefix_src}{entry[1]}"]
     if "map_to_str" in concept_mapping:
         for entry in concept_mapping["map_to_str"]:
             if isinstance(entry, str):
@@ -251,13 +270,13 @@ def add_specific_metadata(
                         trg = variadic_path_to_specific_path(
                             f"{variadic_prefix_trg}/{entry[0]}", identifier
                         )
-                        with open(orgmeta[f"{prefix_src}/{entry[1]}"], "rb") as fp:
+                        with open(orgmeta[f"{prefix_src}{entry[1]}"], "rb") as fp:
                             template[f"{rchop(trg, 'checksum')}checksum"] = (
                                 get_sha256_of_file_content(fp)
                             )
                             template[f"{rchop(trg, 'checksum')}file"] = "file"
                             template[f"{rchop(trg, 'checksum')}path"] = orgmeta[
-                                f"{prefix_src}/{entry[1]}"
+                                f"{prefix_src}{entry[1]}"
                             ]
                             template[f"{rchop(trg, 'checksum')}algorithm"] = "SHA256"
     return template
