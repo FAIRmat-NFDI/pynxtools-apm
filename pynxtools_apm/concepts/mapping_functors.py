@@ -86,7 +86,10 @@ def add_specific_metadata(
             if isinstance(entry, str):
                 if f"{prefix_src}{entry}" not in orgmeta:
                     continue
-                if isinstance(orgmeta[f"{prefix_src}{entry}"], str) and orgmeta[f"{prefix_src}{entry}"] == "":
+                if (
+                    isinstance(orgmeta[f"{prefix_src}{entry}"], str)
+                    and orgmeta[f"{prefix_src}{entry}"] == ""
+                ):
                     continue
                 trg = variadic_path_to_specific_path(
                     f"{variadic_prefix_trg}/{entry}", identifier
@@ -97,7 +100,9 @@ def add_specific_metadata(
                     if isinstance(entry[0], str):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
-                        if (orgmeta[f"{prefix_src}{entry[1]}"], str) and orgmeta[f"{prefix_src}{entry[1]}"] == "":
+                        if (orgmeta[f"{prefix_src}{entry[1]}"], str) and orgmeta[
+                            f"{prefix_src}{entry[1]}"
+                        ] == "":
                             continue
                         trg = variadic_path_to_specific_path(
                             f"{variadic_prefix_trg}/{entry[0]}", identifier
@@ -108,7 +113,10 @@ def add_specific_metadata(
             if isinstance(entry, str):
                 if f"{prefix_src}{entry}" not in orgmeta:
                     continue
-                if isinstance(orgmeta[f"{prefix_src}{entry}"], str) and orgmeta[f"{prefix_src}{entry}"] == "":
+                if (
+                    isinstance(orgmeta[f"{prefix_src}{entry}"], str)
+                    and orgmeta[f"{prefix_src}{entry}"] == ""
+                ):
                     continue
                 trg = variadic_path_to_specific_path(
                     f"{variadic_prefix_trg}/{entry}", identifier
@@ -119,7 +127,10 @@ def add_specific_metadata(
                     if all(isinstance(elem, str) for elem in entry):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
-                        if isinstance(orgmeta[f"{prefix_src}{entry[1]}"], str) and orgmeta[f"{prefix_src}{entry[1]}"] == "":
+                        if (
+                            isinstance(orgmeta[f"{prefix_src}{entry[1]}"], str)
+                            and orgmeta[f"{prefix_src}{entry[1]}"] == ""
+                        ):
                             continue
                         trg = variadic_path_to_specific_path(
                             f"{variadic_prefix_trg}/{entry[0]}", identifier
@@ -153,7 +164,10 @@ def add_specific_metadata(
                 if isinstance(entry[0], str):
                     if f"{prefix_src}{entry[0]}" not in orgmeta:
                         continue
-                    if isinstance(orgmeta[f"{prefix_src}{entry[0]}"], str) and orgmeta[f"{prefix_src}{entry[0]}"] == "":
+                    if (
+                        isinstance(orgmeta[f"{prefix_src}{entry[0]}"], str)
+                        and orgmeta[f"{prefix_src}{entry[0]}"] == ""
+                    ):
                         continue
                     trg = variadic_path_to_specific_path(
                         f"{variadic_prefix_trg}/{entry[0]}", identifier
@@ -166,7 +180,10 @@ def add_specific_metadata(
                     if all(isinstance(elem, str) for elem in entry):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
-                        if isinstance(orgmeta[f"{prefix_src}{entry[0]}"], str) and orgmeta[f"{prefix_src}{entry[1]}"] == "":
+                        if (
+                            isinstance(orgmeta[f"{prefix_src}{entry[0]}"], str)
+                            and orgmeta[f"{prefix_src}{entry[1]}"] == ""
+                        ):
                             continue
                         trg = variadic_path_to_specific_path(
                             f"{variadic_prefix_trg}/{entry[0]}", identifier
@@ -211,7 +228,10 @@ def add_specific_metadata(
                     ):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
-                        if isinstance(orgmeta[f"{prefix_src}{entry[1]}"], str) and orgmeta[f"{prefix_src}{entry[1]}"] == "":
+                        if (
+                            isinstance(orgmeta[f"{prefix_src}{entry[1]}"], str)
+                            and orgmeta[f"{prefix_src}{entry[1]}"] == ""
+                        ):
                             continue
                         trg = variadic_path_to_specific_path(
                             f"{variadic_prefix_trg}/{entry[0]}", identifier
@@ -259,7 +279,10 @@ def add_specific_metadata(
                     if all(isinstance(elem, str) for elem in entry):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
-                        if isinstance(orgmeta[f"{prefix_src}{entry[1]}"], str) and orgmeta[f"{prefix_src}{entry[1]}"] == "":
+                        if (
+                            isinstance(orgmeta[f"{prefix_src}{entry[1]}"], str)
+                            and orgmeta[f"{prefix_src}{entry[1]}"] == ""
+                        ):
                             continue
                         tzone = "UTC"
                         if len(entry) == 3:

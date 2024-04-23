@@ -72,9 +72,7 @@ APM_SPECIMEN_TO_NEXUS = {
         ("initial_radius", "initial_radius/value"),
         ("shank_angle", "shank_angle/value"),
     ],
-    "map_to_bool": [
-        "is_polycrystalline",
-        "is_amorphous"],
+    "map_to_bool": ["is_polycrystalline", "is_amorphous"],
     "map_to_str": [
         "alias",
         "preparation_date",
@@ -181,8 +179,10 @@ APM_USER_TO_NEXUS = {
 
 APM_IDENTIFIER_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
-    "use": [("IDENTIFIER[identifier]/is_persistent", False),
-            ("IDENTIFIER[identifier]/service", "orcid")],
+    "use": [
+        ("IDENTIFIER[identifier]/is_persistent", False),
+        ("IDENTIFIER[identifier]/service", "orcid"),
+    ],
     "map_to_str": [
         ("IDENTIFIER[identifier]/identifier", "orcid"),
     ],

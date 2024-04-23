@@ -208,10 +208,11 @@ class NxApmNomadOasisElnSchemaParser:
                         )
                         if "orcid" not in user_dict:
                             continue
-                        add_specific_metadata(APM_IDENTIFIER_TO_NEXUS,
-                                              fd.FlatDict(user_dict),
-                                              identifier,
-                                              template,
+                        add_specific_metadata(
+                            APM_IDENTIFIER_TO_NEXUS,
+                            fd.FlatDict(user_dict),
+                            identifier,
+                            template,
                         )
                         user_id += 1
         return template
