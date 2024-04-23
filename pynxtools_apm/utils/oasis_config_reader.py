@@ -20,12 +20,11 @@
 import flatdict as fd
 import yaml
 
+from pynxtools_apm.concepts.mapping_functors import add_specific_metadata
 from pynxtools_apm.config.oasis_cfg import (
-    APM_OASIS_TO_NEXUS_CFG,
-    APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG,
-)
-from pynxtools_apm.concepts.mapping_functors import (
-    variadic_path_to_specific_path,
+    APM_OASISCONFIG_TO_NEXUS,
+    APM_CSYS_MCSTASLIKE_TO_NEXUS,
+    APM_EXAMPLE_TO_NEXUS,
 )
 
 
@@ -55,50 +54,41 @@ class NxApmNomadOasisConfigurationParser:
     def parse_various(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         identifier = [self.entry_id]
-        for tpl in APM_OASIS_TO_NEXUS_CFG:
-            if isinstance(tpl, tuple) and len(tpl) >= 2:
-                if tpl[1] != "ignore":
-                    trg = variadic_path_to_specific_path(tpl[0], identifier)
-                    if len(tpl) == 2:
-                        # nxpath, value to use directly
-                        template[trg] = tpl[1]
-                    if len(tpl) == 3:
-                        # nxpath, modifier, value, modifier (function) evaluates value to use
-                        if (tpl[1] == "load_from") and (tpl[2] in self.yml):
-                            template[trg] = self.yml[tpl[2]]
+        add_specific_metadata(APM_OASISCONFIG_TO_NEXUS, self.yml, identifier, template)
         return template
 
     def parse_reference_frames(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         identifier = [self.entry_id]
-        trg = variadic_path_to_specific_path(
-            "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]",
-            identifier,
+        add_specific_metadata(
+            APM_CSYS_MCSTASLIKE_TO_NEXUS, self.yml, identifier, template
         )
-        template[f"{trg}/alias"] = (
-            "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen."
-        )
-        template[f"{trg}/type"] = "cartesian"
-        template[f"{trg}/handedness"] = "right_handed"
-        template[f"{trg}/x_direction"] = (
-            "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian"
-        )
-        template[f"{trg}/x_alias"] = "x-axis"
-        template[f"{trg}/y_direction"] = (
-            "Direction 2 that is perpendicular to the xaxis_direction and the z_direction for a right_handed cartesian"
-        )
-        template[f"{trg}/y_alias"] = "y-axis"
-        template[f"{trg}/z_direction"] = (
-            "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen."
-        )
-        template[f"{trg}/z_alias"] = "z-axis"
-        template[f"{trg}/origin"] = (
-            "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else."
-        )
+        return template
+
+    def parse_example(self, template: dict) -> dict:
+        """Copy data from user section into template."""
+        src = "citation"
+        if src in self.yml:
+            if isinstance(self.yml[src], list):
+                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                    cite_id = 1
+                    # custom schema delivers a list of dictionaries...
+                    for cite_dict in self.yml[src]:
+                        if cite_dict == {}:
+                            continue
+                        identifier = [self.entry_id, cite_id]
+                        add_specific_metadata(
+                            APM_EXAMPLE_TO_NEXUS,
+                            fd.FlatDict(cite_dict),
+                            identifier,
+                            template,
+                        )
+                        cite_id += 1
         return template
 
     def parse(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         self.parse_various(template)
         self.parse_reference_frames(template)
+        self.parse_example(template)
         return template

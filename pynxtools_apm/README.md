@@ -1,4 +1,4 @@
-# APM reader
+<!--# APM reader
 
 TODO::refactor to mkdocs!!!!
 
@@ -116,7 +116,7 @@ all required quantities are defined and mapping their individual concepts as def
 in NXapm. Depending on the complexity of the data model and which branches will be
 instantiated by the input, though, this evaluation may be slower
 as more pathes have to be visited. Noteworthy users should understand that this
-issue is independent of size of the input (i.e. how many ions a dataset has).
+issue is independent of size of the input (i.e. how many ions a dataset has).-->
 
 ## Contact person in FAIRmat for this reader
 Markus Kühbach

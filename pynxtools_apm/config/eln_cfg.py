@@ -17,296 +17,173 @@
 #
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
-APM_EXAMPLE_OTHER_TO_NEXUS = [
-    ("/ENTRY[entry*]/experiment_alias", "load_from", "entry/run_number"),
-    ("/ENTRY[entry*]/run_number", "load_from", "entry/run_number"),
-    ("/ENTRY[entry*]/start_time", "load_from", "entry/start_time"),
-    ("/ENTRY[entry*]/end_time", "load_from", "entry/end_time"),
-    ("/ENTRY[entry*]/operation_mode", "load_from", "entry/operation_mode"),
-    ("/ENTRY[entry*]/specimen/method", "load_from", "entry/method"),
-    (
-        "/ENTRY[entry*]/experiment_description",
-        "load_from",
-        "entry/experiment_description",
-    ),
-    ("/ENTRY[entry*]/sample/method", "experiment"),
-    ("/ENTRY[entry*]/sample/alias", "load_from", "sample/alias"),
-    (
-        "/ENTRY[entry*]/sample/grain_diameter",
-        "load_from",
-        "sample/grain_diameter/value",
-    ),
-    (
-        "/ENTRY[entry*]/sample/grain_diameter/@units",
-        "load_from",
-        "sample/grain_diameter/unit",
-    ),
-    (
-        "/ENTRY[entry*]/sample/grain_diameter_error",
-        "load_from",
-        "sample/grain_diameter_error/value",
-    ),
-    (
-        "/ENTRY[entry*]/sample/grain_diameter_error/@units",
-        "load_from",
-        "sample/grain_diameter_error/unit",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_temperature",
-        "load_from",
-        "sample/heat_treatment_temperature/value",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_temperature/@units",
-        "load_from",
-        "sample/heat_treatment_temperature/unit",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_temperature_error",
-        "load_from",
-        "sample/heat_treatment_temperature_error/value",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_temperature_error/@units",
-        "load_from",
-        "sample/heat_treatment_temperature_error/unit",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_quenching_rate",
-        "load_from",
-        "sample/heat_treatment_quenching_rate/value",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_quenching_rate/@units",
-        "load_from",
-        "sample/heat_treatment_quenching_rate/unit",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_quenching_rate_error",
-        "load_from",
-        "sample/heat_treatment_quenching_rate_error/value",
-    ),
-    (
-        "/ENTRY[entry*]/sample/heat_treatment_quenching_rate_error/@units",
-        "load_from",
-        "sample/heat_treatment_quenching_rate_error/unit",
-    ),
-    ("/ENTRY[entry*]/sample/description", "load_from", "sample/description"),
-    ("/ENTRY[entry*]/specimen/method", "experiment"),
-    ("/ENTRY[entry*]/specimen/alias", "load_from", "specimen/alias"),
-    (
-        "/ENTRY[entry*]/specimen/preparation_date",
-        "load_from",
-        "specimen/preparation_date",
-    ),
-    ("/ENTRY[entry*]/specimen/description", "load_from", "specimen/description"),
-    (
-        "/ENTRY[entry*]/specimen/is_polycrystalline",
-        "load_from",
-        "specimen/is_polycrystalline",
-    ),
-    ("/ENTRY[entry*]/specimen/is_amorphous", "load_from", "specimen/is_amorphous"),
-    (
-        "/ENTRY[entry*]/specimen/initial_radius",
-        "load_from",
-        "specimen/initial_radius/value",
-    ),
-    (
-        "/ENTRY[entry*]/specimen/initial_radius/@units",
-        "load_from",
-        "specimen/initial_radius/unit",
-    ),
-    ("/ENTRY[entry*]/specimen/shank_angle", "load_from", "specimen/shank_angle/value"),
-    (
-        "/ENTRY[entry*]/specimen/shank_angle/@units",
-        "load_from",
-        "specimen/shank_angle/unit",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/instrument_name",
-        "load_from",
-        "atom_probe/instrument_name",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/location",
-        "load_from",
-        "atom_probe/location",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/FABRICATION[fabrication]/vendor",
-        "load_from",
-        "atom_probe/fabrication_vendor",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/FABRICATION[fabrication]/model",
-        "load_from",
-        "atom_probe/fabrication_model",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/FABRICATION[fabrication]/identifier",
-        "load_from",
-        "atom_probe/fabrication_identifier",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/reflectron/status",
-        "load_from",
-        "atom_probe/reflectron_status",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/local_electrode/name",
-        "load_from",
-        "atom_probe/local_electrode_name",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/pulser/pulse_mode",
-        "load_from",
-        "atom_probe/pulser/pulse_mode",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/analysis_chamber/flight_path",
-        "load_from",
-        "atom_probe/nominal_flight_path/value",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/instrument/analysis_chamber/flight_path/@units",
-        "load_from",
-        "atom_probe/nominal_flight_path/unit",
-    ),
-    ("/ENTRY[entry*]/measurement/instrument/status", "load_from", "atom_probe/status"),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/control/evaporation_control",
-        "load_from",
-        "atom_probe/evaporation_control",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/control/target_detection_rate",
-        "load_from",
-        "atom_probe/target_detection_rate",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/control/target_detection_rate/@units",
-        "ions/pulse",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/pulser/pulse_frequency",
-        "load_from",
-        "atom_probe/pulser/pulse_frequency/value",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/pulser/pulse_frequency/@units",
-        "load_from",
-        "atom_probe/pulser/pulse_frequency/unit",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/pulser/pulse_fraction",
-        "load_from",
-        "atom_probe/pulser/pulse_fraction",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/analysis_chamber/chamber_pressure",
-        "load_from",
-        "atom_probe/chamber_pressure/value",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/analysis_chamber/chamber_pressure/@units",
-        "load_from",
-        "atom_probe/chamber_pressure/unit",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/stage_lab/base_temperature",
-        "load_from",
-        "atom_probe/base_temperature/value",
-    ),
-    (
-        "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument/stage_lab/base_temperature/@units",
-        "load_from",
-        "atom_probe/base_temperature/unit",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/ranging/programID[program1]/program",
-        "load_from",
-        "ranging/program",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/ranging/programID[program1]/program/@version",
-        "load_from",
-        "ranging/program_version",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/programID[program1]/program",
-        "load_from",
-        "reconstruction/program",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/programID[program1]/program/@version",
-        "load_from",
-        "reconstruction/program_version",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/protocol_name",
-        "load_from",
-        "reconstruction/protocol_name",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/crystallographic_calibration",
-        "load_from",
-        "reconstruction/crystallographic_calibration",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/parameter",
-        "load_from",
-        "reconstruction/parameter",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/field_of_view",
-        "load_from",
-        "reconstruction/field_of_view/value",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/field_of_view/@units",
-        "load_from",
-        "reconstruction/field_of_view/unit",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/raw_data/serialized/checksum",
-        "sha256",
-        "workflow/raw_dat_file",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/hit_finding/serialized/checksum",
-        "sha256",
-        "workflow/hit_dat_file",
-    ),
-    (
-        "/ENTRY[entry*]/atom_probe/reconstruction/config/checksum",
-        "sha256",
-        "workflow/recon_cfg_file",
-    ),
-]
+APM_ENTRY_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]",
+    "prefix_src": "entry/",
+    "map_to_str": [
+        "run_number",
+        "operation_mode",
+        "start_time",
+        "end_time",
+        "experiment_description",
+        ("experiment_alias", "run_number"),
+    ],
+}
+
+
+APM_SAMPLE_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/sample",
+    "prefix_src": "sample/",
+    "map": [
+        ("grain_diameter", "grain_diameter/value"),
+        ("grain_diameter_error", "grain_diameter_error/value"),
+        ("heat_treatment_temperature", "heat_treatment_temperature/value"),
+        ("heat_treatment_temperature_error", "heat_treatment_temperature_error/value"),
+        ("heat_treatment_quenching_rate", "heat_treatment_quenching_rate/value"),
+        (
+            "heat_treatment_quenching_rate_error",
+            "heat_treatment_quenching_rate_error/value",
+        ),
+    ],
+    "map_to_str": [
+        "alias",
+        "description",
+        "method",
+        ("grain_diameter/@units", "grain_diameter/unit"),
+        ("grain_diameter_error/@units", "grain_diameter/unit"),
+        ("heat_treatment_temperature/@units", "heat_treatment_temperature/unit"),
+        (
+            "heat_treatment_temperature_error/@units",
+            "heat_treatment_temperature_error/unit",
+        ),
+        ("heat_treatment_quenching_rate/@units", "heat_treatment_quenching_rate/unit"),
+        (
+            "heat_treatment_quenching_rate_error/@units",
+            "heat_treatment_quenching_rate_error/unit",
+        ),
+    ],
+}
+
+
+APM_SPECIMEN_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/specimen",
+    "prefix_src": "specimen/",
+    "map": [
+        ("initial_radius", "initial_radius/value"),
+        ("shank_angle", "shank_angle/value"),
+    ],
+    "map_to_bool": ["is_polycrystalline", "is_amorphous"],
+    "map_to_str": [
+        "alias",
+        "preparation_date",
+        "description",
+        "method",
+        ("initial_radius/@units", "initial_radius/unit"),
+        ("shank_angle/@units", "shank_angle/unit"),
+    ],
+}
+
+
+APM_INSTRUMENT_STATIC_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
+    "prefix_src": "atom_probe/",
+    "map": [("analysis_chamber/flight_path", "nominal_flight_path/value")],
+    "map_to_str": [
+        "status",
+        "instrument_name",
+        "location",
+        ("FABRICATION[fabrication]/vendor", "fabrication_vendor"),
+        ("FABRICATION[fabrication]/model", "fabrication_model"),
+        ("FABRICATION[fabrication]/identifier", "fabrication_identifier"),
+        ("reflectron/status", "reflectron_status"),
+        ("local_electrode/name", "local_electrode_name"),
+        ("pulser/pulse_mode", "pulser/pulse_mode"),
+        ("analysis_chamber/flight_path/@units", "nominal_flight_path/unit"),
+    ],
+}
+
+
+APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument",
+    "prefix_src": "atom_probe/",
+    "use": [("control/target_detection_rate/@units", "ions/pulse")],
+    "map": [
+        ("control/target_detection_rate", "target_detection_rate"),
+        ("pulser/pulse_frequency", "pulser/pulse_frequency/value"),
+        ("pulser/pulse_fraction", "pulser/pulse_fraction"),
+        ("analysis_chamber/chamber_pressure", "chamber_pressure/value"),
+        ("stage_lab/base_temperature", "base_temperature/value"),
+    ],
+    "map_to_str": [
+        ("control/evaporation_control", "evaporation_control"),
+        ("pulser/pulse_frequency/@units", "pulser/pulse_frequency/unit"),
+        ("analysis_chamber/chamber_pressure/@units", "chamber_pressure/unit"),
+        ("stage_lab/base_temperature/@units", "base_temperature/unit"),
+    ],
+}
+
+
+APM_RANGE_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
+    "prefix_src": "ranging/",
+    "map_to_str": [
+        ("programID[program1]/program", "program"),
+        ("programID[program1]/program/@version", "program_version"),
+    ],
+}
+
+
+APM_RECON_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
+    "prefix_src": "reconstruction/",
+    "map": [("field_of_view", "field_of_view/value")],
+    "map_to_str": [
+        "protocol_name",
+        "crystallographic_calibration",
+        "parameter",
+        ("programID[program1]/program", "program"),
+        ("programID[program1]/program/@version", "program_version"),
+        ("field_of_view/@units", "field_of_view/unit"),
+    ],
+}
+
+
+APM_WORKFLOW_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/atom_probe",
+    "prefix_src": "workflow/",
+    "sha256": [
+        ("raw_data/SERIALIZED[serialized]/checksum", "raw_dat_file"),
+        ("hit_finding/SERIALIZED[serialized]/checksum", "hit_dat_file"),
+        ("reconstruction/config/checksum", "recon_cfg_file"),
+    ],
+}
 
 # NeXus concept specific mapping tables which require special treatment as the current
 # NOMAD Oasis custom schema implementation delivers them as a list of dictionaries instead
 # of a directly flattenable list of key, value pairs
 
-
-APM_EXAMPLE_USER_TO_NEXUS = [
-    ("/ENTRY[entry*]/USER[user*]/name", "load_from", "name"),
-    ("/ENTRY[entry*]/USER[user*]/affiliation", "load_from", "affiliation"),
-    ("/ENTRY[entry*]/USER[user*]/address", "load_from", "address"),
-    ("/ENTRY[entry*]/USER[user*]/email", "load_from", "email"),
-    (
-        "/ENTRY[entry*]/USER[user*]/IDENTIFIER[identifier]/identifier",
-        "load_from",
-        "orcid",
-    ),
-    ("/ENTRY[entry*]/USER[user*]/IDENTIFIER[identifier]/service", "orcid"),
-    ("/ENTRY[entry*]/USER[user*]/IDENTIFIER[identifier]/is_persistent", False),
-    ("/ENTRY[entry*]/USER[user*]/telephone_number", "load_from", "telephone_number"),
-    ("/ENTRY[entry*]/USER[user*]/role", "load_from", "role"),
-    ("/ENTRY[entry*]/USER[user*]/social_media_name", "load_from", "social_media_name"),
-    (
-        "/ENTRY[entry*]/USER[user*]/social_media_platform",
-        "load_from",
+APM_USER_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/USER[user*]",
+    "map_to_str": [
+        "name",
+        "affiliation",
+        "address",
+        "email",
+        "telephone_number",
+        "role",
+        "social_media_name",
         "social_media_platform",
-    ),
-]
+    ],
+}
+
+
+APM_IDENTIFIER_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/USER[user*]",
+    "use": [
+        ("IDENTIFIER[identifier]/is_persistent", False),
+        ("IDENTIFIER[identifier]/service", "orcid"),
+    ],
+    "map_to_str": [
+        ("IDENTIFIER[identifier]/identifier", "orcid"),
+    ],
+}
