@@ -20,8 +20,8 @@
 import flatdict as fd
 import yaml
 
-from pynxtools_apm.concepts.mapping_functors_two import add_specific_metadata
-from pynxtools_apm.config.oasis_cfg_two import (
+from pynxtools_apm.concepts.mapping_functors import add_specific_metadata
+from pynxtools_apm.config.oasis_cfg import (
     APM_OASISCONFIG_TO_NEXUS,
     APM_CSYS_MCSTASLIKE_TO_NEXUS,
     APM_EXAMPLE_TO_NEXUS,

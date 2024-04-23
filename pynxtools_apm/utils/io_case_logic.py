@@ -19,7 +19,7 @@
 
 from typing import Tuple, Dict, List
 
-from pynxtools_apm.concepts.mapping_functors_two import (
+from pynxtools_apm.concepts.mapping_functors import (
     variadic_path_to_specific_path,
 )
 from pynxtools_apm.utils.get_file_checksum import (

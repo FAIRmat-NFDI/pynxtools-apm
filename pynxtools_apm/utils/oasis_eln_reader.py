@@ -21,7 +21,7 @@ import flatdict as fd
 import yaml
 
 from ase.data import chemical_symbols
-from pynxtools_apm.config.eln_cfg_two import (
+from pynxtools_apm.config.eln_cfg import (
     APM_ENTRY_TO_NEXUS,
     APM_SAMPLE_TO_NEXUS,
     APM_SPECIMEN_TO_NEXUS,
@@ -34,7 +34,7 @@ from pynxtools_apm.config.eln_cfg_two import (
 )
 
 from pynxtools_apm.utils.parse_composition_table import parse_composition_table
-from pynxtools_apm.concepts.mapping_functors_two import add_specific_metadata
+from pynxtools_apm.concepts.mapping_functors import add_specific_metadata
 
 
 class NxApmNomadOasisElnSchemaParser:
