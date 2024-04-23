@@ -136,6 +136,17 @@ class APMReader(BaseReader):
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)
 
+        # in the future we expect that there are sequential dependencies that may demand
+        # conditional post-processing of the template or changing the order in which
+        # sources of information are processed
+        # e.g. if the user does not provide reconstruction and ranging definition
+        # it is currently still possible to use NXapm because none of these are required
+        # entries but if recon and ranging are absent it makes no sense to store
+        # the config of the reconstruction as it provokes that incorrect or dummy
+        # information is provided.
+        # Therefore, currently empty strings from config or eln_data.yaml files are
+        # considered non-filled in template instance data and are thus not copied over
+
         # print("Reporting state of template before passing to HDF5 writing...")
         # for keyword in template.keys():
         #     print(f"keyword: {keyword}, template[keyword]: {template[keyword]}")

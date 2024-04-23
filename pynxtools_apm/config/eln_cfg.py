@@ -23,7 +23,6 @@ APM_ENTRY_TO_NEXUS = {
     "map_to_str": [
         "run_number",
         "operation_mode",
-        "method",
         "start_time",
         "end_time",
         "experiment_description",
@@ -35,7 +34,6 @@ APM_ENTRY_TO_NEXUS = {
 APM_SAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
-    "use": [("method", "experiment")],
     "map": [
         ("grain_diameter", "grain_diameter/value"),
         ("grain_diameter_error", "grain_diameter_error/value"),
@@ -50,6 +48,7 @@ APM_SAMPLE_TO_NEXUS = {
     "map_to_str": [
         "alias",
         "description",
+        "method",
         ("grain_diameter/@units", "grain_diameter/unit"),
         ("grain_diameter_error/@units", "grain_diameter/unit"),
         ("heat_treatment_temperature/@units", "heat_treatment_temperature/unit"),
@@ -73,11 +72,14 @@ APM_SPECIMEN_TO_NEXUS = {
         ("initial_radius", "initial_radius/value"),
         ("shank_angle", "shank_angle/value"),
     ],
-    "map_to_bool": [("is_polycrystalline"), ("is_amorphous")],
+    "map_to_bool": [
+        "is_polycrystalline",
+        "is_amorphous"],
     "map_to_str": [
         "alias",
         "preparation_date",
         "description",
+        "method",
         ("initial_radius/@units", "initial_radius/unit"),
         ("shank_angle/@units", "shank_angle/unit"),
     ],
@@ -118,7 +120,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
         ("control/evaporation_control", "evaporation_control"),
         ("pulser/pulse_frequency/@units", "pulser/pulse_frequency/unit"),
         ("analysis_chamber/chamber_pressure/@units", "chamber_pressure/unit"),
-        ("stage_lab/base_temperature/@units", "stage_lab/base_temperature/unit"),
+        ("stage_lab/base_temperature/@units", "base_temperature/unit"),
     ],
 }
 
@@ -138,12 +140,12 @@ APM_RECON_TO_NEXUS = {
     "prefix_src": "reconstruction/",
     "map": [("field_of_view", "field_of_view/value")],
     "map_to_str": [
+        "protocol_name",
+        "crystallographic_calibration",
+        "parameter",
         ("programID[program1]/program", "program"),
         ("programID[program1]/program/@version", "program_version"),
         ("field_of_view/@units", "field_of_view/unit"),
-        ("protocol_name"),
-        ("crystallographic_calibration"),
-        ("parameter"),
     ],
 }
 
@@ -164,17 +166,24 @@ APM_WORKFLOW_TO_NEXUS = {
 
 APM_USER_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
-    "use": [("IDENTIFIER[identifier]/is_persistent", False)],
     "map_to_str": [
-        ("name"),
-        ("affiliation"),
-        ("address"),
-        ("email"),
-        ("telephone_number"),
-        ("role"),
-        ("social_media_name"),
-        ("social_media_platform"),
+        "name",
+        "affiliation",
+        "address",
+        "email",
+        "telephone_number",
+        "role",
+        "social_media_name",
+        "social_media_platform",
+    ],
+}
+
+
+APM_IDENTIFIER_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/USER[user*]",
+    "use": [("IDENTIFIER[identifier]/is_persistent", False),
+            ("IDENTIFIER[identifier]/service", "orcid")],
+    "map_to_str": [
         ("IDENTIFIER[identifier]/identifier", "orcid"),
-        ("IDENTIFIER[identifier]/service", "orcid"),
     ],
 }

@@ -31,6 +31,7 @@ from pynxtools_apm.config.eln_cfg import (
     APM_RECON_TO_NEXUS,
     APM_WORKFLOW_TO_NEXUS,
     APM_USER_TO_NEXUS,
+    APM_IDENTIFIER_TO_NEXUS,
 )
 
 from pynxtools_apm.utils.parse_composition_table import parse_composition_table
@@ -204,6 +205,13 @@ class NxApmNomadOasisElnSchemaParser:
                             fd.FlatDict(user_dict),
                             identifier,
                             template,
+                        )
+                        if "orcid" not in user_dict:
+                            continue
+                        add_specific_metadata(APM_IDENTIFIER_TO_NEXUS,
+                                              fd.FlatDict(user_dict),
+                                              identifier,
+                                              template,
                         )
                         user_id += 1
         return template

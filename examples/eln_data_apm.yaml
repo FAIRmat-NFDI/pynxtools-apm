@@ -55,7 +55,6 @@ entry:
   end_time: '2023-06-11T11:20:00+00:00'
   run_number: '2121'
   operation_mode: apt
-  method: experiment
 workflow:
   raw_dat_file: str.str
   hit_dat_file: hits.hits
@@ -80,7 +79,7 @@ sample:
   - Al 12 +- 3
   - B 50 ppm +- 12
   - C 3.6
-  method: measurement
+  method: experiment
   alias: Si
   grain_diameter:
     unit: µm
@@ -102,7 +101,7 @@ sample:
     value: 10.
   description: '<p>nothing</p>'
 specimen:
-  method: measurement
+  method: experiment
   alias: usa_denton_smith_si
   description: '<p>normal</p>
 
