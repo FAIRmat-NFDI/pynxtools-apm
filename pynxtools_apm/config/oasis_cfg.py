@@ -40,72 +40,55 @@
 
 import datetime as dt
 
-from pynxtools_apm.utils.versioning import (
-    NX_APM_ADEF_NAME,
-)
+from pynxtools_apm.utils.versioning import NX_APM_ADEF_NAME
 
 
-APM_OASIS_TO_NEXUS_CFG = [
-    ("/ENTRY[entry*]/definition", f"{NX_APM_ADEF_NAME}"),
-    ("/ENTRY[entry*]/operation_mode", "ignore", "operation_mode"),
-    (
-        "/ENTRY[entry*]/start_time",
-        f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
-    ),
-]
+APM_OASISCONFIG_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]",
+    "use": [
+        ("definition", f"{NX_APM_ADEF_NAME}"),
+        (
+            "start_time",
+            f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
+        ),
+    ],
+    "map_to_str": [("operation_mode")],
+}
 
 
-APM_PARAPROBE_EXAMPLE_TO_NEXUS_CFG = [
-    ("/ENTRY[entry*]/CITE[cite*]/doi", "load_from", "doi"),
-    ("/ENTRY[entry*]/CITE[cite*]/description", "load_from", "description"),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/alias",
-        "load_from",
-        "coordinate_system_set/alias",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/type",
-        "load_from",
-        "coordinate_system_set/type",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/handedness",
-        "load_from",
-        "coordinate_system_set/handedness",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/x_direction",
-        "load_from",
-        "coordinate_system_set/x_direction",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/x_alias",
-        "load_from",
-        "coordinate_system_set/x_alias",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/y_direction",
-        "load_from",
-        "coordinate_system_set/y_direction",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/y_alias",
-        "load_from",
-        "coordinate_system_set/y_alias",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/z_direction",
-        "load_from",
-        "coordinate_system_set/z_direction",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/z_alias",
-        "load_from",
-        "coordinate_system_set/z_alias",
-    ),
-    (
-        "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]/origin",
-        "load_from",
-        "coordinate_system_set/origin",
-    ),
-]
+APM_CSYS_MCSTASLIKE_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]",
+    "use": [
+        (
+            "alias",
+            "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen",
+        ),
+        ("type", "cartesian"),
+        ("handedness", "right_handed"),
+        (
+            "x_direction",
+            "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian",
+        ),
+        ("x_alias", "x-axis"),
+        (
+            "y_direction",
+            "Direction 2 that is perpendicular to the x_direction and the z_direction for a right_handed cartesian",
+        ),
+        ("y_alias", "y-axis"),
+        (
+            "z_direction",
+            "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen",
+        ),
+        ("z_alias", "z-axis"),
+        (
+            "origin",
+            "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else",
+        ),
+    ],
+}
+
+
+APM_EXAMPLE_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
+    "map_to_str": [("doi"), ("description")],
+}

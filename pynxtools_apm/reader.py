@@ -80,6 +80,7 @@ class APMReader(BaseReader):
 
         entry_id = 1
         if len(file_paths) == 1:
+            pass
             """
             # TODO::better make this an option rather than hijack and demand a
             # specifically named file to trigger the synthesizer
@@ -102,20 +103,18 @@ class APMReader(BaseReader):
                 return {}
             case.report_workflow(template, entry_id)
 
-            print("Parse (meta)data coming from a configuration of an RDM...")
-            # currently this example shows how to using the NOMAD Oasis RDM
             if len(case.cfg) == 1:
+                print("Parse (meta)data coming from a configuration of an RDM...")
                 nx_apm_cfg = NxApmNomadOasisConfigurationParser(
-                    case.cfg[0], entry_id, verbose=True
+                    case.cfg[0], entry_id, False
                 )
                 nx_apm_cfg.parse(template)
-            # having or using a deployment-specific configuration is optional
+            else:
+                print("No input file defined for config data !")
 
-            print("Parse (meta)data coming from an ELN...")
             if len(case.eln) == 1:
-                nx_apm_eln = NxApmNomadOasisElnSchemaParser(
-                    case.eln[0], entry_id, False
-                )
+                print("Parse (meta)data coming from an ELN...")
+                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id, True)
                 nx_apm_eln.parse(template)
             else:
                 print("No input file defined for eln data !")
@@ -126,17 +125,27 @@ class APMReader(BaseReader):
                 nx_apm_recon.report(template)
             else:
                 print("No input-file defined for reconstructed dataset!")
-                return {}
+
             if len(case.ranging) == 1:
                 print("Parse (meta)data from a ranging definitions file...")
                 nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0], entry_id)
                 nx_apm_range.report(template)
             else:
                 print("No input-file defined for ranging definitions!")
-                return {}
 
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)
+
+        # in the future we expect that there are sequential dependencies that may demand
+        # conditional post-processing of the template or changing the order in which
+        # sources of information are processed
+        # e.g. if the user does not provide reconstruction and ranging definition
+        # it is currently still possible to use NXapm because none of these are required
+        # entries but if recon and ranging are absent it makes no sense to store
+        # the config of the reconstruction as it provokes that incorrect or dummy
+        # information is provided.
+        # Therefore, currently empty strings from config or eln_data.yaml files are
+        # considered non-filled in template instance data and are thus not copied over
 
         # print("Reporting state of template before passing to HDF5 writing...")
         # for keyword in template.keys():

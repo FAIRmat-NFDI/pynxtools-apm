@@ -22,13 +22,20 @@ import yaml
 
 from ase.data import chemical_symbols
 from pynxtools_apm.config.eln_cfg import (
-    APM_EXAMPLE_OTHER_TO_NEXUS,
-    APM_EXAMPLE_USER_TO_NEXUS,
+    APM_ENTRY_TO_NEXUS,
+    APM_SAMPLE_TO_NEXUS,
+    APM_SPECIMEN_TO_NEXUS,
+    APM_INSTRUMENT_STATIC_TO_NEXUS,
+    APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
+    APM_RANGE_TO_NEXUS,
+    APM_RECON_TO_NEXUS,
+    APM_WORKFLOW_TO_NEXUS,
+    APM_USER_TO_NEXUS,
+    APM_IDENTIFIER_TO_NEXUS,
 )
-from pynxtools_apm.concepts.mapping_functors import variadic_path_to_specific_path
-from pynxtools_apm.utils.string_conversions import rchop
+
 from pynxtools_apm.utils.parse_composition_table import parse_composition_table
-from pynxtools_apm.utils.get_file_checksum import get_sha256_of_file_content
+from pynxtools_apm.concepts.mapping_functors import add_specific_metadata
 
 
 class NxApmNomadOasisElnSchemaParser:
@@ -59,7 +66,7 @@ class NxApmNomadOasisElnSchemaParser:
             self.file_path = file_path
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
-                if verbose is True:
+                if verbose:
                     for key, val in self.yml.items():
                         print(f"key: {key}, value: {val}")
         else:
@@ -67,10 +74,20 @@ class NxApmNomadOasisElnSchemaParser:
             self.file_path = ""
             self.yml = {}
 
+    def parse_entry(self, template: dict) -> dict:
+        identifier = [self.entry_id]
+        add_specific_metadata(APM_ENTRY_TO_NEXUS, self.yml, identifier, template)
+        return template
+
+    def parse_sample(self, template: dict) -> dict:
+        identifier = [self.entry_id]
+        add_specific_metadata(APM_SAMPLE_TO_NEXUS, self.yml, identifier, template)
+        return template
+
     def parse_sample_composition(self, template: dict) -> dict:
         """Interpret human-readable ELN input to generate consistent composition table."""
         src = "sample/composition"
-        if src in self.yml.keys():
+        if src in self.yml:
             if isinstance(self.yml[src], list):
                 dct = parse_composition_table(self.yml[src])
 
@@ -94,11 +111,11 @@ class NxApmNomadOasisElnSchemaParser:
                         return template
                 ion_id = 1
                 for symbol in chemical_symbols[1::]:
-                    # ase convention, chemical_symbols[0] == "X"
-                    # to use ordinal number for indexing
+                    # ase convention is that chemical_symbols[0] == "X"
+                    # to enable using ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ION[ion{ion_id}]"  # TODO make ionID
+                            trg = f"{prfx}/ionID[ion{ion_id}]"
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
@@ -108,35 +125,29 @@ class NxApmNomadOasisElnSchemaParser:
                             ion_id += 1
         return template
 
-    def parse_user(self, template: dict) -> dict:
-        """Copy data from user section into template."""
-        src = "user"
-        if src in self.yml:
-            if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
-                    user_id = 1
-                    # custom schema delivers a list of dictionaries...
-                    for user_dict in self.yml[src]:
-                        if user_dict == {}:
-                            continue
-                        identifier = [self.entry_id, user_id]
-                        for key in user_dict:
-                            for tpl in APM_EXAMPLE_USER_TO_NEXUS:
-                                if isinstance(tpl, tuple) and (len(tpl) == 3):
-                                    if (tpl[1] == "load_from") and (key == tpl[2]):
-                                        trg = variadic_path_to_specific_path(
-                                            tpl[0], identifier
-                                        )
-                                        # res = apply_modifier(modifier, user_dict)
-                                        # res is not None
-                                        template[trg] = user_dict[tpl[2]]
-                        user_id += 1
+    def parse_specimen(self, template: dict) -> dict:
+        identifier = [self.entry_id]
+        add_specific_metadata(APM_SPECIMEN_TO_NEXUS, self.yml, identifier, template)
+        return template
+
+    def parse_instrument_static(self, template: dict) -> dict:
+        identifier = [self.entry_id]
+        add_specific_metadata(
+            APM_INSTRUMENT_STATIC_TO_NEXUS, self.yml, identifier, template
+        )
+        return template
+
+    def parse_instrument_dynamic(self, template: dict) -> dict:
+        identifier = [self.entry_id]
+        add_specific_metadata(
+            APM_INSTRUMENT_DYNAMIC_TO_NEXUS, self.yml, identifier, template
+        )
         return template
 
     def parse_pulser_source(self, template: dict) -> dict:
         """Copy data into the (laser)/source section of the pulser."""
         # additional laser-specific details only relevant when the laser was used
-        if "atom_probe/pulser/pulse_mode" in self.yml.keys():
+        if "atom_probe/pulser/pulse_mode" in self.yml:
             if self.yml["atom_probe/pulser/pulse_mode"] == "voltage":
                 return template
 
@@ -177,49 +188,61 @@ class NxApmNomadOasisElnSchemaParser:
         print("WARNING: pulse_mode != voltage but no laser details specified!")
         return template
 
-    def parse_other(self, template: dict) -> dict:
-        """Copy data from custom schema into template."""
+    def parse_user(self, template: dict) -> dict:
+        """Copy data from user section into template."""
+        src = "user"
+        if src in self.yml:
+            if isinstance(self.yml[src], list):
+                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                    user_id = 1
+                    # custom schema delivers a list of dictionaries...
+                    for user_dict in self.yml[src]:
+                        if user_dict == {}:
+                            continue
+                        identifier = [self.entry_id, user_id]
+                        add_specific_metadata(
+                            APM_USER_TO_NEXUS,
+                            fd.FlatDict(user_dict),
+                            identifier,
+                            template,
+                        )
+                        if "orcid" not in user_dict:
+                            continue
+                        add_specific_metadata(
+                            APM_IDENTIFIER_TO_NEXUS,
+                            fd.FlatDict(user_dict),
+                            identifier,
+                            template,
+                        )
+                        user_id += 1
+        return template
+
+    def parse_range(self, template: dict) -> dict:
         identifier = [self.entry_id]
-        for tpl in APM_EXAMPLE_OTHER_TO_NEXUS:
-            if isinstance(tpl, tuple):
-                if len(tpl) == 2:
-                    trg = variadic_path_to_specific_path(tpl[0], identifier)
-                    template[trg] = tpl[1]
-                if len(tpl) == 3:
-                    if tpl[1] not in ("ignore"):
-                        # nxpath, modifier, value, modifier (function) evaluates value to use
-                        if tpl[1] == "load_from":
-                            if tpl[2] in self.yml.keys():
-                                trg = variadic_path_to_specific_path(tpl[0], identifier)
-                                template[trg] = self.yml[tpl[2]]
-                            else:
-                                raise ValueError(
-                                    f"tpl2 {tpl[2]} not in self.yml.keys()!"
-                                )
-                        if tpl[1] == "sha256":
-                            if tpl[2] in self.yml.keys():
-                                trg = variadic_path_to_specific_path(tpl[0], identifier)
-                                with open(self.yml[tpl[2]], "rb") as fp:
-                                    template[f"{rchop(trg, 'checksum')}checksum"] = (
-                                        get_sha256_of_file_content(fp)
-                                    )
-                                    template[f"{rchop(trg, 'checksum')}file"] = "file"
-                                    template[f"{rchop(trg, 'checksum')}path"] = (
-                                        f"{self.yml[tpl[2]]}"
-                                    )
-                                    template[f"{rchop(trg, 'checksum')}algorithm"] = (
-                                        "SHA256"
-                                    )
-                            else:
-                                raise ValueError(
-                                    f"tpl2 {tpl[2]} not in self.yml.keys()!"
-                                )
+        add_specific_metadata(APM_RANGE_TO_NEXUS, self.yml, identifier, template)
+        return template
+
+    def parse_recon(self, template: dict) -> dict:
+        identifier = [self.entry_id]
+        add_specific_metadata(APM_RECON_TO_NEXUS, self.yml, identifier, template)
+        return template
+
+    def parse_workflow(self, template: dict) -> dict:
+        identifier = [self.entry_id]
+        add_specific_metadata(APM_WORKFLOW_TO_NEXUS, self.yml, identifier, template)
         return template
 
     def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
+        self.parse_entry(template)
+        self.parse_sample(template)
         self.parse_sample_composition(template)
-        self.parse_user(template)
+        self.parse_specimen(template)
+        self.parse_instrument_static(template)
+        self.parse_instrument_dynamic(template)
         self.parse_pulser_source(template)
-        self.parse_other(template)
+        self.parse_user(template)
+        self.parse_range(template)
+        self.parse_recon(template)
+        self.parse_workflow(template)
         return template

@@ -1,0 +1,62 @@
+site_name: pynxtools-apm
+site_description: |
+  The documentation for the pynxtools-apm plugin
+site_author: The FAIRmat authors
+nav:
+  - Home: index.md
+  - Tutorials:
+    - tutorial/standalone.md
+    # - tutorial/nexusio.md
+    # - tutorial/oasis.md
+  - How-tos:
+    - how-tos/howto.md
+  - Learn:
+    - explanation/learn.md
+  - Reference:
+    - reference/contextualization.md
+    - reference/apt.md
+    - reference/epos.md
+    - reference/pos.md
+    - reference/rng.md
+    - reference/rrng.md
+    - reference/faufig.md
+    - reference/pyccapt.md
+    - reference/ato.md
+    - reference/env.md
+    - reference/csv.md
+    - reference/inspico.md
+    - reference/camecaroot.md
+    - reference/mqanalysis.md
+    - reference/atomtypes.md
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - content.code.annotate
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - toc:
+      permalink: True
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji
+  - pymdownx.extra
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+use_directory_urls: false
+plugins:
+    - search
+    - macros:
+        module_name: docs/macros
+extra_css:
+  - stylesheets/extra.css

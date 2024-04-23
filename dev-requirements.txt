@@ -8,17 +8,26 @@ ase==3.22.1
     # via
     #   ifes-apt-tc-data-modeling
     #   pynxtools
+babel==2.14.0
+    # via mkdocs-material
 blosc2==2.5.1
     # via tables
 build==1.1.1
     # via pip-tools
+certifi==2024.2.2
+    # via requests
+charset-normalizer==3.3.2
+    # via requests
 click==8.1.7
     # via
     #   click-default-group
+    #   mkdocs
     #   pip-tools
     #   pynxtools
 click-default-group==1.2.4
     # via pynxtools
+colorama==0.4.6
+    # via mkdocs-material
 contourpy==1.2.0
     # via matplotlib
 cycler==0.12.1
@@ -27,26 +36,59 @@ flatdict==4.0.1
     # via ifes-apt-tc-data-modeling
 fonttools==4.49.0
     # via matplotlib
+ghp-import==2.1.0
+    # via mkdocs
 h5py==3.10.0
     # via
     #   ifes-apt-tc-data-modeling
     #   pynxtools
+idna==3.7
+    # via requests
 ifes-apt-tc-data-modeling==0.2.1
     # via pynxtools-apm (pyproject.toml)
 importlib-metadata==7.0.2
     # via pynxtools
 iniconfig==2.0.0
     # via pytest
+jinja2==3.1.3
+    # via
+    #   mkdocs
+    #   mkdocs-macros-plugin
+    #   mkdocs-material
 kiwisolver==1.4.5
     # via matplotlib
 lxml==5.1.0
     # via pynxtools
+markdown==3.6
+    # via
+    #   mkdocs
+    #   mkdocs-material
+    #   pymdown-extensions
+markupsafe==2.1.5
+    # via
+    #   jinja2
+    #   mkdocs
 matplotlib==3.8.3
     # via
     #   ase
     #   radioactivedecay
 mergedeep==1.3.4
-    # via pynxtools
+    # via
+    #   mkdocs
+    #   pynxtools
+mkdocs==1.5.3
+    # via
+    #   mkdocs-macros-plugin
+    #   mkdocs-material
+    #   pynxtools-apm (pyproject.toml)
+mkdocs-macros-plugin==1.0.5
+    # via pynxtools-apm (pyproject.toml)
+mkdocs-material==9.5.18
+    # via pynxtools-apm (pyproject.toml)
+mkdocs-material-extensions==1.3.1
+    # via
+    #   mkdocs-material
+    #   pynxtools-apm (pyproject.toml)
 mpmath==1.3.0
     # via sympy
 msgpack==1.0.8
@@ -80,24 +122,35 @@ packaging==24.0
     # via
     #   build
     #   matplotlib
+    #   mkdocs
     #   pytest
     #   tables
     #   xarray
+paginate==0.5.6
+    # via mkdocs-material
 pandas==2.2.1
     # via
     #   ifes-apt-tc-data-modeling
     #   pynxtools
     #   xarray
+pathspec==0.12.1
+    # via mkdocs
 pillow==10.0.1
     # via matplotlib
 pip-tools==7.4.1
     # via pynxtools-apm (pyproject.toml)
+platformdirs==4.2.0
+    # via mkdocs
 pluggy==1.4.0
     # via pytest
 py-cpuinfo==9.0.0
     # via
     #   blosc2
     #   tables
+pygments==2.17.2
+    # via mkdocs-material
+pymdown-extensions==10.8
+    # via mkdocs-material
 pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools
     # via pynxtools-apm (pyproject.toml)
 pyparsing==3.1.2
@@ -110,14 +163,27 @@ pytest==8.1.1
     # via pynxtools-apm (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via
+    #   ghp-import
     #   matplotlib
+    #   mkdocs-macros-plugin
     #   pandas
 pytz==2024.1
     # via pandas
 pyyaml==6.0.1
-    # via pynxtools
+    # via
+    #   mkdocs
+    #   mkdocs-macros-plugin
+    #   pymdown-extensions
+    #   pynxtools
+    #   pyyaml-env-tag
+pyyaml-env-tag==0.1
+    # via mkdocs
 radioactivedecay==0.4.22
     # via ifes-apt-tc-data-modeling
+regex==2024.4.16
+    # via mkdocs-material
+requests==2.31.0
+    # via mkdocs-material
 ruff==0.3.4
     # via pynxtools-apm (pyproject.toml)
 scipy==1.12.0
@@ -130,12 +196,18 @@ sympy==1.12
     # via radioactivedecay
 tables==3.9.2
     # via ifes-apt-tc-data-modeling
+termcolor==2.4.0
+    # via mkdocs-macros-plugin
 types-pyyaml==6.0.12.20240311
     # via pynxtools-apm (pyproject.toml)
 typing-extensions==4.10.0
     # via mypy
 tzdata==2024.1
     # via pandas
+urllib3==2.2.1
+    # via requests
+watchdog==4.0.0
+    # via mkdocs
 wheel==0.43.0
     # via pip-tools
 xarray==2024.2.0

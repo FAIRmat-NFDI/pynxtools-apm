@@ -198,16 +198,18 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
 
     has_valid_m_z = False
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/mass_to_charge_conversion/mass_to_charge"
-    if isinstance(template[trg], dict):
-        if "compress" in template[trg].keys():
-            if isinstance(template[trg]["compress"], np.ndarray):
-                has_valid_m_z = True
+    if trg in template:
+        if isinstance(template[trg], dict):
+            if "compress" in template[trg].keys():
+                if isinstance(template[trg]["compress"], np.ndarray):
+                    has_valid_m_z = True
     has_valid_xyz = False
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/reconstructed_positions"
-    if isinstance(template[trg], dict):
-        if "compress" in template[trg].keys():
-            if isinstance(template[trg]["compress"], np.ndarray):
-                has_valid_xyz = True
+    if trg in template:
+        if isinstance(template[trg], dict):
+            if "compress" in template[trg].keys():
+                if isinstance(template[trg]["compress"], np.ndarray):
+                    has_valid_xyz = True
     print(f"m_z, xyz: {has_valid_m_z}, {has_valid_xyz}")
 
     if (has_valid_m_z is False) and (has_valid_xyz is False):

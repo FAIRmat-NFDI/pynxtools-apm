@@ -8,7 +8,7 @@ dynamic = ["version"]
 authors = [
     { name = "Markus Kühbach", email = "markus.kuehbach@physik.hu-berlin.de" },
 ]
-description = "Parser/converter/extractor to generate NeXus file for documenting metadata and data of experiments with instruments used in the field of atom probe tomography as well as field ion microscopy"
+description = "Make atom probe tomography and field-ion microscopy results interoperable via NeXus"
 readme = "README.md"
 license= {text = "Apache-2.0"}
 requires-python = ">=3.8"
@@ -26,7 +26,16 @@ dependencies = [
     "ifes_apt_tc_data_modeling>=0.2.1",
 ]
 
+[project.urls]
+"Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"
+"Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools-apm/issues"
 [project.optional-dependencies]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocs-material-extensions",
+    "mkdocs-macros-plugin",
+]
 dev = [
     "mypy",
     "ruff==0.3.4",
@@ -44,12 +53,15 @@ local_scheme = "node-and-date"
 
 [tool.ruff]
 include = ["pynxtools_apm/*.py", "tests/*.py"]
-lint.select = [
+line-length = 88
+indent-width = 4
+[tool.ruff.lint]
+select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
 ]
-lint.ignore = [
+ignore = [
     "E501", # Line too long ({width} > {limit} characters)
     "E701", # Multiple statements on one line (colon)
     "E731", # Do not assign a lambda expression, use a def
@@ -64,11 +76,13 @@ lint.ignore = [
     "PLR1714", # consider-using-in
     "PLR5501", # else-if-used
 ]
-lint.fixable = ["ALL"]
+fixable = ["ALL"]
 
-[tool.hatch.metadata]
-allow-direct-references = true
-
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 [tool.mypy]
 strict = false
 ignore_missing_imports = true
