@@ -22,8 +22,9 @@ import pytz
 import flatdict as fd
 import numpy as np
 
-from pynxtools_apm.utils.string_conversions import string_to_number
+from pynxtools_apm.utils.string_conversions import string_to_number, rchop
 from pynxtools_apm.utils.interpret_boolean import try_interpret_as_boolean
+from pynxtools_apm.utils.get_file_checksum import get_sha256_of_file_content
 
 
 def variadic_path_to_specific_path(path: str, instance_identifier: list):
@@ -73,23 +74,23 @@ def add_specific_metadata(
     if "use" in concept_mapping:
         for entry in concept_mapping["use"]:
             if isinstance(entry, tuple):
-                trg = variadic_path_to_specific_path(
-                    f"{variadic_prefix_trg}/{entry[0]}", identifier
-                )
-                template[f"{trg}"] = entry[1]
+                if len(entry) == 2:
+                    trg = variadic_path_to_specific_path(
+                        f"{variadic_prefix_trg}/{entry[0]}", identifier
+                    )
+                    template[f"{trg}"] = entry[1]
     if "map_to_str" in concept_mapping:
         for entry in concept_mapping["map_to_str"]:
+            if isinstance(entry, str):
+                if f"{prefix_src}{entry}" not in orgmeta:
+                    continue
+                trg = variadic_path_to_specific_path(
+                    f"{variadic_prefix_trg}/{entry}", identifier
+                )
+                template[f"{trg}"] = orgmeta[f"{prefix_src}{entry}"]
             if isinstance(entry, tuple):
-                if len(entry) == 1:
-                    if isinstance(entry[0], str):
-                        if f"{prefix_src}{entry[0]}" not in orgmeta:
-                            continue
-                        trg = variadic_path_to_specific_path(
-                            f"{variadic_prefix_trg}/{entry[0]}", identifier
-                        )
-                        template[f"{trg}"] = orgmeta[f"{prefix_src}{entry[0]}"]
-                elif len(entry) == 2:
-                    if isinstance(entry[0], str) and isinstance(entry[1], str):
+                if len(entry) == 2:
+                    if all(isinstance(elem, str) for elem in entry):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
                         trg = variadic_path_to_specific_path(
@@ -98,19 +99,18 @@ def add_specific_metadata(
                         template[f"{trg}"] = orgmeta[f"{prefix_src}{entry[1]}"]
     if "map_to_bool" in concept_mapping:
         for entry in concept_mapping["map_to_bool"]:
+            if isinstance(entry, str):
+                if f"{prefix_src}{entry[0]}" not in orgmeta:
+                    continue
+                    trg = variadic_path_to_specific_path(
+                        f"{variadic_prefix_trg}/{entry[0]}", identifier
+                    )
+                    template[f"{trg}"] = try_interpret_as_boolean(
+                        orgmeta[f"{prefix_src}{entry[0]}"]
+                    )
             if isinstance(entry, tuple):
-                if len(entry) == 1:
-                    if isinstance(entry[0], str):
-                        if f"{prefix_src}{entry[0]}" not in orgmeta:
-                            continue
-                        trg = variadic_path_to_specific_path(
-                            f"{variadic_prefix_trg}/{entry[0]}", identifier
-                        )
-                        template[f"{trg}"] = try_interpret_as_boolean(
-                            orgmeta[f"{prefix_src}{entry[0]}"]
-                        )
-                elif len(entry) == 2:
-                    if isinstance(entry[0], str) and isinstance(entry[1], str):
+                if len(entry) == 2:
+                    if all(isinstance(elem, str) for elem in entry):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
                         trg = variadic_path_to_specific_path(
@@ -121,17 +121,19 @@ def add_specific_metadata(
                         )
     if "map_to_real" in concept_mapping:
         for entry in concept_mapping["map_to_real"]:
+            if isinstance(entry, str):
+                if isinstance(entry[0], str):
+                    if f"{prefix_src}{entry[0]}" not in orgmeta:
+                        continue
+                    trg = variadic_path_to_specific_path(
+                        f"{variadic_prefix_trg}/{entry[0]}", identifier
+                    )
+                    template[f"{trg}"] = string_to_number(
+                        orgmeta[f"{prefix_src}{entry[0]}"]
+                    )
             if isinstance(entry, tuple):
-                if len(entry) == 1:
-                    if isinstance(entry[0], str):
-                        trg = variadic_path_to_specific_path(
-                            f"{variadic_prefix_trg}/{entry[0]}", identifier
-                        )
-                        template[f"{trg}"] = string_to_number(
-                            orgmeta[f"{prefix_src}{entry[0]}"]
-                        )
-                elif len(entry) == 2:
-                    if isinstance(entry[1], str):
+                if len(entry) == 2:
+                    if all(isinstance(elem, str) for elem in entry):
                         if f"{prefix_src}{entry[1]}" not in orgmeta:
                             continue
                         trg = variadic_path_to_specific_path(
@@ -140,7 +142,7 @@ def add_specific_metadata(
                         template[f"{trg}"] = string_to_number(
                             orgmeta[f"{prefix_src}{entry[1]}"]
                         )
-                    elif isinstance(entry[1], list):
+                    elif isinstance(entry[0], str) and isinstance(entry[1], list):
                         if not all(
                             (
                                 isinstance(value, str)
@@ -160,58 +162,102 @@ def add_specific_metadata(
                         template[f"{trg}"] = np.asarray(res, np.float64)
     if "map_to_real_and_multiply" in concept_mapping:
         for entry in concept_mapping["map_to_real_and_multiply"]:
-            if isinstance(entry, tuple) and len(entry) == 3:
-                if isinstance(entry[1], str) and isinstance(entry[2], float):
-                    if f"{prefix_src}{entry[1]}" not in orgmeta:
-                        continue
-                    trg = variadic_path_to_specific_path(
-                        f"{variadic_prefix_trg}/{entry[0]}", identifier
-                    )
-                    template[f"{trg}"] = entry[2] * string_to_number(
-                        orgmeta[f"{prefix_src}{entry[1]}"]
-                    )
+            if isinstance(entry, tuple):
+                if len(entry) == 3:
+                    if (
+                        isinstance(entry[0], str)
+                        and isinstance(entry[1], str)
+                        and isinstance(entry[2], float)
+                    ):
+                        if f"{prefix_src}{entry[1]}" not in orgmeta:
+                            continue
+                        trg = variadic_path_to_specific_path(
+                            f"{variadic_prefix_trg}/{entry[0]}", identifier
+                        )
+                        template[f"{trg}"] = entry[2] * string_to_number(
+                            orgmeta[f"{prefix_src}{entry[1]}"]
+                        )
     if "map_to_real_and_join" in concept_mapping:
         for entry in concept_mapping["map_to_real_and_join"]:
-            trg = variadic_path_to_specific_path(
-                f"{variadic_prefix_trg}/{entry[0]}", identifier
-            )
-            if isinstance(entry[1], list):
-                if not all(
-                    (isinstance(value, str) and f"{prefix_src}{value}" in orgmeta)
-                    for value in entry[1]
-                ):
-                    continue
-                res = []
-                for value in entry[1]:
-                    res.append(string_to_number(orgmeta[f"{prefix_src}{value}"]))
-                template[f"{trg}"] = np.asarray(res)
-            # we may need to be more specific with the return datatype here
+            if isinstance(entry, tuple):
+                if len(entry) == 2:
+                    if isinstance(entry[0], str) and isinstance(entry[1], list):
+                        trg = variadic_path_to_specific_path(
+                            f"{variadic_prefix_trg}/{entry[0]}", identifier
+                        )
+                        if not all(
+                            (
+                                isinstance(value, str)
+                                and f"{prefix_src}{value}" in orgmeta
+                            )
+                            for value in entry[1]
+                        ):
+                            continue
+                        res = []
+                        for value in entry[1]:
+                            res.append(
+                                string_to_number(orgmeta[f"{prefix_src}{value}"])
+                            )
+                        template[f"{trg}"] = np.asarray(res)
+            # we may need to be more specific with the return datatype here, currently default python float
     if "unix_to_iso8601" in concept_mapping:
         for entry in concept_mapping["unix_to_iso8601"]:
-            trg = variadic_path_to_specific_path(
-                f"{variadic_prefix_trg}/{entry[0]}", identifier
-            )
-            if isinstance(entry[1], str):
-                if f"{prefix_src}{entry[1]}" not in orgmeta:
-                    continue
-                template[f"{trg}"] = datetime.fromtimestamp(
-                    int(orgmeta[f"{prefix_src}{entry[1]}"]), tz=pytz.timezone("UTC")
-                ).isoformat()
-                # TODO::is this really a UNIX timestamp
-                # what about the timezone needs clarification from scientists !!!
+            if isinstance(entry, tuple):
+                if (
+                    2 <= len(entry) <= 3
+                ):  # trg, src, timestamp or empty string (meaning utc)
+                    if all(isinstance(elem, str) for elem in entry):
+                        if f"{prefix_src}{entry[1]}" not in orgmeta:
+                            continue
+                        tzone = "UTC"
+                        if len(entry) == 3:
+                            tzone = entry[2]
+                        if tzone not in pytz.all_timezones:
+                            raise ValueError(
+                                f"{tzone} is not a timezone in pytz.all_timezones!"
+                            )
+                        trg = variadic_path_to_specific_path(
+                            f"{variadic_prefix_trg}/{entry[0]}", identifier
+                        )
+                        template[f"{trg}"] = datetime.fromtimestamp(
+                            int(orgmeta[f"{prefix_src}{entry[1]}"]),
+                            tz=pytz.timezone(tzone),
+                        ).isoformat()
     if "join_str" in concept_mapping:
         for entry in concept_mapping["join_str"]:
-            trg = variadic_path_to_specific_path(
-                f"{variadic_prefix_trg}/{entry[0]}", identifier
-            )
-            if isinstance(entry[1], list):
-                if not all(
-                    (isinstance(value, str) and f"{prefix_src}{value}" in orgmeta)
-                    for value in entry[1]
-                ):
-                    continue
-                res = []
-                for value in entry[1]:
-                    res.append(orgmeta[f"{prefix_src}{value}"])
-                template[f"{trg}"] = " ".join(res)
+            if isinstance(entry, tuple):
+                if len(entry) == 2:
+                    if isinstance(entry[0], str) and isinstance(entry[1], list):
+                        if not all(
+                            (
+                                isinstance(value, str)
+                                and f"{prefix_src}{value}" in orgmeta
+                            )
+                            for value in entry[1]
+                        ):
+                            continue
+                        trg = variadic_path_to_specific_path(
+                            f"{variadic_prefix_trg}/{entry[0]}", identifier
+                        )
+                        res = []
+                        for value in entry[1]:
+                            res.append(orgmeta[f"{prefix_src}{value}"])
+                        template[f"{trg}"] = " ".join(res)
+    if "sha256" in concept_mapping:
+        for entry in concept_mapping["sha256"]:
+            if isinstance(entry, tuple):
+                if len(entry) == 2:
+                    if all(isinstance(elem, str) for elem in entry):
+                        trg = variadic_path_to_specific_path(
+                            f"{variadic_prefix_trg}/{entry[0]}", identifier
+                        )
+                        with open(orgmeta[f"{prefix_src}/{entry[1]}"], "rb") as fp:
+                            template[f"{rchop(trg, 'checksum')}checksum"] = (
+                                get_sha256_of_file_content(fp)
+                            )
+                            template[f"{rchop(trg, 'checksum')}file"] = "file"
+                            template[f"{rchop(trg, 'checksum')}path"] = orgmeta[
+                                f"{prefix_src}/{entry[1]}"
+                            ]
+                            template[f"{rchop(trg, 'checksum')}algorithm"] = "SHA256"
     return template

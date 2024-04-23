@@ -19,7 +19,7 @@
 
 from typing import Tuple, Dict, List
 
-from pynxtools_apm.concepts.mapping_functors import (
+from pynxtools_apm.concepts.mapping_functors_two import (
     variadic_path_to_specific_path,
 )
 from pynxtools_apm.utils.get_file_checksum import (
@@ -112,7 +112,7 @@ class ApmUseCaseSelector:
                     recon_input += len(value)
         # print(f"{recon_input}, {range_input}, {other_input}")
 
-        if (recon_input == 1) and (range_input == 1) and (1 <= other_input <= 2):
+        if 1 <= other_input <= 2:  # and (recon_input == 1) and (range_input == 1)
             self.is_valid = True
             self.reconstruction: List[str] = []
             self.ranging: List[str] = []

@@ -43,7 +43,7 @@ import datetime as dt
 from pynxtools_apm.utils.versioning import NX_APM_ADEF_NAME
 
 
-APM_OASIS_TO_NEXUS_CFG = {
+APM_OASISCONFIG_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
     "use": [
         ("definition", f"{NX_APM_ADEF_NAME}"),
@@ -56,13 +56,7 @@ APM_OASIS_TO_NEXUS_CFG = {
 }
 
 
-APM_EXAMPLE_TO_NEXUS_CFG = {
-    "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
-    "map_to_str": [("doi"), ("description")],
-}
-
-
-APM_CSYS_MCSTASLIKE_TO_NEXUS_CFG = {
+APM_CSYS_MCSTASLIKE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]",
     "use": [
         (
@@ -91,4 +85,10 @@ APM_CSYS_MCSTASLIKE_TO_NEXUS_CFG = {
             "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else",
         ),
     ],
+}
+
+
+APM_EXAMPLE_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
+    "map_to_str": [("doi"), ("description")],
 }

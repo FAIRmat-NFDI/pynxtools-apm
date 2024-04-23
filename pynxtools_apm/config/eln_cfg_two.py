@@ -17,9 +17,9 @@
 #
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
-ENTRY_TO_NEXUS = {
+APM_ENTRY_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
-    "prefix_src": "entry",
+    "prefix_src": "entry/",
     "map_to_str": [
         ("experiment_alias", "run_number"),
         ("run_number"),
@@ -32,9 +32,9 @@ ENTRY_TO_NEXUS = {
 }
 
 
-SAMPLE_TO_NEXUS = {
+APM_SAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/sample",
-    "prefix_src": "sample",
+    "prefix_src": "sample/",
     "use": [("method", "experiment")],
     "map_to_real": [
         ("grain_diameter", "grain_diameter/value"),
@@ -66,9 +66,9 @@ SAMPLE_TO_NEXUS = {
 }
 
 
-SPECIMEN_TO_NEXUS = {
+APM_SPECIMEN_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
-    "prefix_src": "specimen",
+    "prefix_src": "specimen/",
     "map_to_str": [
         ("alias"),
         ("preparation_date"),
@@ -84,9 +84,9 @@ SPECIMEN_TO_NEXUS = {
 }
 
 
-INSTRUMENT_STATIC_TO_NEXUS = {
+APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
-    "prefix_src": "atom_probe",
+    "prefix_src": "atom_probe/",
     "map_to_str": [
         ("status"),
         ("instrument_name"),
@@ -103,9 +103,9 @@ INSTRUMENT_STATIC_TO_NEXUS = {
 }
 
 
-INSTRUMENT_DYNAMIC_TO_NEXUS = {
+APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument",
-    "prefix_src": "atom_probe",
+    "prefix_src": "atom_probe/",
     "use": [("control/target_detection_rate/@units", "ions/pulse")],
     "map_to_str": [
         ("control/evaporation_control", "evaporation_control"),
@@ -123,9 +123,9 @@ INSTRUMENT_DYNAMIC_TO_NEXUS = {
 }
 
 
-RANGE_TO_NEXUS = {
+APM_RANGE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
-    "prefix_src": "ranging",
+    "prefix_src": "ranging/",
     "map_to_str": [
         ("programID[program1]/program", "program"),
         ("programID[program1]/program/@version", "program_version"),
@@ -133,9 +133,9 @@ RANGE_TO_NEXUS = {
 }
 
 
-RECON_TO_NEXUS = {
+APM_RECON_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
-    "prefix_src": "reconstruction",
+    "prefix_src": "reconstruction/",
     "map_to_str": [
         ("programID[program1]/program", "program"),
         ("programID[program1]/program/@version", "program_version"),
@@ -148,9 +148,9 @@ RECON_TO_NEXUS = {
 }
 
 
-WORKFLOW_TO_NEXUS = {
+APM_WORKFLOW_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe",
-    "prefix_src": "workflow",
+    "prefix_src": "workflow/",
     "sha256": [
         ("raw_data/SERIALIZED[serialized]/checksum", "raw_dat_file"),
         ("hit_finding/SERIALIZED[serialized]/checksum", "hit_dat_file"),
@@ -162,7 +162,7 @@ WORKFLOW_TO_NEXUS = {
 # NOMAD Oasis custom schema implementation delivers them as a list of dictionaries instead
 # of a directly flattenable list of key, value pairs
 
-APM_EXAMPLE_USER_TO_NEXUS = {
+APM_USER_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
     "use": [("IDENTIFIER[identifier]/is_persistent", False)],
     "map_to_str": [
