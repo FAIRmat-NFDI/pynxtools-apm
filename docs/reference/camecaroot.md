@@ -5,7 +5,7 @@ with software other than provided by Cameca. We have investigated the situation 
 of metadata have been documented by Cameca. In addition, we have done a successful proof-of-concept to explore a route of reading several pieces of information contained in all of these binary file formats using only Python.
 
 The main motivation for this was to explore a route that would enable automated mapping and normalizing of some of the metadata into NeXus via a simpler - programmatic approach - than having users to enter the information via e.g. electronic lab notebooks or supplementary files.
-The main motivation to access the binary file structure directly in contrast to using a library from Cern's ROOT ecosystem was that every
+The main motivation to access the binary file structure directly in contrast to using a library from [Cern's ROOT](https://root.cern/) ecosystem was that every
 tool which would include a ROOT-capable pynxtools-apm plugin would also have to install at least some part of the versatile but functionally
 rich ROOT library that may not be appropriate in all cases when working with already complex research data management system with their
 own dependencies.

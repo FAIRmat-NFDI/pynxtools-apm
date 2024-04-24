@@ -12,6 +12,7 @@ nav:
     - how-tos/howto.md
   - Learn:
     - explanation/learn.md
+    - explanation/performance.md
   - Reference:
     - reference/contextualization.md
     - reference/apt.md
