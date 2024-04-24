@@ -2,7 +2,10 @@
 ![](https://github.com/FAIRmat-NFDI/pynxtools-apm/actions/workflows/pytest.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools-apm/actions/workflows/pylint.yml/badge.svg)
 ![](https://github.com/FAIRmat-NFDI/pynxtools-apm/actions/workflows/publish.yml/badge.svg)
-![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools_apm/badge.svg?branch=master)
+![](https://img.shields.io/pypi/pyversions/pynxtools-apm)
+![](https://img.shields.io/pypi/l/pynxtools-apm)
+![](https://img.shields.io/pypi/v/pynxtools-apm)
+![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools-apm/badge.svg?branch=main)
 
 # A parser and normalizer for atom probe tomography and field-ion microscopy data
 
@@ -25,7 +28,7 @@ within the field of atom probe tomography and field-ion microscopy into a standa
 
 ## Supported file formats
 This plugin supports the majority of the file formats that are currently used for atom probe.
-A detailed summary is available in the [reference section of the documentation](https://fairmat-nfdi.github.io/pynxtools-apm/pynxtools-apm).
+A detailed summary is available in the [reference section of the documentation](https://fairmat-nfdi.github.io/pynxtools-apm).
 
 # Getting started
 [A getting started tutorial](https://github.com/FAIRmat-NFDI/pynxtools-apm/tree/main/examples) is offered that guides you
