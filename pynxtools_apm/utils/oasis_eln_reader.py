@@ -59,8 +59,8 @@ class NxApmNomadOasisElnSchemaParser:
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
         print(f"Extracting data from ELN file: {file_path}")
         if (
-            file_path.rsplit("/", 1)[-1].startswith("eln_data")
-            or file_path.startswith("eln_data")
+            file_path.rsplit("/", 1)[-1].endswith("eln_data.yaml")
+            or file_path.rsplit("/", 1)[-1].endswith("eln_data.yml")
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path

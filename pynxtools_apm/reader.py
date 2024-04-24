@@ -114,7 +114,7 @@ class APMReader(BaseReader):
 
             if len(case.eln) == 1:
                 print("Parse (meta)data coming from an ELN...")
-                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id, True)
+                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
                 nx_apm_eln.parse(template)
             else:
                 print("No input file defined for eln data !")

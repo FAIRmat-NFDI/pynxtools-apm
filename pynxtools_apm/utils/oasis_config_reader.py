@@ -37,7 +37,7 @@ class NxApmNomadOasisConfigurationParser:
         )
         if (
             file_path.rsplit("/", 1)[-1].endswith(".oasis.specific.yaml")
-            or file_path.endswith(".oasis.specific.yml")
+            or file_path.rsplit("/", 1)[-1].endswith(".oasis.specific.yml")
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
