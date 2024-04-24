@@ -39,6 +39,9 @@ This is the place where to add documentation of [diátaxis](https://diataxis.fr)
 
 This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type explanation.
 
+- [Scope and idea](explanation/learn.md)
+- [Known performance issues](explanation/performance.md)
+
 </div>
 <div markdown="block">
 
