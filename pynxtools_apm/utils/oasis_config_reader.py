@@ -19,6 +19,7 @@
 
 import flatdict as fd
 import yaml
+import pathlib
 
 from pynxtools_apm.concepts.mapping_functors import add_specific_metadata
 from pynxtools_apm.config.oasis_cfg import (
@@ -36,8 +37,8 @@ class NxApmNomadOasisConfigurationParser:
             f"Extracting data from deployment-specific configuration file: {file_path}"
         )
         if (
-            file_path.rsplit("/", 1)[-1].endswith(".oasis.specific.yaml")
-            or file_path.rsplit("/", 1)[-1].endswith(".oasis.specific.yml")
+            pathlib.Path(file_path).name.endswith(".oasis.specific.yaml")
+            or pathlib.Path(file_path).name.endswith(".oasis.specific.yml")
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path

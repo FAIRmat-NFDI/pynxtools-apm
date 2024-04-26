@@ -19,6 +19,7 @@
 
 import flatdict as fd
 import yaml
+import pathlib
 
 from ase.data import chemical_symbols
 from pynxtools_apm.config.eln_cfg import (
@@ -59,8 +60,8 @@ class NxApmNomadOasisElnSchemaParser:
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
         print(f"Extracting data from ELN file: {file_path}")
         if (
-            file_path.rsplit("/", 1)[-1].endswith("eln_data.yaml")
-            or file_path.rsplit("/", 1)[-1].endswith("eln_data.yml")
+            pathlib.Path(file_path).name.endswith("eln_data.yaml")
+            or pathlib.Path(file_path).name.endswith("eln_data.yml")
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
