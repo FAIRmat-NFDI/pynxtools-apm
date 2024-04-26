@@ -233,7 +233,7 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
 def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dict:
     """Add those required information which an RRNG file has."""
     print(f"Extracting data from RRNG file: {file_path}")
-    rangefile = ReadRrngFileFormat(file_path)
+    rangefile = ReadRrngFileFormat(file_path, unique=False)
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         print(WARNING_TOO_MANY_DEFINITIONS)
 
