@@ -326,6 +326,8 @@ def add_specific_metadata(
                 if len(entry) == 2:
                     if not all(isinstance(elem, str) for elem in entry):
                         continue
+                    if f"{prefix_src}{entry[1]}" not in orgmeta:
+                        continue
                     if orgmeta[f"{prefix_src}{entry[1]}"] == "":
                         continue
                     trg = variadic_path_to_specific_path(
