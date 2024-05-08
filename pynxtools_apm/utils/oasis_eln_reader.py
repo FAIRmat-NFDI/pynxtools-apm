@@ -148,11 +148,11 @@ class NxApmNomadOasisElnSchemaParser:
     def parse_pulser_source(self, template: dict) -> dict:
         """Copy data into the (laser)/source section of the pulser."""
         # additional laser-specific details only relevant when the laser was used
-        if "atom_probe/pulser/pulse_mode" in self.yml:
-            if self.yml["atom_probe/pulser/pulse_mode"] == "voltage":
+        if "instrument/pulser/pulse_mode" in self.yml:
+            if self.yml["instrument/pulser/pulse_mode"] == "voltage":
                 return template
 
-        src = "atom_probe/pulser/laser_source"
+        src = "instrument/pulser/laser_source"
         if src in self.yml.keys():
             if isinstance(self.yml[src], list):
                 if all(isinstance(entry, dict) for entry in self.yml[src]) is True:

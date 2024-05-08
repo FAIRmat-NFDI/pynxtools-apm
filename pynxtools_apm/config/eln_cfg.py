@@ -86,7 +86,7 @@ APM_SPECIMEN_TO_NEXUS = {
 
 APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
-    "prefix_src": "atom_probe/",
+    "prefix_src": "instrument/",
     "map": [("analysis_chamber/flight_path", "nominal_flight_path/value")],
     "map_to_str": [
         "status",
@@ -105,7 +105,7 @@ APM_INSTRUMENT_STATIC_TO_NEXUS = {
 
 APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument",
-    "prefix_src": "atom_probe/",
+    "prefix_src": "instrument/",
     "use": [("control/target_detection_rate/@units", "ions/pulse")],
     "map": [
         ("control/target_detection_rate", "target_detection_rate"),
