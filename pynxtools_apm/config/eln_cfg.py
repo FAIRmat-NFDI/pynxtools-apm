@@ -180,7 +180,7 @@ APM_USER_TO_NEXUS = {
 APM_IDENTIFIER_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
     "use": [
-        ("IDENTIFIER[identifier]/is_persistent", False),
+        ("IDENTIFIER[identifier]/is_persistent", True),
         ("IDENTIFIER[identifier]/service", "orcid"),
     ],
     "map_to_str": [
