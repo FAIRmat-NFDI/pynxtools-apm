@@ -147,7 +147,9 @@ jsonschema[format-nongpl]==4.21.1
 jsonschema-specifications==2023.12.1
     # via jsonschema
 jupyter==1.0.0
-    # via ifes-apt-tc-data-modeling
+    # via
+    #   ifes-apt-tc-data-modeling
+    #   pynxtools-apm (pyproject.toml)
 jupyter-client==8.6.1
     # via
     #   ipykernel
@@ -186,8 +188,11 @@ jupyterlab==4.1.7
     # via
     #   ifes-apt-tc-data-modeling
     #   notebook
+    #   pynxtools-apm (pyproject.toml)
 jupyterlab-h5web==12.1.0
-    # via ifes-apt-tc-data-modeling
+    # via
+    #   ifes-apt-tc-data-modeling
+    #   pynxtools-apm (pyproject.toml)
 jupyterlab-pygments==0.3.0
     # via nbconvert
 jupyterlab-server==2.27.1
