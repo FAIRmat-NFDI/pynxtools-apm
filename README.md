@@ -32,9 +32,8 @@ A detailed summary is available in the [reference section of the documentation](
 
 # Getting started
 [A getting started tutorial](https://github.com/FAIRmat-NFDI/pynxtools-apm/tree/main/examples) is offered that guides you
-how to use the apm reader for converting your data to NeXus from a Jupyter notebook. Note that not every combination of
-supported file formats and input for the parser allows to fill required and recommended fields and attributes of the NXapm
-application definition. Therefore, you may need to provide an ELN file that contains the missing values in order for the
+how to use the apm reader for converting your data to NeXus using a Jupyter notebook. That notebook details also the commands how to convert data via command line calls. Note that not every combination of input from a supported file format and other, typically electronic lab notebook, input for the parser allows filling the required and recommended fields and attributes of the NXapm application definition.
+Therefore, you may need to provide an ELN file that contains the missing values in order for the
 validation step of the APM reader to pass.
 
 # Contributing
@@ -49,7 +48,7 @@ git clone https://github.com/FAIRmat-NFDI/pynxtools-apm.git --branch main --recu
 cd pynxtools_apm
 python -m pip install --upgrade pip
 python -m pip install -e .
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,docs]"
 ```
 
 <!---There is also a [pre-commit hook](https://pre-commit.com/#intro) available
@@ -71,4 +70,4 @@ python -m pytest -sv tests
 ```
 
 ## Contact person in FAIRmat for this reader
-Markus Kühbach
+[Markus Kühbach](https://www.fairmat-nfdi.eu/fairmat/about-fairmat/team-fairmat)

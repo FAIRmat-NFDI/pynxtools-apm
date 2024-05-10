@@ -105,7 +105,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     axes = []
     for dim in dims:
         axes.append(f"axis_{dim}")
-        template[f"{trg}@AXISNAME_indices[axis_{dim}]"] = np.uint32(col)
+        template[f"{trg}@AXISNAME_indices[axis_{dim}_indices]"] = np.uint32(col)
         col += 1
     template[f"{trg}@axes"] = axes
 
@@ -169,7 +169,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     )
     template[f"{trg}@signal"] = "intensity"
     template[f"{trg}@axes"] = "axis_mass_to_charge"
-    template[f"{trg}@AXISNAME_indices[axis_mass_to_charge]"] = np.uint32(0)
+    template[f"{trg}@AXISNAME_indices[axis_mass_to_charge_indices]"] = np.uint32(0)
     template[f"{trg}DATA[intensity]"] = {
         "compress": np.asarray(hist1d[0], np.uint32),
         "strength": 1,
