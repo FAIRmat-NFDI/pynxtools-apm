@@ -44,7 +44,6 @@ from pynxtools_apm.utils.load_ranging import (
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
 from pynxtools_apm.utils.versioning import (
-    NX_APM_ADEF_NAME,
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
 )

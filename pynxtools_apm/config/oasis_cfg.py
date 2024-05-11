@@ -40,8 +40,6 @@
 
 import datetime as dt
 
-from pynxtools_apm.utils.versioning import NX_APM_ADEF_NAME
-
 APM_OASISCONFIG_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
     "use": [

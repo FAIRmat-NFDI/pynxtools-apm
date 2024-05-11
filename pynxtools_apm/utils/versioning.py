@@ -20,10 +20,6 @@
 from pynxtools_apm.utils.get_gitrepo_commit import get_repo_last_commit
 
 
-NX_APM_ADEF_NAME = "NXapm"
-NX_APM_EXEC_NAME = "pynxtools-apm/reader.py"
-
-
 def get_apm_exec_version() -> str:
     tag = get_repo_last_commit()
     if tag is not None:
@@ -34,6 +30,7 @@ def get_apm_exec_version() -> str:
         )
 
 
+NX_APM_EXEC_NAME = "pynxtools-apm/reader.py"
 NX_APM_EXEC_VERSION = get_apm_exec_version()
 
 # numerics
