@@ -20,40 +20,33 @@
 # MK::2023/05/04 the code in this file can currently not be used when
 # developers have an environment which uses ase==3.19.0 and numpy>=1.2x
 
-import hashlib
-
 import datetime
-
+import hashlib
 from typing import List
 
-import numpy as np
-
 import ase
+import numpy as np
+from ase.data import atomic_masses, atomic_numbers, chemical_symbols
 from ase.lattice.cubic import FaceCenteredCubic
-from ase.data import atomic_numbers, atomic_masses, chemical_symbols
-
 from ifes_apt_tc_data_modeling.utils.utils import (
-    create_nuclide_hash,
-    nuclide_hash_to_nuclide_list,
-    nuclide_hash_to_human_readable_name,
     MAX_NUMBER_OF_ATOMS_PER_ION,
     MQ_EPSILON,
-)
-
-# do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
-# from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
-#     import isotopes
-
-from pynxtools_apm.utils.versioning import (
-    NX_APM_ADEF_NAME,
-    NX_APM_EXEC_NAME,
-    NX_APM_EXEC_VERSION,
+    create_nuclide_hash,
+    nuclide_hash_to_human_readable_name,
+    nuclide_hash_to_nuclide_list,
 )
 
 from pynxtools_apm.utils.load_ranging import (
     add_unknown_iontype,
 )
 
+# do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
+# from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
+#     import isotopes
+from pynxtools_apm.utils.versioning import (
+    NX_APM_EXEC_NAME,
+    NX_APM_EXEC_VERSION,
+)
 
 # parameter affecting reconstructed positions and size
 CRYSTAL_ORIENTATION = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -313,7 +306,6 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # print("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
-        template[f"{trg}definition"] = NX_APM_ADEF_NAME
         template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
         template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()

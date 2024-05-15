@@ -40,13 +40,9 @@
 
 import datetime as dt
 
-from pynxtools_apm.utils.versioning import NX_APM_ADEF_NAME
-
-
 APM_OASISCONFIG_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
     "use": [
-        ("definition", f"{NX_APM_ADEF_NAME}"),
         (
             "start_time",
             f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
