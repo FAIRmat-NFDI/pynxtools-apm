@@ -2,8 +2,7 @@
 
 ## Who is this tutorial for?
 
-This document is for people who want to standardize their research data by converting these
-into a NeXus standardized format.
+This document is for people who want to standardize their research data by converting these into a NeXus standardized format.
 
 ## What should you should know before this tutorial?
 

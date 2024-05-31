@@ -16,8 +16,7 @@ hide: toc
 <div markdown="block">
 
 ### Tutorial
-
-This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type tutorial.
+<!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type tutorial.-->
 
 - [Convert atom probe content to NeXus](tutorial/standalone.md)
 - [How to use a NeXus/HDF5 file](tutorial/nexusio.md)
@@ -27,27 +26,23 @@ This is the place where to add documentation of [diátaxis](https://diataxis.fr)
 <div markdown="block">
 
 ### How-to guides
-
-This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type how-to guides.
+<!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type how-to guides.-->
 
 
 </div>
-
 <div markdown="block">
 
 ### Learn
-
-This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type explanation.
+<!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type explanation.-->
 
 - [Scope and idea](explanation/learn.md)
-- [Known performance issues](explanation/performance.md)
+- [Known issues](explanation/performance.md)
 
 </div>
 <div markdown="block">
 
 ### Reference
-
-This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type reference.
+<!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type reference.-->
 Here you can learn which specific pieces of information and concepts the plugin supports for the
 respective file formats of the atom probe tomography and field-ion microscopy communities.
 
