@@ -86,5 +86,5 @@ APM_CSYS_MCSTASLIKE_TO_NEXUS = {
 
 APM_EXAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
-    "map_to_str": [("doi"), ("description")],
+    "map_to_str": [("authors"), ("doi"), ("description"), ("url")],
 }

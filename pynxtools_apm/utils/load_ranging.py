@@ -18,34 +18,35 @@
 
 """Wrapping multiple parsers for vendor files with ranging definition files."""
 
-from typing import Dict, Any
-import numpy as np
+from typing import Any, Dict
 
+import numpy as np
 from ase.data import chemical_symbols
-from ifes_apt_tc_data_modeling.utils.utils import (
-    create_nuclide_hash,
-    nuclide_hash_to_nuclide_list,
-    nuclide_hash_to_human_readable_name,
-)
-from ifes_apt_tc_data_modeling.utils.definitions import (
-    MAX_NUMBER_OF_ATOMS_PER_ION,
-    MQ_EPSILON,
-    MAX_NUMBER_OF_ION_SPECIES,
-)
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
+from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
 from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptRangingFileFormat,
 )
-from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
 from ifes_apt_tc_data_modeling.rng.rng_reader import ReadRngFileFormat
 from ifes_apt_tc_data_modeling.rrng.rrng_reader import ReadRrngFileFormat
+from ifes_apt_tc_data_modeling.utils.definitions import (
+    MAX_NUMBER_OF_ATOMS_PER_ION,
+    MAX_NUMBER_OF_ION_SPECIES,
+    MQ_EPSILON,
+)
+from ifes_apt_tc_data_modeling.utils.utils import (
+    create_nuclide_hash,
+    nuclide_hash_to_human_readable_name,
+    nuclide_hash_to_nuclide_list,
+)
+
+from pynxtools_apm.utils.io_case_logic import (
+    VALID_FILE_NAME_SUFFIX_RANGE,
+)
 from pynxtools_apm.utils.versioning import (
     NX_APM_EXEC_NAME,
     NX_APM_EXEC_VERSION,
-)
-from pynxtools_apm.utils.io_case_logic import (
-    VALID_FILE_NAME_SUFFIX_RANGE,
 )
 
 WARNING_TOO_MANY_DEFINITIONS = (
@@ -94,6 +95,11 @@ def add_standardize_molecular_ions(
 
         if ion.charge_state_model["n_cand"] > 0:
             path = f"{trg}ionID[ion{ion_id}]/charge_state_analysis/"
+            template[f"{path}nuclides"] = np.asarray(ion.nuclide_hash.values, np.uint16)
+            template[f"{path}mass_to_charge_range"] = np.asarray(
+                ion.ranges.values, np.float32
+            )
+            template[f"{path}mass_to_charge_range/@units"] = "Da"  # ion.ranges.unit
             template[f"{path}min_abundance"] = np.float64(
                 ion.charge_state_model["min_abundance"]
             )
@@ -123,7 +129,7 @@ def add_standardize_molecular_ions(
                     ion.charge_state_model["shortest_half_life"]
                 )
                 template[f"{path}shortest_half_life/@units"] = "s"
-            else:
+            elif ion.charge_state_model["n_cand"] > 1:
                 template[f"{path}nuclide_hash"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["nuclide_hash"], np.uint16
