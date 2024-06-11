@@ -3,13 +3,20 @@ hide: toc
 ---
 
 # pynxtools-apm documentation
+pynxtools-apm is a free and open-source data software for creating standardized semantic serializations of atom probe tomography and related field-ion microscopy data and metadata for research data management using NeXus, implemented with the goal to make scientific research data FAIR (findable, accessible, interoperable and reusable).
+
+pynxtools-apm, which is a plugin for pynxtools, provides a tool for reading data from various proprietary and open data formats from technology partners of the
+atom probe community and standardizing it such that it is compliant with the NeXus application definition NXapm.
+
+pynxtools-apm is developed both as a standalone reader and as a tool within NOMAD, which is the open-source research data management platform for Materials Science that is developed by the [FAIRmat consortium of the German National Research Data Infrastructure (German NFDI)](https://www.nfdi.de/consortia-fairmat/?lang=en).
+
+pynxtools-apm solves the challenge that comes with using heterogeneous and semantically ambiguous serialization formats that are commonly used in atom probe research. In addition, the plugin provides an interface for writing readers for different file formats to be mapped to NeXus.
+
+pynxtools-apm is useful for scientists from the atom probe community who deal with heterogeneous data, for technology partners, software developers, and data providers who search for ways to make their data more completely aligned with the aims of the FAIR principles.
 
 <!-- A single sentence that says what the product is, succinctly and memorably -->
-
 <!-- A paragraph of one to three short sentences, that describe what the product does. -->
-
 <!-- A third paragraph of similar length, this time explaining what need the product meets -->
-
 <!-- Finally, a paragraph that describes whom the product is useful for. -->
 
 <div markdown="block" class="home-grid">
@@ -66,3 +73,4 @@ respective file formats of the atom probe tomography and field-ion microscopy co
 </div>
 
 <h2>Project and community</h2>
+[The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – 460197019 (FAIRmat)](https://gepris.dfg.de/gepris/projekt/460197019?language=en).
