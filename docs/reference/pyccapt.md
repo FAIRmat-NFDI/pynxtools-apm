@@ -3,8 +3,8 @@
 [pyccapt](https://github.com/mmonajem/pyccapt) is an open-source control system for a custom-built atom probe as well as other instruments pioneered by Prof. Felfer and M. Monajem at the FAU Erlangen. The software is used to control their custom-built atom probe instrument
 OXCART. Pyccapt generates several HDF5 files which store key results and parameterization of an atom probe measurement.
 
-Pynxtools-apm can read all pieces of information that is stored in these files. Currently, exemplarily the following pieces of information are
-configured to be mapped by default on respective NeXus concepts.
+Pynxtools-apm can read all pieces of information that is stored in these files. Currently, the following pieces of information are
+configured to be mapped by default on respective NeXus concepts to serve as an example.
 
 | pyccapt reconstruction | NeXus/HDF5 |
 | --------------- | --------------  |

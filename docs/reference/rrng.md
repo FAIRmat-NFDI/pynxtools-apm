@@ -11,3 +11,6 @@ The RRNG file format is a text file format for storing ranging definitions that 
 The ifes_apt_tc_data_modeling library >=0.2.1 currently ignores these pieces of information.
 Occasionally, users define ions with custom name but unphysical details to it in an effort to
 enable a filtering of ions within specific mass-to-charge-state-ratio values. The ifes_apt_tc_data_modeling library >= 0.2.1 reads these iontypes but discards their custom name.
+
+In ifes_apt_tc_data_modeling library >= 0.2.2 offers functionalities which avoid that duplicated ranging definitions are imported as storing these is unnecessary.
+Pynxtools-apm==0.1.1 is configured to not take advantage of this functionality though.
