@@ -7,7 +7,7 @@ definitions:
   sections: # section definitions what were back in the old days msections
     AtomProbeMicroscopy: # the actual schema
       base_sections:
-        - 'nomad.datamodel.metainfo.eln.NexusDataConverter'
+        - 'pynxtools.nomad.dataconverter.NexusDataConverter'
         - 'nomad.datamodel.data.EntryData'
       m_annotations:
         # Here you can set your default values for the reader and nxdl.
