@@ -1,7 +1,10 @@
 site_name: pynxtools-apm
 site_description: |
   The documentation for the pynxtools-apm plugin
-site_author: The FAIRmat authors
+site_author: The NOMAD authors
+repo_url: https://github.com/FAIRmat-NFDI/pynxtools-apm
+edit_uri: ""
+
 nav:
   - Home: index.md
   - Tutorials:
@@ -29,11 +32,27 @@ nav:
     - reference/camecaroot.md
     - reference/mqanalysis.md
     - reference/atomtypes.md
+
+plugins:
+  - search
+  - macros:
+      module_name: src/pynxtools_apm/mkdocs
+
 theme:
   name: material
+  palette:
+    primary: '#2A4CDF'
+    accent: '#008A67'
+  font:
+    text: 'Titillium Web'
+  logo: assets/nomad-logo.png
+  favicon: assets/favicon.png
   features:
+    - navigation.instant
     - content.code.copy
     - content.code.annotate
+  custom_dir: docs/theme
+
 markdown_extensions:
   - attr_list
   - md_in_html
@@ -48,16 +67,24 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.emoji
+  - mkdocs-click
   - pymdownx.extra
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra:
+  generator: false
+  homepage: https://nomad-lab.eu
+
 use_directory_urls: false
-plugins:
-    - search
-    - macros:
-        module_name: docs/macros
+
 extra_css:
   - stylesheets/extra.css
+
+extra_javascript:
+  - javascript.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
