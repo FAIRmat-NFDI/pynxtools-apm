@@ -22,10 +22,10 @@ from typing import Tuple, Any
 import numpy as np
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from src.pynxtools_apm.utils.io_case_logic import (
+from pynxtools_apm.utils.io_case_logic import (
     ApmUseCaseSelector,
 )
-from src.pynxtools_apm.utils.oasis_config_reader import (
+from pynxtools_apm.utils.oasis_config_reader import (
     NxApmNomadOasisConfigurationParser,
 )
 from pynxtools_apm.utils.oasis_eln_reader import (
