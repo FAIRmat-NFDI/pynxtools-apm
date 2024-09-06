@@ -7,9 +7,9 @@
 ![](https://img.shields.io/pypi/v/pynxtools-apm)
 ![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools-apm/badge.svg?branch=main)
 
-# A parser and normalizer for atom probe tomography and field-ion microscopy data
+# Parse and normalize atom probe tomography and field-ion microscopy data
 
-# Installation
+## Installation
 It is recommended to use python 3.11 with a dedicated virtual environment for this package.
 Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
 [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
@@ -19,9 +19,11 @@ This package is a reader plugin for [`pynxtools`](https://github.com/FAIRmat-NFD
 pip install pynxtools[apm]
 ```
 
-for the latest development version.
+for the latest release version from [pypi](https://pypi.org/project/pynxtools-em/).
 
-# Purpose
+If you are interested in the newest version, we recommend to work with a development installation instead.
+
+## Purpose
 This reader plugin for [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) is used to translate diverse file formats from the scientific community and technology partners
 within the field of atom probe tomography and field-ion microscopy into a standardized representation using the
 [NeXus](https://www.nexusformat.org/) application definition [NXapm](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm.html#nxapm).
@@ -30,14 +32,12 @@ within the field of atom probe tomography and field-ion microscopy into a standa
 This plugin supports the majority of the file formats that are currently used for atom probe.
 A detailed summary is available in the [reference section of the documentation](https://fairmat-nfdi.github.io/pynxtools-apm).
 
-# Getting started
+## Getting started
 [A getting started tutorial](https://github.com/FAIRmat-NFDI/pynxtools-apm/tree/main/examples) is offered that guides you
-how to use the apm reader for converting your data to NeXus using a Jupyter notebook. That notebook details also the commands how to convert data via command line calls. Note that not every combination of input from a supported file format and other, typically electronic lab notebook, input for the parser allows filling the required and recommended fields and attributes of the NXapm application definition.
-Therefore, you may need to provide an ELN file that contains the missing values in order for the
-validation step of the APM reader to pass.
+on how to use the apm reader for converting your data to NeXus using a Jupyter notebook or command line calls. Note that not every combination of input from a supported file format and other input, such as from an electronic lab notebook, allows filling the required and recommended fields and their attributes of the NXapm application definition. Therefore, you may need to provide an ELN file that contains the missing values in order for the validation step of the APM reader to pass.
 
-# Contributing
-We are continously working on adding parsers for other data formats, technology partners, and atom probers.
+## Contributing
+We are continously working on improving the collection of parsers and their functionalities.
 If you would like to implement a parser for your data, feel free to get in contact.
 
 ## Development install
@@ -47,19 +47,12 @@ Install the package with its dependencies:
 git clone https://github.com/FAIRmat-NFDI/pynxtools-apm.git --branch main --recursive pynxtools_apm
 cd pynxtools_apm
 python -m pip install --upgrade pip
-python -m pip install -e .
 python -m pip install -e ".[dev,docs]"
-```
-
-<!---There is also a [pre-commit hook](https://pre-commit.com/#intro) available
-which formats the code and checks the linting before actually commiting.
-It can be installed with
-```shell
 pre-commit install
 ```
-from the root of this repository.
 
-## Development Notes-->
+The last line installs a [pre-commit hook](https://pre-commit.com/#intro) which
+automatically formats (linting) and type checks the code before committing.
 
 ## Test this software
 Especially relevant for developers, there exists a basic test framework written in

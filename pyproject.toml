@@ -22,7 +22,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools>=0.2.1",
+    "pint==0.17",
+    "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@bypass_v06",
     "ifes_apt_tc_data_modeling>=0.2.2",
 ]
 
@@ -31,32 +32,48 @@ dependencies = [
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools-apm/issues"
 
 [project.optional-dependencies]
+dev = [
+    "mypy",
+    "ruff==0.5.5",
+    "pytest",
+    "pytest-cov",
+    "pytest-timeout",
+    "pytest-cov",
+    "structlog",
+    "types-pyyaml",
+    "types-pytz",
+    "types-requests",
+    "pip-tools",
+    "uv",
+    "pre-commit",
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-h5web"
+]
 docs = [
     "mkdocs",
     "mkdocs-material",
     "mkdocs-material-extensions",
     "mkdocs-macros-plugin",
-]
-dev = [
-    "mypy",
-    "ruff==0.3.4",
-    "pytest",
-    "types-pyyaml",
-    "pip-tools",
-    "jupyter",
-    "jupyterlab",
-    "jupyterlab-h5web"
+    "mkdocs-click",
+    "markdown-include"
 ]
 
 [project.entry-points."pynxtools.reader"]
 apm = "pynxtools_apm.reader:APMReader"
+
+[tool.setuptools.packages.find]
+where = [
+    "src",
+]
+exclude = ["dev/*"]
 
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
 
 [tool.ruff]
-include = ["pynxtools_apm/*.py", "tests/*.py"]
+include = ["src/*.py", "tests/*.py"]
 line-length = 88
 indent-width = 4
 
