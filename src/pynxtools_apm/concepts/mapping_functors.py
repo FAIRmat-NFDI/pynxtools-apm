@@ -18,13 +18,14 @@
 """Utilities for working with NeXus concepts encoded as Python dicts in the concepts dir."""
 
 from datetime import datetime
-import pytz
+
 import flatdict as fd
 import numpy as np
+import pytz
 
-from pynxtools_apm.utils.string_conversions import string_to_number, rchop
-from pynxtools_apm.utils.interpret_boolean import try_interpret_as_boolean
 from pynxtools_apm.utils.get_file_checksum import get_sha256_of_file_content
+from pynxtools_apm.utils.interpret_boolean import try_interpret_as_boolean
+from pynxtools_apm.utils.string_conversions import rchop, string_to_number
 
 
 def variadic_path_to_specific_path(path: str, instance_identifier: list):
@@ -333,13 +334,18 @@ def add_specific_metadata(
                     trg = variadic_path_to_specific_path(
                         f"{variadic_prefix_trg}/{entry[0]}", identifier
                     )
-                    with open(orgmeta[f"{prefix_src}{entry[1]}"], "rb") as fp:
-                        template[f"{rchop(trg, 'checksum')}checksum"] = (
-                            get_sha256_of_file_content(fp)
+                    try:
+                        with open(orgmeta[f"{prefix_src}{entry[1]}"], "rb") as fp:
+                            template[f"{rchop(trg, 'checksum')}checksum"] = (
+                                get_sha256_of_file_content(fp)
+                            )
+                            template[f"{rchop(trg, 'checksum')}type"] = "file"
+                            template[f"{rchop(trg, 'checksum')}path"] = orgmeta[
+                                f"{prefix_src}{entry[1]}"
+                            ]
+                            template[f"{rchop(trg, 'checksum')}algorithm"] = "sha256"
+                    except (FileNotFoundError, IOError):
+                        print(
+                            f"File {orgmeta[f'''{prefix_src}{entry[1]}''']} not found !"
                         )
-                        template[f"{rchop(trg, 'checksum')}type"] = "file"
-                        template[f"{rchop(trg, 'checksum')}path"] = orgmeta[
-                            f"{prefix_src}{entry[1]}"
-                        ]
-                        template[f"{rchop(trg, 'checksum')}algorithm"] = "sha256"
     return template

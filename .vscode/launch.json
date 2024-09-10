@@ -12,11 +12,14 @@
             "program": "../.py3.12.4/bin/dataconverter",
             "args": [//"convert",
                      "tests/data/eln/eln_data.yaml",
+                     "tests/data/eln/apm.oasis.specific.yaml",
+                     "tests/data/apt/Si.apt",
+                     "tests/data/rng/87D_1.rng",
                      "--reader",
                      "apm",
                      "--nxdl",
                      "NXapm",
-                     "--output=tests/prod/eln.eln_data.yaml.nxs"]
+                     "--output=tests/prod/apt.Si.apt.nxs"]
         }
     ]
 }
