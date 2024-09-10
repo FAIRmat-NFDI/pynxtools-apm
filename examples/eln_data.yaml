@@ -84,7 +84,7 @@ sample:
   identifier:
     service: undefined
     identifier: 'Si in sample'
-    is_persistent: false
+    # is_persistent: false
   grain_diameter:
     unit: µm
     value: 200.
@@ -110,7 +110,7 @@ specimen:
   identifier:
     service: undefined
     identifier: 'Si in specimen'
-    is_persistent: false
+    # is_persistent: false
   description: '<p>normal</p>
 
     <p><em>bold</em></p>
