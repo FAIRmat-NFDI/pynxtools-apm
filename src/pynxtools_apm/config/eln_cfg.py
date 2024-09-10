@@ -48,7 +48,7 @@ APM_SAMPLE_TO_NEXUS = {
     "map_to_str": [
         "alias",
         "description",
-        "method",
+        ("type", "method"),
         ("grain_diameter/@units", "grain_diameter/unit"),
         ("grain_diameter_error/@units", "grain_diameter/unit"),
         ("heat_treatment_temperature/@units", "heat_treatment_temperature/unit"),
@@ -77,7 +77,7 @@ APM_SPECIMEN_TO_NEXUS = {
         "alias",
         "preparation_date",
         "description",
-        "method",
+        ("type", "method"),
         ("initial_radius/@units", "initial_radius/unit"),
         ("shank_angle/@units", "shank_angle/unit"),
     ],
