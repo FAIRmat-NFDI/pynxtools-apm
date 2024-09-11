@@ -391,7 +391,7 @@ pygments==2.18.0
     #   nbconvert
 pymdown-extensions==10.9
     # via mkdocs-material
-pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@7a98577e8799e5082ff8b759c0c116027bd37cba
+pynxtools==0.7.0
     # via pynxtools-apm (pyproject.toml)
 pyparsing==3.1.4
     # via matplotlib
