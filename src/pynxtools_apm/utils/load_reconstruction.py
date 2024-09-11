@@ -17,17 +17,18 @@
 #
 """Wrapping multiple parsers for vendor files with reconstructed dataset files."""
 
-from typing import Dict, Any
-import numpy as np
+from typing import Any, Dict
 
+import numpy as np
 from ifes_apt_tc_data_modeling.apt.apt6_reader import ReadAptFileFormat
-from ifes_apt_tc_data_modeling.epos.epos_reader import ReadEposFileFormat
-from ifes_apt_tc_data_modeling.pos.pos_reader import ReadPosFileFormat
 from ifes_apt_tc_data_modeling.ato.ato_reader import ReadAtoFileFormat
 from ifes_apt_tc_data_modeling.csv.csv_reader import ReadCsvFileFormat
+from ifes_apt_tc_data_modeling.epos.epos_reader import ReadEposFileFormat
+from ifes_apt_tc_data_modeling.pos.pos_reader import ReadPosFileFormat
 from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptCalibrationFileFormat,
 )
+
 from pynxtools_apm.utils.io_case_logic import (
     VALID_FILE_NAME_SUFFIX_RECON,
 )
@@ -256,7 +257,7 @@ class ApmReconstructionParser:
         if self.meta["file_format"] is None:
             raise ValueError(f"{file_path} is not a supported reconstruction file!")
 
-    def report(self, template: dict) -> dict:
+    def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
 
         Paths in template are prefixed by prefix and have to be compliant

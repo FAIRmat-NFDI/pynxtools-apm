@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "pynx-apm debug",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "../.py3.12.4/bin/dataconverter",
+            "args": [//"convert",
+                     "tests/data/eln/eln_data.yaml",
+                     "tests/data/eln/apm.oasis.specific.yaml",
+                     "tests/data/apt/Si.apt",
+                     "tests/data/rng/87D_1.rng",
+                     "--reader",
+                     "apm",
+                     "--nxdl",
+                     "NXapm",
+                     "--output=tests/prod/apt.Si.apt.nxs"]
+        }
+    ]
+}

@@ -18,12 +18,22 @@
 """Generic parser for loading atom probe microscopy data into NXapm."""
 
 from time import perf_counter_ns
-from typing import Tuple, Any
-import numpy as np
+from typing import Any, Tuple
 
+import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
+
+from pynxtools_apm.utils.create_nx_default_plots import (
+    apm_default_plot_generator,
+)
 from pynxtools_apm.utils.io_case_logic import (
     ApmUseCaseSelector,
+)
+from pynxtools_apm.utils.load_ranging import (
+    ApmRangingDefinitionsParser,
+)
+from pynxtools_apm.utils.load_reconstruction import (
+    ApmReconstructionParser,
 )
 from pynxtools_apm.utils.oasis_config_reader import (
     NxApmNomadOasisConfigurationParser,
@@ -31,15 +41,7 @@ from pynxtools_apm.utils.oasis_config_reader import (
 from pynxtools_apm.utils.oasis_eln_reader import (
     NxApmNomadOasisElnSchemaParser,
 )
-from pynxtools_apm.utils.load_reconstruction import (
-    ApmReconstructionParser,
-)
-from pynxtools_apm.utils.load_ranging import (
-    ApmRangingDefinitionsParser,
-)
-from pynxtools_apm.utils.create_nx_default_plots import (
-    apm_default_plot_generator,
-)
+
 # from pynxtools_apm.utils.apm_generate_synthetic_data import (
 #     ApmCreateExampleData,
 # )
@@ -79,59 +81,58 @@ class APMReader(BaseReader):
         template.clear()
 
         entry_id = 1
-        if len(file_paths) == 1:
-            pass
-            """
-            # TODO::better make this an option rather than hijack and demand a
-            # specifically named file to trigger the synthesizer
-            # the synthesize functionality is currently deactivated, we have enough
-            # example datasets and the synthesizer is in need for a refactoring.
-            if file_paths[0].startswith("synthesize"):
-                synthesis_id = int(file_paths[0].replace("synthesize", ""))
-                print(f"synthesis_id {synthesis_id}")
-            else:
-                synthesis_id = 1
-            print("Create one synthetic entry in one NeXus file...")
-            synthetic = ApmCreateExampleData(synthesis_id)
-            synthetic.synthesize(template)
-            """
-        else:  # eln_data, and ideally recon and ranging definitions from technology partner file
-            print("Parse ELN and technology partner file(s)...")
-            case = ApmUseCaseSelector(file_paths)
-            if not case.is_valid:
-                print("Such a combination of input-file(s, if any) is not supported !")
-                return {}
-            case.report_workflow(template, entry_id)
+        # if len(file_paths) == 1:
+        """
+        # TODO::better make this an option rather than hijack and demand a
+        # specifically named file to trigger the synthesizer
+        # the synthesize functionality is currently deactivated, we have enough
+        # example datasets and the synthesizer is in need for a refactoring.
+        if file_paths[0].startswith("synthesize"):
+            synthesis_id = int(file_paths[0].replace("synthesize", ""))
+            print(f"synthesis_id {synthesis_id}")
+        else:
+            synthesis_id = 1
+        print("Create one synthetic entry in one NeXus file...")
+        synthetic = ApmCreateExampleData(synthesis_id)
+        synthetic.synthesize(template)
+        """
+        # eln_data, and ideally recon and ranging definitions from technology partner file
+        print("Parse ELN and technology partner file(s)...")
+        case = ApmUseCaseSelector(file_paths)
+        if not case.is_valid:
+            print("Such a combination of input-file(s, if any) is not supported !")
+            return {}
+        case.report_workflow(template, entry_id)
 
-            if len(case.cfg) == 1:
-                print("Parse (meta)data coming from a configuration of an RDM...")
-                nx_apm_cfg = NxApmNomadOasisConfigurationParser(
-                    case.cfg[0], entry_id, False
-                )
-                nx_apm_cfg.parse(template)
-            else:
-                print("No input file defined for config data !")
+        if len(case.cfg) == 1:
+            print("Parse (meta)data coming from a configuration of an RDM...")
+            nx_apm_cfg = NxApmNomadOasisConfigurationParser(
+                case.cfg[0], entry_id, False
+            )
+            nx_apm_cfg.parse(template)
+        else:
+            print("No input file defined for config data !")
 
-            if len(case.eln) == 1:
-                print("Parse (meta)data coming from an ELN...")
-                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
-                nx_apm_eln.parse(template)
-            else:
-                print("No input file defined for eln data !")
+        if len(case.eln) == 1:
+            print("Parse (meta)data coming from an ELN...")
+            nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
+            nx_apm_eln.parse(template)
+        else:
+            print("No input file defined for eln data !")
 
-            if len(case.reconstruction) == 1:
-                print("Parse (meta)data from a reconstructed dataset file...")
-                nx_apm_recon = ApmReconstructionParser(case.reconstruction[0], entry_id)
-                nx_apm_recon.report(template)
-            else:
-                print("No input-file defined for reconstructed dataset!")
+        if len(case.reconstruction) == 1:
+            print("Parse (meta)data from a reconstructed dataset file...")
+            nx_apm_recon = ApmReconstructionParser(case.reconstruction[0], entry_id)
+            nx_apm_recon.parse(template)
+        else:
+            print("No input-file defined for reconstructed dataset!")
 
-            if len(case.ranging) == 1:
-                print("Parse (meta)data from a ranging definitions file...")
-                nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0], entry_id)
-                nx_apm_range.report(template)
-            else:
-                print("No input-file defined for ranging definitions!")
+        if len(case.ranging) == 1:
+            print("Parse (meta)data from a ranging definitions file...")
+            nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0], entry_id)
+            nx_apm_range.parse(template)
+        else:
+            print("No input-file defined for ranging definitions!")
 
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)
@@ -154,8 +155,7 @@ class APMReader(BaseReader):
 
         print("Forward instantiated template to the NXS writer...")
         toc = perf_counter_ns()
-        trg = f"/entry{entry_id}/profiling"
-        template[f"{trg}/@NX_class"] = "NXcs_profiling"
+        trg = f"/ENTRY[entry{entry_id}]/profiling"
         template[f"{trg}/template_filling_elapsed_time"] = np.float64(
             (toc - tic) / 1.0e9
         )
