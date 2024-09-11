@@ -302,7 +302,7 @@ class ApmRangingDefinitionsParser:
 
         return template
 
-    def report(self, template: dict) -> dict:
+    def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
 
         Paths in template are prefixed by prefix and have to be compliant

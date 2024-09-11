@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "pint==0.17",
-    "pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@bypass_v06",
+    "pynxtools>=0.7.0",
     "ifes_apt_tc_data_modeling>=0.2.2",
 ]
 

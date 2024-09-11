@@ -79,8 +79,12 @@ sample:
   - Al 12 +- 3
   - B 50 ppm +- 12
   - C 3.6
-  method: experiment
+  type: experiment
   alias: Si
+  identifier:
+    service: undefined
+    identifier: 'Si in sample'
+    # is_persistent: false
   grain_diameter:
     unit: µm
     value: 200.
@@ -101,8 +105,12 @@ sample:
     value: 10.
   description: '<p>nothing</p>'
 specimen:
-  method: experiment
+  type: experiment
   alias: usa_denton_smith_si
+  identifier:
+    service: undefined
+    identifier: 'Si in specimen'
+    # is_persistent: false
   description: '<p>normal</p>
 
     <p><em>bold</em></p>

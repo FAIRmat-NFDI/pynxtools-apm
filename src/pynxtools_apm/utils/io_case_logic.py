@@ -17,7 +17,7 @@
 #
 """Utility class to analyze which vendor/community files are passed to apm reader."""
 
-from typing import Tuple, Dict, List
+from typing import Dict, List, Tuple
 
 from pynxtools_apm.concepts.mapping_functors import (
     variadic_path_to_specific_path,
@@ -112,30 +112,30 @@ class ApmUseCaseSelector:
                     recon_input += len(value)
         # print(f"{recon_input}, {range_input}, {other_input}")
 
-        if 1 <= other_input <= 2:  # and (recon_input == 1) and (range_input == 1)
-            self.is_valid = True
-            self.reconstruction: List[str] = []
-            self.ranging: List[str] = []
-            for suffix in VALID_FILE_NAME_SUFFIX_RECON:
-                self.reconstruction += self.case[suffix]
-            for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
-                self.ranging += self.case[suffix]
-            yml: List[str] = []
-            for suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
-                yml += self.case[suffix]
-            for entry in yml:
-                if entry.endswith(".oasis.specific.yaml") or entry.endswith(
-                    ".oasis.specific.yml"
-                ):
-                    self.cfg += [entry]
-                else:
-                    self.eln += [entry]
-            print(
-                f"recon_results: {self.reconstruction}\n"
-                f"range_results: {self.ranging}\n"
-                f"Oasis ELN: {self.eln}\n"
-                f"Oasis local config: {self.cfg}\n"
-            )
+        # if 1 <= other_input <= 2:  # and (recon_input == 1) and (range_input == 1)
+        self.is_valid = True
+        self.reconstruction: List[str] = []
+        self.ranging: List[str] = []
+        for suffix in VALID_FILE_NAME_SUFFIX_RECON:
+            self.reconstruction += self.case[suffix]
+        for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
+            self.ranging += self.case[suffix]
+        yml: List[str] = []
+        for suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
+            yml += self.case[suffix]
+        for entry in yml:
+            if entry.endswith(".oasis.specific.yaml") or entry.endswith(
+                ".oasis.specific.yml"
+            ):
+                self.cfg += [entry]
+            else:
+                self.eln += [entry]
+        print(
+            f"recon_results: {self.reconstruction}\n"
+            f"range_results: {self.ranging}\n"
+            f"Oasis ELN: {self.eln}\n"
+            f"Oasis local config: {self.cfg}\n"
+        )
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""
