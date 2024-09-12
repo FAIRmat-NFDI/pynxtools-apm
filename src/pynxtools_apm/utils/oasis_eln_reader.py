@@ -17,26 +17,26 @@
 #
 """Wrapping multiple parsers for vendor files with NOMAD Oasis/ELN/YAML metadata."""
 
-import flatdict as fd
-import yaml
 import pathlib
 
+import flatdict as fd
+import yaml
 from ase.data import chemical_symbols
-from pynxtools_apm.config.eln_cfg import (
+
+from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
+from pynxtools_apm.configurations.eln_cfg import (
     APM_ENTRY_TO_NEXUS,
-    APM_SAMPLE_TO_NEXUS,
-    APM_SPECIMEN_TO_NEXUS,
-    APM_INSTRUMENT_STATIC_TO_NEXUS,
+    APM_IDENTIFIER_TO_NEXUS,
     APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
+    APM_INSTRUMENT_STATIC_TO_NEXUS,
     APM_RANGE_TO_NEXUS,
     APM_RECON_TO_NEXUS,
-    APM_WORKFLOW_TO_NEXUS,
+    APM_SAMPLE_TO_NEXUS,
+    APM_SPECIMEN_TO_NEXUS,
     APM_USER_TO_NEXUS,
-    APM_IDENTIFIER_TO_NEXUS,
+    APM_WORKFLOW_TO_NEXUS,
 )
-
 from pynxtools_apm.utils.parse_composition_table import parse_composition_table
-from pynxtools_apm.concepts.mapping_functors import add_specific_metadata
 
 
 class NxApmNomadOasisElnSchemaParser:
@@ -57,33 +57,24 @@ class NxApmNomadOasisElnSchemaParser:
     during the verification of the template dictionary.
     """
 
-    def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
+    def __init__(self, file_path: str = "", entry_id: int = 1, verbose: bool = False):
         print(f"Extracting data from ELN file: {file_path}")
-        if (
-            pathlib.Path(file_path).name.endswith("eln_data.yaml")
-            or pathlib.Path(file_path).name.endswith("eln_data.yml")
-        ) and entry_id > 0:
-            self.entry_id = entry_id
+        if pathlib.Path(file_path).name.endswith("eln_data.yaml") or pathlib.Path(
+            file_path
+        ).name.endswith("eln_data.yml"):
             self.file_path = file_path
+        self.entry_id = entry_id if entry_id > 0 else 1
+        self.verbose = verbose
+        try:
             with open(self.file_path, "r", encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
-                if verbose:
+                if self.verbose:
                     for key, val in self.yml.items():
                         print(f"key: {key}, value: {val}")
-        else:
-            self.entry_id = 1
-            self.file_path = ""
-            self.yml = {}
-
-    def parse_entry(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(APM_ENTRY_TO_NEXUS, self.yml, identifier, template)
-        return template
-
-    def parse_sample(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(APM_SAMPLE_TO_NEXUS, self.yml, identifier, template)
-        return template
+        except (FileNotFoundError, IOError):
+            print(f"File {self.file_path} not found !")
+            self.yml = fd.FlatDict({}, delimiter="/")
+            return
 
     def parse_sample_composition(self, template: dict) -> dict:
         """Interpret human-readable ELN input to generate consistent composition table."""
@@ -126,23 +117,33 @@ class NxApmNomadOasisElnSchemaParser:
                             ion_id += 1
         return template
 
-    def parse_specimen(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(APM_SPECIMEN_TO_NEXUS, self.yml, identifier, template)
-        return template
-
-    def parse_instrument_static(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(
-            APM_INSTRUMENT_STATIC_TO_NEXUS, self.yml, identifier, template
-        )
-        return template
-
-    def parse_instrument_dynamic(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(
-            APM_INSTRUMENT_DYNAMIC_TO_NEXUS, self.yml, identifier, template
-        )
+    def parse_user(self, template: dict) -> dict:
+        """Copy data from user section into template."""
+        src = "user"
+        if src in self.yml:
+            if isinstance(self.yml[src], list):
+                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                    user_id = 1
+                    # custom schema delivers a list of dictionaries...
+                    for user_dict in self.yml[src]:
+                        if user_dict == {}:
+                            continue
+                        identifier = [self.entry_id, user_id]
+                        add_specific_metadata_pint(
+                            APM_USER_TO_NEXUS,
+                            user_dict,
+                            identifier,
+                            template,
+                        )
+                        if "orcid" not in user_dict:
+                            continue
+                        add_specific_metadata_pint(
+                            APM_IDENTIFIER_TO_NEXUS,
+                            user_dict,
+                            identifier,
+                            template,
+                        )
+                        user_id += 1
         return template
 
     def parse_pulser_source(self, template: dict) -> dict:
@@ -153,7 +154,7 @@ class NxApmNomadOasisElnSchemaParser:
                 return template
 
         src = "instrument/pulser/laser_source"
-        if src in self.yml.keys():
+        if src in self.yml:
             if isinstance(self.yml[src], list):
                 if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
                     laser_id = 1
@@ -161,20 +162,20 @@ class NxApmNomadOasisElnSchemaParser:
                     for ldct in self.yml[src]:
                         trg_sta = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"instrument/pulser/SOURCE[source{laser_id}]"
+                            f"instrument/pulser/sourceID[source{laser_id}]"
                         )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
-                        quantities = ["wavelength"]
-                        for qnt in quantities:
-                            if ("value" in ldct[qnt]) and ("unit" in ldct[qnt]):
+                        qnt = "wavelength"
+                        if qnt in ldct:
+                            if "value" in ldct[qnt] and "unit" in ldct[qnt]:
                                 template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
                                 template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
 
                         trg_dyn = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"event_data_apm_set/EVENT_DATA_APM[event_data_apm]/"
-                            f"instrument/pulser/SOURCE[source{laser_id}]"
+                            f"event_data_apm_set/event_data_apm/instrument/"
+                            f"pulser/sourceID[source{laser_id}]"
                         )
                         quantities = ["power", "pulse_energy"]
                         for qnt in quantities:
@@ -189,61 +190,21 @@ class NxApmNomadOasisElnSchemaParser:
         print("WARNING: pulse_mode != voltage but no laser details specified!")
         return template
 
-    def parse_user(self, template: dict) -> dict:
-        """Copy data from user section into template."""
-        src = "user"
-        if src in self.yml:
-            if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
-                    user_id = 1
-                    # custom schema delivers a list of dictionaries...
-                    for user_dict in self.yml[src]:
-                        if user_dict == {}:
-                            continue
-                        identifier = [self.entry_id, user_id]
-                        add_specific_metadata(
-                            APM_USER_TO_NEXUS,
-                            fd.FlatDict(user_dict),
-                            identifier,
-                            template,
-                        )
-                        if "orcid" not in user_dict:
-                            continue
-                        add_specific_metadata(
-                            APM_IDENTIFIER_TO_NEXUS,
-                            fd.FlatDict(user_dict),
-                            identifier,
-                            template,
-                        )
-                        user_id += 1
-        return template
-
-    def parse_range(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(APM_RANGE_TO_NEXUS, self.yml, identifier, template)
-        return template
-
-    def parse_recon(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(APM_RECON_TO_NEXUS, self.yml, identifier, template)
-        return template
-
-    def parse_workflow(self, template: dict) -> dict:
-        identifier = [self.entry_id]
-        add_specific_metadata(APM_WORKFLOW_TO_NEXUS, self.yml, identifier, template)
-        return template
-
     def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
-        self.parse_entry(template)
-        self.parse_sample(template)
         self.parse_sample_composition(template)
-        self.parse_specimen(template)
-        self.parse_instrument_static(template)
-        self.parse_instrument_dynamic(template)
-        self.parse_pulser_source(template)
         self.parse_user(template)
-        self.parse_range(template)
-        self.parse_recon(template)
-        self.parse_workflow(template)
+        self.parse_pulser_source(template)
+        identifier = [self.entry_id]
+        for cfg in [
+            APM_ENTRY_TO_NEXUS,
+            APM_SAMPLE_TO_NEXUS,
+            APM_SPECIMEN_TO_NEXUS,
+            APM_INSTRUMENT_STATIC_TO_NEXUS,
+            APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
+            APM_RANGE_TO_NEXUS,
+            APM_RECON_TO_NEXUS,
+            APM_WORKFLOW_TO_NEXUS,
+        ]:
+            add_specific_metadata_pint(cfg, self.yml, identifier, template)
         return template

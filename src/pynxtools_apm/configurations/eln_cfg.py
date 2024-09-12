@@ -17,10 +17,12 @@
 #
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
+from pynxtools_apm.utils.pint_custom_unit_registry import ureg
+
 APM_ENTRY_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "entry/",
-    "map_to_str": [
+    "map": [
         "run_number",
         "operation_mode",
         "start_time",
@@ -35,33 +37,48 @@ APM_SAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
     "map": [
-        ("grain_diameter", "grain_diameter/value"),
-        ("grain_diameter_error", "grain_diameter_error/value"),
-        ("heat_treatment_temperature", "heat_treatment_temperature/value"),
-        ("heat_treatment_temperature_error", "heat_treatment_temperature_error/value"),
-        ("heat_treatment_quenching_rate", "heat_treatment_quenching_rate/value"),
-        (
-            "heat_treatment_quenching_rate_error",
-            "heat_treatment_quenching_rate_error/value",
-        ),
-    ],
-    "map_to_str": [
         "alias",
         "description",
-        "type",
+        ("type", "method"),
         ("identifier/identifier", "identifier/identifier"),
         ("identifier/service", "identifier/service"),
-        ("identifier/is_persistent", "identifier/is_persistent"),
-        ("grain_diameter/@units", "grain_diameter/unit"),
-        ("grain_diameter_error/@units", "grain_diameter/unit"),
-        ("heat_treatment_temperature/@units", "heat_treatment_temperature/unit"),
+    ],
+    "map_to_bool": [("identifier/is_persistent", "identifier/is_persistent")],
+    "map_to_f8": [
         (
-            "heat_treatment_temperature_error/@units",
+            "grain_diameter",
+            ureg.micrometer,
+            "grain_diameter/value",
+            "grain_diameter/unit",
+        ),
+        (
+            "grain_diameter_error",
+            ureg.micrometer,
+            "grain_diameter_error/value",
+            "grain_diameter_error/unit",
+        ),
+        (
+            "heat_treatment_temperature",
+            ureg.degC,
+            "heat_treatment_temperature/value",
+            "heat_treatment_temperature/unit",
+        ),
+        (
+            "heat_treatment_temperature_error",
+            ureg.degC,
+            "heat_treatment_temperature_error/value",
             "heat_treatment_temperature_error/unit",
         ),
-        ("heat_treatment_quenching_rate/@units", "heat_treatment_quenching_rate/unit"),
         (
-            "heat_treatment_quenching_rate_error/@units",
+            "heat_treatment_quenching_rate",
+            ureg.kelvin / ureg.second,
+            "heat_treatment_quenching_rate/value",
+            "heat_treatment_quenching_rate/unit",
+        ),
+        (
+            "heat_treatment_quenching_rate_error",
+            ureg.kelvin / ureg.second,
+            "heat_treatment_quenching_rate_error/value",
             "heat_treatment_quenching_rate_error/unit",
         ),
     ],
@@ -72,20 +89,26 @@ APM_SPECIMEN_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "specimen/",
     "map": [
-        ("initial_radius", "initial_radius/value"),
-        ("shank_angle", "shank_angle/value"),
-    ],
-    "map_to_bool": ["is_polycrystalline", "is_amorphous"],
-    "map_to_str": [
         "alias",
         "preparation_date",
         "description",
-        "type",
+        ("type", "method"),
         ("identifier/identifier", "identifier/identifier"),
         ("identifier/service", "identifier/service"),
+    ],
+    "map_to_f8": [
+        (
+            "initial_radius",
+            ureg.nanometer,
+            "initial_radius/value",
+            "initial_radius/unit",
+        ),
+        ("shank_angle", ureg.degree, "shank_angle/value", "shank_angle/unit"),
+    ],
+    "map_to_bool": [
+        "is_polycrystalline",
+        "is_amorphous",
         ("identifier/is_persistent", "identifier/is_persistent"),
-        ("initial_radius/@units", "initial_radius/unit"),
-        ("shank_angle/@units", "shank_angle/unit"),
     ],
 }
 
@@ -93,38 +116,57 @@ APM_SPECIMEN_TO_NEXUS = {
 APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
     "prefix_src": "instrument/",
-    "map": [("analysis_chamber/flight_path", "nominal_flight_path/value")],
-    "map_to_str": [
+    "map": [
         "status",
         "instrument_name",
         "location",
-        ("FABRICATION[fabrication]/vendor", "fabrication_vendor"),
-        ("FABRICATION[fabrication]/model", "fabrication_model"),
-        ("FABRICATION[fabrication]/identifier", "fabrication_identifier"),
+        ("fabrication/vendor", "fabrication_vendor"),
+        ("fabrication/model", "fabrication_model"),
+        ("fabrication/identifier/identifier", "fabrication_identifier"),
         ("reflectron/status", "reflectron_status"),
         ("local_electrode/name", "local_electrode_name"),
         ("pulser/pulse_mode", "pulser/pulse_mode"),
-        ("analysis_chamber/flight_path/@units", "nominal_flight_path/unit"),
+    ],
+    "map_to_f8": [
+        (
+            "analysis_chamber/flight_path",
+            ureg.meter,
+            "nominal_flight_path/value",
+            "nominal_flight_path/unit",
+        )
     ],
 }
 
 
 APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/EVENT_DATA_APM[event_data_apm]/instrument",
+    "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/event_data_apm/instrument",
     "prefix_src": "instrument/",
     "use": [("control/target_detection_rate/@units", "ions/pulse")],
     "map": [
-        ("control/target_detection_rate", "target_detection_rate"),
-        ("pulser/pulse_frequency", "pulser/pulse_frequency/value"),
-        ("pulser/pulse_fraction", "pulser/pulse_fraction"),
-        ("analysis_chamber/chamber_pressure", "chamber_pressure/value"),
-        ("stage_lab/base_temperature", "base_temperature/value"),
-    ],
-    "map_to_str": [
+        "pulser_pulse_mode",
         ("control/evaporation_control", "evaporation_control"),
-        ("pulser/pulse_frequency/@units", "pulser/pulse_frequency/unit"),
-        ("analysis_chamber/chamber_pressure/@units", "chamber_pressure/unit"),
-        ("stage_lab/base_temperature/@units", "base_temperature/unit"),
+    ],
+    "map_to_f8": [
+        ("control/target_detection_rate", "target_detection_rate"),
+        (
+            "pulser/pulse_frequency",
+            ureg.kilohertz,
+            "pulser/pulse_frequency/value",
+            "pulser/pulse_frequency/unit",
+        ),
+        ("pulser/pulse_fraction", "pulser/pulse_fraction"),
+        (
+            "analysis_chamber/chamber_pressure",
+            ureg.bar,
+            "chamber_pressure/value",
+            "chamber_pressure/unit",
+        ),
+        (
+            "stage_lab/base_temperature",
+            ureg.kelvin,
+            "base_temperature/value",
+            "base_temperature/unit",
+        ),
     ],
 }
 
@@ -132,7 +174,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
 APM_RANGE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
     "prefix_src": "ranging/",
-    "map_to_str": [
+    "map": [
         ("programID[program1]/program", "program"),
         ("programID[program1]/program/@version", "program_version"),
     ],
@@ -142,14 +184,15 @@ APM_RANGE_TO_NEXUS = {
 APM_RECON_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
     "prefix_src": "reconstruction/",
-    "map": [("field_of_view", "field_of_view/value")],
-    "map_to_str": [
+    "map": [
         "protocol_name",
         "crystallographic_calibration",
         "parameter",
         ("programID[program1]/program", "program"),
         ("programID[program1]/program/@version", "program_version"),
-        ("field_of_view/@units", "field_of_view/unit"),
+    ],
+    "map_to_f8": [
+        ("field_of_view", ureg.centimeter, "field_of_view/value", "field_of_view/unit")
     ],
 }
 
@@ -158,8 +201,8 @@ APM_WORKFLOW_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe",
     "prefix_src": "workflow/",
     "sha256": [
-        ("raw_data/SERIALIZED[serialized]/checksum", "raw_dat_file"),
-        ("hit_finding/SERIALIZED[serialized]/checksum", "hit_dat_file"),
+        ("raw_data/serialized/checksum", "raw_dat_file"),
+        ("hit_finding/serialized/checksum", "hit_dat_file"),
         ("reconstruction/config/checksum", "recon_cfg_file"),
     ],
 }
@@ -170,7 +213,8 @@ APM_WORKFLOW_TO_NEXUS = {
 
 APM_USER_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
-    "map_to_str": [
+    "prefix_src": "",
+    "map": [
         "name",
         "affiliation",
         "address",
@@ -185,11 +229,8 @@ APM_USER_TO_NEXUS = {
 
 APM_IDENTIFIER_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
-    "use": [
-        ("IDENTIFIER[identifier]/is_persistent", True),
-        ("IDENTIFIER[identifier]/service", "orcid"),
-    ],
-    "map_to_str": [
-        ("IDENTIFIER[identifier]/identifier", "orcid"),
-    ],
+    "prefix_src": "",
+    "use": [("identifier/service", "orcid")],
+    "map": [("identifier/identifier", "orcid")],
+    "map_to_bool": [("identifier/is_persistent", "identifier/is_persistent")],
 }

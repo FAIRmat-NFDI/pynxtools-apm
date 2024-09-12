@@ -1,4 +1,4 @@
-atom_probe:
+instrument:
   fabrication_identifier: '12'
   fabrication_model: LEAP3000
   fabrication_vendor: Cameca
@@ -79,12 +79,12 @@ sample:
   - Al 12 +- 3
   - B 50 ppm +- 12
   - C 3.6
-  type: experiment
+  method: experiment
   alias: Si
   identifier:
     service: undefined
     identifier: 'Si in sample'
-    # is_persistent: false
+    is_persistent: false
   grain_diameter:
     unit: µm
     value: 200.
@@ -105,12 +105,12 @@ sample:
     value: 10.
   description: '<p>nothing</p>'
 specimen:
-  type: experiment
+  method: experiment
   alias: usa_denton_smith_si
   identifier:
     service: undefined
     identifier: 'Si in specimen'
-    # is_persistent: false
+    is_persistent: false
   description: '<p>normal</p>
 
     <p><em>bold</em></p>

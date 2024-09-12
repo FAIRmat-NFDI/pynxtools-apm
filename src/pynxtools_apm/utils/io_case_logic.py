@@ -19,12 +19,8 @@
 
 from typing import Dict, List, Tuple
 
-from pynxtools_apm.concepts.mapping_functors import (
-    variadic_path_to_specific_path,
-)
-from pynxtools_apm.utils.get_file_checksum import (
-    get_sha256_of_file_content,
-)
+from pynxtools_apm.concepts.mapping_functors_pint import var_path_to_spcfc_path
+from pynxtools_apm.utils.get_file_checksum import get_sha256_of_file_content
 
 VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
 VALID_FILE_NAME_SUFFIX_RANGE = [
@@ -143,7 +139,7 @@ class ApmUseCaseSelector:
         # populate automatically input-files used
         # rely on assumption made in check_validity_of_file_combination
         for fpath in self.reconstruction:
-            prfx = variadic_path_to_specific_path(
+            prfx = var_path_to_spcfc_path(
                 "/ENTRY[entry*]/atom_probe/reconstruction/results", identifier
             )
             with open(fpath, "rb") as fp:
@@ -152,7 +148,7 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = "SHA256"
         for fpath in self.ranging:
-            prfx = variadic_path_to_specific_path(
+            prfx = var_path_to_spcfc_path(
                 "/ENTRY[entry*]/atom_probe/ranging/definitions", identifier
             )
             with open(fpath, "rb") as fp:
