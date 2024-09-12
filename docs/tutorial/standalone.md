@@ -15,7 +15,7 @@ You will have a basic understanding how to use pynxtools-apm for converting your
 
 ## Steps
 
-[The Jupyter notebook is available here](https://github.com/FAIRmat-NFDI/pynxtools-apm/blob/main/examples/HowToUseTutorial.ipynb)
+[The Jupyter notebook is available here](https://github.com/FAIRmat-NFDI/pynxtools-apm/blob/main/examples/HowToCreateTutorial.ipynb)
 
 **Congrats! You now have a FAIR NeXus file!**
 
