@@ -42,18 +42,20 @@ import datetime as dt
 
 APM_OASISCONFIG_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
+    "prefix_src": "",
     "use": [
         (
             "start_time",
             f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
         ),
     ],
-    "map_to_str": [("operation_mode")],
+    "map": ["operation_mode"],
 }
 
 
 APM_CSYS_MCSTASLIKE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]",
+    "prefix_src": "",
     "use": [
         (
             "alias",
@@ -86,5 +88,6 @@ APM_CSYS_MCSTASLIKE_TO_NEXUS = {
 
 APM_EXAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
-    "map_to_str": [("authors"), ("doi"), ("description"), ("url")],
+    "prefix_src": "",
+    "map": ["authors", "doi", "description", "url"],
 }

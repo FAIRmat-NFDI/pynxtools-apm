@@ -29,8 +29,10 @@ HUMAN_BOOLEAN_STATEMENT = {
 }
 
 
-def try_interpret_as_boolean(arg: str) -> bool:
+def try_interpret_as_boolean(arg) -> bool:
     """Try to interpret a human string statement if boolean be strict."""
+    if isinstance(arg, bool):
+        return arg
     if arg.lower() in HUMAN_BOOLEAN_STATEMENT:
         return HUMAN_BOOLEAN_STATEMENT[arg.lower()]
     raise KeyError(

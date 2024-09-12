@@ -269,7 +269,7 @@ class ApmRangingDefinitionsParser:
         """Update the atom_types list in the specimen based on ranging defs."""
         number_of_ion_types = 1
         prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
-        if f"{prefix}number_of_ion_types" in template.keys():
+        if f"{prefix}number_of_ion_types" in template:
             number_of_ion_types = template[f"{prefix}number_of_ion_types"]
         print(
             f"Auto-detecting elements from ranging {number_of_ion_types} ion types..."
@@ -283,7 +283,7 @@ class ApmRangingDefinitionsParser:
         )
         for ion_id in np.arange(1, number_of_ion_types):
             trg = f"{prefix}ionID[ion{ion_id}]/nuclide_list"
-            if trg in template.keys():
+            if trg in template:
                 nuclide_list = template[trg][:, 1]
                 # second row of NXion/nuclide_list yields atom number to decode element
                 for atom_number in nuclide_list:

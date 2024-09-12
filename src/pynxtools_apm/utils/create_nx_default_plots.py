@@ -20,10 +20,10 @@
 import numpy as np
 
 from pynxtools_apm.utils.versioning import (
-    NX_APM_EXEC_NAME,
-    NX_APM_EXEC_VERSION,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
+    NX_APM_EXEC_NAME,
+    NX_APM_EXEC_VERSION,
 )
 
 
@@ -200,14 +200,14 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/mass_to_charge_conversion/mass_to_charge"
     if trg in template:
         if isinstance(template[trg], dict):
-            if "compress" in template[trg].keys():
+            if "compress" in template[trg]:
                 if isinstance(template[trg]["compress"], np.ndarray):
                     has_valid_m_z = True
     has_valid_xyz = False
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/reconstructed_positions"
     if trg in template:
         if isinstance(template[trg], dict):
-            if "compress" in template[trg].keys():
+            if "compress" in template[trg]:
                 if isinstance(template[trg]["compress"], np.ndarray):
                     has_valid_xyz = True
     print(f"m_z, xyz: {has_valid_m_z}, {has_valid_xyz}")

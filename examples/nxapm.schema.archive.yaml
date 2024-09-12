@@ -1,5 +1,5 @@
 # group, field, and attribute names match to NXapm, for further details
-# what each field should contain consult the respective docstring of the 
+# what each field should contain consult the respective docstring of the
 # quantity in NXapm
 definitions:
   name: 'apm'
@@ -11,13 +11,13 @@ definitions:
         - 'nomad.datamodel.data.EntryData'
       m_annotations:
         # Here you can set your default values for the reader and nxdl.
-        template: 
+        template:
           reader: apm
           nxdl: NXapm.nxdl
         # Listing quantities in the hide component will not show them in the ELN.
         # This would be useful to make the default values set in `template` fixed.
         # Leave the hide key even if you want to pass an empty list like in this example.
-        eln: 
+        eln:
           hide: ['nxdl', 'reader']
       sub_sections:
         entry:
@@ -114,13 +114,13 @@ definitions:
                   One string for each element with statements separated via a
                   single space. The string is expected to have the following format:
                   Symbol value unit +- stdev
-                  
+
                   An example: B 1. +- 0.2, means
                   composition of boron 1. at.-% +- 0.2 at.%.
                   If a string contains only a symbol this is interpreted
                   that the symbol specifies the matrix or remainder element
                   for the composition table.
-                  
+
                   If unit is omitted or named % this is interpreted as at.-%.
                   Unit can be at% or wt% but all strings have to use either atom
                   or weight percent but no mixtures.
@@ -129,7 +129,7 @@ definitions:
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              grain_diameter: 
+              grain_diameter:
                 type: np.float64
                 unit: micrometer
                 description: |
@@ -198,14 +198,14 @@ definitions:
             m_annotations:
               eln:
             quantities:
-              name: 
+              name:
                 type: str
                 description: |
-                  GUID which distinguishes the specimen from all others and especially 
+                  GUID which distinguishes the specimen from all others and especially
                   the predecessor/origin from where the specimen was cut.
                   In cases where the specimen was e.g. site-specifically cut from
                   samples or in cases of an instrument session during which multiple
-                  specimens are loaded, the name has to be descriptive enough to 
+                  specimens are loaded, the name has to be descriptive enough to
                   resolve which specimen on e.g. the microtip array was taken.
                   This field must not be used for an alias of the specimen.
                   Instead, use short_title.
@@ -216,7 +216,7 @@ definitions:
               #   type: str
               #   description: |
               #     Reference to the location of or a GUID providing as many details
-              #     as possible of the material, its microstructure, and its 
+              #     as possible of the material, its microstructure, and its
               #     thermo-chemo-mechanical processing/preparation history.
               #   m_annotations:
               #     eln:
@@ -526,7 +526,7 @@ definitions:
               control_software_program:
                 type: str
                 description: |
-                  Name of the control software of the microscope 
+                  Name of the control software of the microscope
                   used during acquisition (e.g. IVAS/APSuite).
                 m_annotations:
                   eln:

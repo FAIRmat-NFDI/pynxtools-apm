@@ -149,7 +149,7 @@ class APMReader(BaseReader):
         # considered non-filled in template instance data and are thus not copied over
 
         # print("Reporting state of template before passing to HDF5 writing...")
-        # for keyword in template.keys():
+        # for keyword in template:
         #     print(f"keyword: {keyword}, template[keyword]: {template[keyword]}")
         # exit(1)
 

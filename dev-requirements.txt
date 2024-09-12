@@ -295,8 +295,9 @@ numexpr==2.10.1
     # via
     #   blosc2
     #   tables
-numpy==2.1.1
+numpy==1.26.4
     # via
+    #   pynxtools-apm (pyproject.toml)
     #   ase
     #   blosc2
     #   contourpy

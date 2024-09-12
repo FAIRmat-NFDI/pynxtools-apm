@@ -10,7 +10,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "../.py3.12.4/bin/dataconverter",
-            "args": [//"convert",
+            "args": [//workflow files str.str, hits.hits, root.root should be created via touch str.str ...
                      "tests/data/eln/eln_data.yaml",
                      "tests/data/eln/apm.oasis.specific.yaml",
                      "tests/data/apt/Si.apt",

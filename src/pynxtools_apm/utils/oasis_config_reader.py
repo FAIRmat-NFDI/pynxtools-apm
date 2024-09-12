@@ -17,15 +17,16 @@
 #
 """Load deployment-specific quantities."""
 
-import flatdict as fd
-import yaml
 import pathlib
 
-from pynxtools_apm.concepts.mapping_functors import add_specific_metadata
-from pynxtools_apm.config.oasis_cfg import (
-    APM_OASISCONFIG_TO_NEXUS,
+import flatdict as fd
+import yaml
+
+from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
+from pynxtools_apm.configurations.oasis_cfg import (
     APM_CSYS_MCSTASLIKE_TO_NEXUS,
     APM_EXAMPLE_TO_NEXUS,
+    APM_OASISCONFIG_TO_NEXUS,
 )
 
 
@@ -55,13 +56,15 @@ class NxApmNomadOasisConfigurationParser:
     def parse_various(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         identifier = [self.entry_id]
-        add_specific_metadata(APM_OASISCONFIG_TO_NEXUS, self.yml, identifier, template)
+        add_specific_metadata_pint(
+            APM_OASISCONFIG_TO_NEXUS, self.yml, identifier, template
+        )
         return template
 
     def parse_reference_frames(self, template: dict) -> dict:
         """Copy data from configuration applying mapping functors."""
         identifier = [self.entry_id]
-        add_specific_metadata(
+        add_specific_metadata_pint(
             APM_CSYS_MCSTASLIKE_TO_NEXUS, self.yml, identifier, template
         )
         return template
@@ -78,7 +81,7 @@ class NxApmNomadOasisConfigurationParser:
                         if cite_dict == {}:
                             continue
                         identifier = [self.entry_id, cite_id]
-                        add_specific_metadata(
+                        add_specific_metadata_pint(
                             APM_EXAMPLE_TO_NEXUS,
                             fd.FlatDict(cite_dict),
                             identifier,
