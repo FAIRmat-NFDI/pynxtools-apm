@@ -61,3 +61,4 @@ def test_nomad_example_upload_entry_point_valid(entrypoint, expected_local_path)
         entrypoint=entrypoint,
         plugin_package="pynxtools-apm",
         expected_local_path=expected_local_path,
+    )
