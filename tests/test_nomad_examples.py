@@ -42,7 +42,7 @@ from pynxtools_apm.nomad.entrypoints import apm_example
 )
 def test_parse_nomad_examples(mainfile):
     """Test if NOMAD examples work."""
-    parse_nomad_examples(mainfile)
+    archive_dict = parse_nomad_examples(mainfile)
 
 
 @pytest.mark.parametrize(
