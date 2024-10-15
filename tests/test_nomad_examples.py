@@ -17,6 +17,7 @@
 #
 """Test for NOMAD examples in APM reader plugin."""
 
+import os
 import pytest
 
 try:
@@ -38,7 +39,17 @@ from pynxtools_apm.nomad.entrypoints import apm_example
 
 
 @pytest.mark.parametrize(
-    "mainfile", get_file_parameter("src/pynxtools_apm/nomad/examples")
+    "mainfile",
+    get_file_parameter(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "src",
+            "pynxtools_apm",
+            "nomad",
+            "examples",
+        )
+    ),
 )
 def test_parse_nomad_examples(mainfile):
     """Test if NOMAD examples work."""
