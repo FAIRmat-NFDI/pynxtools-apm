@@ -57,7 +57,13 @@ click==8.1.7
 click-default-group==1.2.4
     # via pynxtools
 colorama==0.4.6
-    # via mkdocs-material
+    # via
+    #   build
+    #   click
+    #   ipython
+    #   mkdocs
+    #   mkdocs-material
+    #   pytest
 comm==0.2.2
     # via
     #   ipykernel
@@ -345,8 +351,6 @@ parso==0.8.4
     # via jedi
 pathspec==0.12.1
     # via mkdocs
-pexpect==4.9.0
-    # via ipython
 pillow==10.4.0
     # via matplotlib
 pint==0.17
@@ -372,10 +376,6 @@ prompt-toolkit==3.0.47
     #   jupyter-console
 psutil==6.0.0
     # via ipykernel
-ptyprocess==0.7.0
-    # via
-    #   pexpect
-    #   terminado
 pure-eval==0.2.3
     # via stack-data
 py-cpuinfo==9.0.0
@@ -421,6 +421,13 @@ python-json-logger==2.0.7
     # via jupyter-events
 pytz==2024.1
     # via pandas
+pywin32==308
+    # via jupyter-core
+pywinpty==2.0.14
+    # via
+    #   jupyter-server
+    #   jupyter-server-terminals
+    #   terminado
 pyyaml==6.0.2
     # via
     #   jupyter-events
@@ -464,7 +471,7 @@ rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing
-ruff==0.5.5
+ruff==0.7.0
     # via pynxtools-apm (pyproject.toml)
 scipy==1.14.1
     # via
@@ -543,6 +550,7 @@ types-requests==2.32.0.20240905
 typing-extensions==4.12.2
     # via
     #   h5grove
+    #   ipython
     #   mypy
     #   tables
 tzdata==2024.1
