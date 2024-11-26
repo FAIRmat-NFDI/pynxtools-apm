@@ -36,6 +36,5 @@ apm_example = ExampleUploadEntryPoint(
         and keep the size of your NOMAD installation small. Once started, we recommend changing the respective
         input file in the NOMAD Oasis ELN to run the example with your own datasets.
     """,
-    path="nomad/examples",
-    local_path="examples/data/uploads/apm.zip",
+    resources=['nomad/examples/*']
 )
