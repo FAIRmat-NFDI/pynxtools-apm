@@ -36,5 +36,6 @@ apm_example = ExampleUploadEntryPoint(
         and keep the size of your NOMAD installation small. Once started, we recommend changing the respective
         input file in the NOMAD Oasis ELN to run the example with your own datasets.
     """,
+    plugin_package="pynxtools_apm",
     resources=["nomad/examples/*"],
 )
