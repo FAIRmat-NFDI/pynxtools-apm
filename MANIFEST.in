@@ -2,4 +2,4 @@ prune *
 exclude *
 recursive-include src/pynxtools_apm *.py
 include pyproject.toml README.md dev-requirements.txt
-recursive-include src/pynxtools_apm/nomad/examples
+graft src/pynxtools_apm/nomad/examples
