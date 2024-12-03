@@ -26,7 +26,9 @@ authors:
   - given-names: Claudia
     family-names: Draxl
     orcid: 'https://orcid.org/0000-0003-3523-6657'
-repository-code: https://github.com/FAIRmat-NFDI/pynxtools-apm
+doi: 10.5281/zenodo.14263076
+repository-code: https://github.com/FAIRmat-NFDI/pynxtools-apmi
+url: https://zenodo.org/records/14263076
 keywords:
   - Atom probe tomography
   - Field ion microscopy
