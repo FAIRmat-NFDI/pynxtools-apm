@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "pint==0.17",
-    "pynxtools>=0.7.0",
+    "pynxtools>=0.9.0",
     "ifes_apt_tc_data_modeling>=0.2.2",
     "numpy<=1.26.4",
 ]
@@ -35,7 +35,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "mypy",
-    "ruff==0.5.5",
+    "ruff>=0.6.0",
     "pytest",
     "pytest-cov",
     "pytest-timeout",
@@ -62,6 +62,9 @@ docs = [
 
 [project.entry-points."pynxtools.reader"]
 apm = "pynxtools_apm.reader:APMReader"
+
+[project.entry-points.'nomad.plugin']
+apm_example = "pynxtools_apm.nomad.entrypoints:apm_example"
 
 [tool.setuptools.packages.find]
 where = [
