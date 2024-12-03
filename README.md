@@ -6,6 +6,7 @@
 ![](https://img.shields.io/pypi/l/pynxtools-apm)
 ![](https://img.shields.io/pypi/v/pynxtools-apm)
 ![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools-apm/badge.svg?branch=main)
+[![DOI](https://zenodo.org/badge/772049905.svg)](https://zenodo.org/badge/latestdoi/772049905)
 
 # Parse and normalize atom probe tomography and field-ion microscopy data
 
