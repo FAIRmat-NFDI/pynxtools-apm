@@ -55,7 +55,7 @@ apm_example = ExampleUploadEntryPoint(
 
 schema = "pynxtools.nomad.schema.NeXus"
 
-nexus_app = AppEntryPoint(
+apm_app = AppEntryPoint(
     name="ApmApp",
     description="Atom probe tomography app.",
     app=App(
