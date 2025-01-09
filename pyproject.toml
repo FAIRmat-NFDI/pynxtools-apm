@@ -39,7 +39,6 @@ dev = [
     "pytest",
     "pytest-cov",
     "pytest-timeout",
-    "pytest-cov",
     "structlog",
     "types-pyyaml",
     "types-pytz",
@@ -65,6 +64,7 @@ apm = "pynxtools_apm.reader:APMReader"
 
 [project.entry-points.'nomad.plugin']
 apm_example = "pynxtools_apm.nomad.entrypoints:apm_example"
+apm_app = "pynxtools_apm.nomad.entrypoints:apm_app"
 
 [tool.setuptools.packages.find]
 where = [
