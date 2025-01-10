@@ -465,7 +465,7 @@ pyzmq==26.2.0
     #   jupyter-client
     #   jupyter-console
     #   jupyter-server
-radioactivedecay==0.6.0
+radioactivedecay==0.6.1
     # via ifes-apt-tc-data-modeling
 referencing==0.35.1
     # via
@@ -490,7 +490,7 @@ rpds-py==0.22.3
     # via
     #   jsonschema
     #   referencing
-ruff==0.8.6
+ruff==0.9.0
     # via pynxtools-apm (pyproject.toml)
 scipy==1.15.0
     # via
@@ -600,7 +600,7 @@ wheel==0.45.1
     # via pip-tools
 widgetsnbextension==4.0.13
     # via ipywidgets
-xarray==2025.1.0
+xarray==2025.1.1
     # via pynxtools
 xmltodict==0.14.2
     # via ifes-apt-tc-data-modeling
