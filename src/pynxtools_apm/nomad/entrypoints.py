@@ -60,15 +60,15 @@ apm_app = AppEntryPoint(
     description="Atom probe tomography app.",
     app=App(
         # Label of the App
-        label="Apm",
+        label="Atom probe tomography",
         # Path used in the URL, must be unique
         path="apmapp",
         # Used to categorize apps in the explore menu
         category="Experiment",
         # Brief description used in the app menu
-        description="A simple search app customized for NeXus data from the research field of atom probe tomography.",
+        description="A simple search app customized for atom probe data.",
         # Longer description that can also use markdown
-        # readme="This is a simple App to support basic search for NeXus based Experiment Entries.",
+        readme="App for searching NeXus-based Experiment Entries from the research fields of atom probe tomography and related field-ion microscopy.",
         # If you want to use quantities from a custom schema, you need to load
         # the search quantities from it first here. Note that you can use a glob
         # syntax to load the entire package, or just a single schema from a
@@ -112,16 +112,8 @@ apm_app = AppEntryPoint(
                         MenuItemPeriodicTable(
                             quantity="results.material.elements",
                         ),
-                        MenuItemTerms(
-                            quantity="results.material.chemical_formula_hill",
-                            width=6,
-                            options=0,
-                        ),
-                        MenuItemTerms(
-                            quantity="results.material.chemical_formula_iupac",
-                            width=6,
-                            options=0,
-                        ),
+                        # chemical formula later when required but most
+                        # apt specimens are cut from polycrystalline, multiphase material
                         MenuItemHistogram(
                             x="results.material.n_elements",
                         ),
