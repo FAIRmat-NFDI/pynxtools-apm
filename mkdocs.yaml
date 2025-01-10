@@ -11,11 +11,12 @@ nav:
     - tutorial/standalone.md
     # - tutorial/nexusio.md
     # - tutorial/oasis.md
-  - How-tos:
-    - how-tos/howto.md
+  # - How-tos:
+  #    - how-tos/howto.md
   - Learn:
     - explanation/learn.md
-    - explanation/performance.md
+    - explanation/apmapp.md
+    - explanation/issues.md
   - Reference:
     - reference/contextualization.md
     - reference/apt.md

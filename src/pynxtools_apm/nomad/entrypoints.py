@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Entry points for XPS examples."""
+"""Entry points for APM examples."""
 
 try:
     from nomad.config.models.plugins import (

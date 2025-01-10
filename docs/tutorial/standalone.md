@@ -20,4 +20,4 @@ You will have a basic understanding how to use pynxtools-apm for converting your
 **Congrats! You now have a FAIR NeXus file!**
 
 The above-mentioned parsing is also integrated into the NOMAD research data management system.
-Feel invited to try out the respective tutorial here TODO.
+<!--Feel invited to try out the respective tutorial here TODO.-->
