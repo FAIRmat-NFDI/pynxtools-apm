@@ -32,6 +32,7 @@ VALID_FILE_NAME_SUFFIX_RANGE = [
     ".analysis",
 ]
 VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
+VALID_FILE_NAME_SUFFIX_CAMECA = [".cameca"]
 
 
 class ApmUseCaseSelector:
@@ -50,6 +51,7 @@ class ApmUseCaseSelector:
         self.case: Dict[str, list] = {}
         self.eln: List[str] = []
         self.cfg: List[str] = []
+        self.apsuite: List[str] = []
         self.reconstruction: List[str] = []
         self.ranging: List[str] = []
         self.is_valid = False
@@ -57,6 +59,7 @@ class ApmUseCaseSelector:
             VALID_FILE_NAME_SUFFIX_RECON
             + VALID_FILE_NAME_SUFFIX_RANGE
             + VALID_FILE_NAME_SUFFIX_CONFIG
+            + VALID_FILE_NAME_SUFFIX_CAMECA
         )
         print(f"self.supported_file_name_suffixes: {self.supported_file_name_suffixes}")
         print(f"{file_paths}")
@@ -90,7 +93,8 @@ class ApmUseCaseSelector:
         """Check if this combination of types of files is supported."""
         recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT, ATO, CSV
         range_input = 0  # ranging definition file, e.g. RNG, RRNG, ENV, FIG.TXT
-        other_input = 0  # generic ELN or Oasis-specific configurations
+        other_input = 0  # generic ELN, Oasis-specific configurations
+        apsui_input = 0  # manual yaml files composed from IVAS/AP Suite
         for suffix, value in self.case.items():
             if suffix not in [".h5", "range_.h5"]:
                 if suffix in VALID_FILE_NAME_SUFFIX_RECON:
@@ -99,6 +103,8 @@ class ApmUseCaseSelector:
                     range_input += len(value)
                 elif suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
                     other_input += len(value)
+                elif suffix in VALID_FILE_NAME_SUFFIX_CAMECA:
+                    apsui_input += len(value)
                 else:
                     continue
             else:
@@ -126,12 +132,16 @@ class ApmUseCaseSelector:
                 self.cfg += [entry]
             else:
                 self.eln += [entry]
+        for suffix in VALID_FILE_NAME_SUFFIX_CAMECA:
+            self.apsuite += self.case[suffix]
         print(
             f"recon_results: {self.reconstruction}\n"
             f"range_results: {self.ranging}\n"
             f"Oasis ELN: {self.eln}\n"
             f"Oasis local config: {self.cfg}\n"
         )
+        if len(self.apsuite) > 0:
+            print(f"IVAS/APSuite: {self.apsuite}\n")
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""

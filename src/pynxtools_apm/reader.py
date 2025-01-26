@@ -35,6 +35,7 @@ from pynxtools_apm.utils.load_ranging import (
 from pynxtools_apm.utils.load_reconstruction import (
     ApmReconstructionParser,
 )
+from pynxtools_apm.utils.oasis_apsuite_reader import NxApmNomadOasisCamecaParser
 from pynxtools_apm.utils.oasis_config_reader import (
     NxApmNomadOasisConfigurationParser,
 )
@@ -81,7 +82,6 @@ class APMReader(BaseReader):
         template.clear()
 
         entry_id = 1
-        # if len(file_paths) == 1:
         """
         # TODO::better make this an option rather than hijack and demand a
         # specifically named file to trigger the synthesizer
@@ -133,6 +133,10 @@ class APMReader(BaseReader):
             nx_apm_range.parse(template)
         else:
             print("No input-file defined for ranging definitions!")
+
+        if len(case.apsuite) == 1:
+            print("Parse from a file with IVAS/APSuite-specific concepts...")
+            nx_apm_cameca = NxApmNomadOasisCamecaParser(case.apsuite[0], entry_id)
 
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)
