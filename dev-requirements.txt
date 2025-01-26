@@ -22,7 +22,7 @@ asttokens==3.0.0
     # via stack-data
 async-lru==2.0.4
     # via jupyterlab
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   jsonschema
     #   referencing
@@ -78,7 +78,7 @@ coverage==7.6.10
     # via pytest-cov
 cycler==0.12.1
     # via matplotlib
-debugpy==1.8.11
+debugpy==1.8.12
     # via ipykernel
 decorator==5.1.1
     # via ipython
@@ -86,15 +86,15 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.9
     # via virtualenv
-executing==2.1.0
+executing==2.2.0
     # via stack-data
 fastjsonschema==2.21.1
     # via nbformat
-filelock==3.16.1
+filelock==3.17.0
     # via virtualenv
 flatdict==4.0.1
     # via ifes-apt-tc-data-modeling
-fonttools==4.55.3
+fonttools==4.55.6
     # via matplotlib
 fqdn==1.5.1
     # via jsonschema
@@ -120,7 +120,7 @@ httpx==0.28.1
     # via
     #   blosc2
     #   jupyterlab
-identify==2.6.5
+identify==2.6.6
     # via pre-commit
 idna==3.10
     # via
@@ -130,7 +130,7 @@ idna==3.10
     #   requests
 ifes-apt-tc-data-modeling==0.2.2
     # via pynxtools-apm (pyproject.toml)
-importlib-metadata==8.5.0
+importlib-metadata==8.6.1
     # via pynxtools
 iniconfig==2.0.0
     # via pytest
@@ -268,7 +268,7 @@ mkdocs-get-deps==0.2.0
     # via mkdocs
 mkdocs-macros-plugin==1.3.7
     # via pynxtools-apm (pyproject.toml)
-mkdocs-material==9.5.49
+mkdocs-material==9.5.50
     # via pynxtools-apm (pyproject.toml)
 mkdocs-material-extensions==1.3.1
     # via
@@ -329,7 +329,7 @@ numpy==1.26.4
     #   tables
     #   tifffile
     #   xarray
-orjson==3.10.14
+orjson==3.10.15
     # via h5grove
 overrides==7.7.0
     # via jupyter-server
@@ -370,7 +370,7 @@ pillow==11.1.0
     # via matplotlib
 pint==0.17
     # via pynxtools-apm (pyproject.toml)
-pip==24.3.1
+pip==25.0
     # via pip-tools
 pip-tools==7.4.1
     # via pynxtools-apm (pyproject.toml)
@@ -381,11 +381,11 @@ platformdirs==4.3.6
     #   virtualenv
 pluggy==1.5.0
     # via pytest
-pre-commit==4.0.1
+pre-commit==4.1.0
     # via pynxtools-apm (pyproject.toml)
 prometheus-client==0.21.1
     # via jupyter-server
-prompt-toolkit==3.0.48
+prompt-toolkit==3.0.50
     # via
     #   ipython
     #   jupyter-console
@@ -409,9 +409,9 @@ pygments==2.19.1
     #   jupyter-console
     #   mkdocs-material
     #   nbconvert
-pymdown-extensions==10.14
+pymdown-extensions==10.14.1
     # via mkdocs-material
-pynxtools==0.9.3
+pynxtools @ git+https://github.com/FAIRmat-NFDI/pynxtools@9ca60a34223623eae954b290d0eb1acb9b213cb1#egg=apm_app
     # via pynxtools-apm (pyproject.toml)
 pyparsing==3.2.1
     # via matplotlib
@@ -467,7 +467,7 @@ pyzmq==26.2.0
     #   jupyter-server
 radioactivedecay==0.6.1
     # via ifes-apt-tc-data-modeling
-referencing==0.35.1
+referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -490,9 +490,9 @@ rpds-py==0.22.3
     # via
     #   jsonschema
     #   referencing
-ruff==0.9.0
+ruff==0.9.3
     # via pynxtools-apm (pyproject.toml)
-scipy==1.15.0
+scipy==1.15.1
     # via
     #   ase
     #   radioactivedecay
@@ -513,7 +513,7 @@ soupsieve==2.6
     # via beautifulsoup4
 stack-data==0.6.3
     # via ipython
-structlog==24.4.0
+structlog==25.1.0
     # via pynxtools-apm (pyproject.toml)
 super-collections==0.5.3
     # via mkdocs-macros-plugin
@@ -527,7 +527,7 @@ terminado==0.18.1
     # via
     #   jupyter-server
     #   jupyter-server-terminals
-tifffile==2024.12.12
+tifffile==2025.1.10
     # via h5grove
 tinycss2==1.4.0
     # via bleach
@@ -571,8 +571,9 @@ typing-extensions==4.12.2
     #   h5grove
     #   ipython
     #   mypy
+    #   referencing
     #   tables
-tzdata==2024.2
+tzdata==2025.1
     # via pandas
 uri-template==1.3.0
     # via jsonschema
@@ -580,9 +581,9 @@ urllib3==2.3.0
     # via
     #   requests
     #   types-requests
-uv==0.5.16
+uv==0.5.24
     # via pynxtools-apm (pyproject.toml)
-virtualenv==20.28.1
+virtualenv==20.29.1
     # via pre-commit
 watchdog==6.0.0
     # via mkdocs
