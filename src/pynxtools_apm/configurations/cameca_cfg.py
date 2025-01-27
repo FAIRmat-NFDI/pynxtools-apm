@@ -25,13 +25,13 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "",
     "map": [
-        ("reconstruction/quality", "fQuality"),
-        ("reconstruction/primary_element", "fPrimaryElement"),
+        ("atom_probe/reconstruction/quality", "fQuality"),
+        ("atom_probe/reconstruction/primary_element", "fPrimaryElement"),
         ("measurement/instrument/local_electrode/name", "fApertureName"),
         ("measurement/instrument/instrument_name", "fAtomProbeName"),
         ("measurement/instrument/fabrication/model", "fLeapModel"),
         (
-            "measurement/instrument/pulser/SOURCE[sourceID]/fabrication/model",
+            "measurement/instrument/pulser/SOURCE[source*]/fabrication/model",
             "fLaserModel",
         ),
         ("measurement/instrument/comments", "fInstrumentComment"),
@@ -42,23 +42,23 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ("start_time", "fStartISO8601"),
     ],
     "map_to_f8": [
-        ("reconstruction/efficiency", "fEfficiency"),
+        ("atom_probe/reconstruction/efficiency", "fEfficiency"),
         (
-            "reconstruction/evaporation_field",
+            "atom_probe/reconstruction/evaporation_field",
             ureg.volt / ureg.nanometer**2,
             "fEvaporationField",
         ),
-        ("reconstruction/flight_path", ureg.millimeter, "fFlightPath"),
-        ("reconstruction/image_compression", "??", "fImageCompression"),
-        ("reconstruction/kfactor", "??", "fKfactor"),
-        ("reconstruction/volume", ureg.nanometer**3, "fReconVolume"),
-        ("reconstruction/shank_angle", ureg.degrees, "fShankAngle"),
-        ("reconstruction/obb/xmax", ureg.nanometer, "fXmax"),
-        ("reconstruction/obb/xmin", ureg.nanometer, "fXmin"),
-        ("reconstruction/obb/ymax", ureg.nanometer, "fYmax"),
-        ("reconstruction/obb/ymin", ureg.nanometer, "fYmin"),
-        ("reconstruction/obb/zmax", ureg.nanometer, "fZmax"),
-        ("reconstruction/obb/zmin", ureg.nanometer, "fZmin"),
+        ("atom_probe/reconstruction/flight_path", ureg.millimeter, "fFlightPath"),
+        ("atom_probe/reconstruction/image_compression", "fImageCompression"),  # ??
+        ("atom_probe/reconstruction/kfactor", "fKfactor"),  # ??
+        ("atom_probe/reconstruction/volume", ureg.nanometer**3, "fReconVolume"),
+        ("atom_probe/reconstruction/shank_angle", ureg.degrees, "fShankAngle"),
+        ("atom_probe/reconstruction/obb/xmax", ureg.nanometer, "fXmax"),
+        ("atom_probe/reconstruction/obb/xmin", ureg.nanometer, "fXmin"),
+        ("atom_probe/reconstruction/obb/ymax", ureg.nanometer, "fYmax"),
+        ("atom_probe/reconstruction/obb/ymin", ureg.nanometer, "fYmin"),
+        ("atom_probe/reconstruction/obb/zmax", ureg.nanometer, "fZmax"),
+        ("atom_probe/reconstruction/obb/zmin", ureg.nanometer, "fZmin"),
         (
             "measurement/instrument/analysis_chamber/pressure",
             ureg.torr,
@@ -95,27 +95,10 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
     ],
 }
 
-# second
-# ("experiment_description", ["fProjectName", "fName", "fComments"])
-# ("operation_mode", "fAcquisitionMode")
-# ("atom_probe/hit_finding/total_hit_quality", "fTotalEventGolden")
-# ("", "fTotalEventIncomplete")
-# ("", "fTotalEventMultiple")
-# ("", "fTotalEventPartials")
-# ("", "fTotalEventRecords")
-# ("", "fAcqBuildVersion")
-# ("", "fAcqMajorVersion")
-# ("", "fAcqMinorVersion")
-# ("", "fCernRootVersion")
-# ("", "fImagoRootDate")
-# ("", "fImagoRootVersion")
-# ("", "fStreamVersion")]
-
 # third
 # ("", ureg.nanometer, "fTipRadius")
 # ("", ureg.nanometer, "fTipRadius0")
 # ("", ureg.volt, "fVoltage0")
-# ("", "fUserID")
 # ("", "fBcaSerialRev")
 # ("", "fFirmwareVersion")
 # ("", "fFlangeSerialNumber")

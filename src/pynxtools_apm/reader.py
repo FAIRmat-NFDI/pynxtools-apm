@@ -134,9 +134,11 @@ class APMReader(BaseReader):
         else:
             print("No input-file defined for ranging definitions!")
 
-        if len(case.apsuite) == 1:
+        if 1 <= len(case.apsuite) <= 2:
             print("Parse from a file with IVAS/APSuite-specific concepts...")
-            nx_apm_cameca = NxApmNomadOasisCamecaParser(case.apsuite[0], entry_id)
+            for cameca_input_file in case.apsuite:
+                nx_apm_cameca = NxApmNomadOasisCamecaParser(cameca_input_file, entry_id)
+                nx_apm_cameca.parse(template)
 
         print("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)

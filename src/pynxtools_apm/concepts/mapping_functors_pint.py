@@ -296,9 +296,7 @@ def map_functor(
             if isinstance(src_val, ureg.Quantity):
                 set_value(template, trg, src_val.to(cmd[1]), trg_dtype_key)
             else:
-                set_value(
-                    template, trg, ureg.Quantity(src_val, cmd[1].units), trg_dtype_key
-                )
+                set_value(template, trg, ureg.Quantity(src_val, cmd[1]), trg_dtype_key)
         elif case == "case_three_list":  # str, ureg.Unit, list
             if len(cmd[2]) == 0:
                 continue
