@@ -160,9 +160,7 @@ class NxApmNomadOasisCamecaParser:
                         ):
                             # TODO::check if range is significant
                             symbol = element_multiplicity[0]
-                            atoms = np.append(
-                                atoms, [symbol] * int(element_multiplicity[1])
-                            )
+                            atoms += [symbol] * int(element_multiplicity[1])
                             unique_elements.add(symbol)
 
                     ion = NxIon(nuclide_hash=create_nuclide_hash(atoms), charge_state=0)
