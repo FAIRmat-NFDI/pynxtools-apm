@@ -186,6 +186,7 @@ class NxApmNomadOasisCamecaParser:
                     template[f"{trg}nuclide_list"] = ion.nuclide_list.values
                     template[f"{trg}name"] = ion.name.values
 
+                    """
                     if ion.charge_state_model["n_cand"] > 0:
                         path = f"{trg}charge_state_analysis/"
                         template[f"{path}nuclides"] = np.asarray(
@@ -263,8 +264,9 @@ class NxApmNomadOasisCamecaParser:
                                 "strength": 1,
                             }
                             template[f"{path}shortest_half_life/@units"] = "s"
+                    """
 
-                trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
+                trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
                 template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
                 template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(
                     MAX_NUMBER_OF_ATOMS_PER_ION

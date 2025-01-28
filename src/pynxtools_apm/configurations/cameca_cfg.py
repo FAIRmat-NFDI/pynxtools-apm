@@ -95,7 +95,11 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
             ureg.millimeter,
             "fMaximumFlightPathMm",
         ),
-        ("measurement/stage/specimen_temperature", ureg.kelvin, "fSpecimenTemperature"),
+        (
+            "measurement/instrument/stage/specimen_temperature",
+            ureg.kelvin,
+            "fSpecimenTemperature",
+        ),
         (
             "atom_probe/voltage_and_bowl/tof_zero_estimate",
             ureg.nanosecond,

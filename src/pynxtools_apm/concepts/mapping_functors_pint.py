@@ -43,6 +43,7 @@ MAP_TO_DTYPES: Dict[str, type] = {
     "i8": np.int64,
     "f8": np.float64,
     "bool": bool,
+    "str": str,
 }
 
 # general conversion workflow
@@ -201,7 +202,9 @@ def set_value(template: dict, trg: str, src_val: Any, trg_dtype: str = "") -> di
             )
     else:  # do an explicit type conversion
         # e.g. in cases when tech partner writes float32 but e.g. NeXus assumes float64
-        if isinstance(src_val, (str, bool)):
+        if isinstance(src_val, str):
+            template[f"{trg}"] = f"{src_val}"
+        if isinstance(src_val, bool):
             template[f"{trg}"] = try_interpret_as_boolean(src_val)
         elif isinstance(src_val, ureg.Quantity):
             if isinstance(src_val.magnitude, (np.ndarray, np.generic)):

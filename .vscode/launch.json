@@ -11,14 +11,14 @@
             "cwd": "${workspaceFolder}",
             "program": "../../.py3.11.11/bin/dataconverter",
             "args": [//workflow files str.str, hits.hits, root.root should be created via touch str.str ...
-                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/001.0.c4b1b412f46833ef7b72164858f3fa2daea60de212b2a62cd7121c07a92d5837.rhit.CRunHeader.dat.Parsed.cameca",
-                     "../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/019.0.8d12016f3d152ce8a02194b126bd6c896f517928dada673864e93e4dfc418738.root.CAnalysis.dat.Parsed.cameca",
+                     "../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/001.0.c4b1b412f46833ef7b72164858f3fa2daea60de212b2a62cd7121c07a92d5837.rhit.CRunHeader.dat.Parsed.cameca",
+                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/019.0.8d12016f3d152ce8a02194b126bd6c896f517928dada673864e93e4dfc418738.root.CAnalysis.dat.Parsed.cameca",
                      "--reader",
                      "apm",
                      "--nxdl",
                      "NXapm",
-                     //"--output=tests/prod/out_recon.nxs"]
-                     "--output=tests/prod/out_range.nxs"]
+                     "--output=tests/prod/out_recon.nxs"]
+                     //"--output=tests/prod/out_range.nxs"]
         }
     ]
 }
