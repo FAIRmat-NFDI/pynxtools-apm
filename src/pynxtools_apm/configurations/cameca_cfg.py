@@ -24,22 +24,32 @@ from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "",
-    "map": [
+    "map_to_str": [
         ("atom_probe/reconstruction/quality", "fQuality"),
         ("atom_probe/reconstruction/primary_element", "fPrimaryElement"),
         ("measurement/instrument/local_electrode/name", "fApertureName"),
         ("measurement/instrument/instrument_name", "fAtomProbeName"),
         ("measurement/instrument/fabrication/model", "fLeapModel"),
+        ("measurement/instrument/fabrication/serial_number", "fSerialNumber"),
         (
             "measurement/instrument/pulser/SOURCE[source*]/fabrication/model",
-            "fLaserModel",
+            "fLaserModelString",
         ),
-        ("measurement/instrument/comments", "fInstrumentComment"),
+        (
+            "measurement/instrument/pulser/SOURCE[source*]/fabrication/serial_number",
+            "fLaserSerialNumber",
+        ),
+        (
+            "measurement/instrument/pulser/fabrication/model",
+            "fPulserType",
+        ),
+        ("measurement/instrument/comment", "fInstrumentComment"),
         ("atom_probe/raw_data/serialized/path", "fRawPathName"),
         ("measurement/status", "fResults"),
         ("specimen/description", "fSpecimenCondition"),
         ("specimen/alias", "fSpecimenName"),
         ("start_time", "fStartISO8601"),
+        ("run_number", "fRunNumber"),
     ],
     "map_to_f8": [
         ("atom_probe/reconstruction/efficiency", "fEfficiency"),
@@ -59,6 +69,9 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ("atom_probe/reconstruction/obb/ymin", ureg.nanometer, "fYmin"),
         ("atom_probe/reconstruction/obb/zmax", ureg.nanometer, "fZmax"),
         ("atom_probe/reconstruction/obb/zmin", ureg.nanometer, "fZmin"),
+        ("atom_probe/reconstruction/tip_radius", ureg.nanometer, "fTipRadius"),
+        ("atom_probe/reconstruction/tip_radius_zero", ureg.nanometer, "fTipRadius0"),
+        ("atom_probe/reconstruction/voltage_zero", ureg.volt, "fVoltage0"),
         (
             "measurement/instrument/analysis_chamber/pressure",
             ureg.torr,
@@ -89,25 +102,16 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
             "fT0Estimate",
         ),
     ],
-    "map_to_u4": [
-        ("measurement/instrument/fabrication/serial_number", "fSerialNumber"),
-        ("run_number", "fRunNumber"),
-    ],
 }
 
 # third
-# ("", ureg.nanometer, "fTipRadius")
-# ("", ureg.nanometer, "fTipRadius0")
-# ("", ureg.volt, "fVoltage0")
 # ("", "fBcaSerialRev")
 # ("", "fFirmwareVersion")
 # ("", "fFlangeSerialNumber")
 # ("", "fHvpsType")
-# ("", "fLaserModelString")
-# ("", "fLaserSerialNumber")
+# ("", "fLaserModel")
 # ("", "fLcbSerialRev")
 # ("", "fMcpSerialNumber")
-# ("", "fPulserType")
 # ("", "fTaSerialRev")
 # ("", "fTdcType")
 # ("", "fTargetEvapRate")
