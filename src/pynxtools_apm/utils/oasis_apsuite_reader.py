@@ -68,7 +68,7 @@ class NxApmNomadOasisCamecaParser:
         ]
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/"
         for cameca_name, nexus_name in event_type_names:
-            if f"fTotalEvent{cameca_name}" in self.yml:
+            if f"fTotalEvent{cameca_name}" in self.yml.as_dict().keys():
                 template[f"{trg}total_event_{nexus_name}"] = self.yml[
                     f"fTotalEvent{cameca_name}"
                 ]
