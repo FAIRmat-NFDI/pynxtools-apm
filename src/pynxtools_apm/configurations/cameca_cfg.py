@@ -28,7 +28,7 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ("atom_probe/reconstruction/quality", "fQuality"),
         ("atom_probe/reconstruction/primary_element", "fPrimaryElement"),
         ("measurement/instrument/local_electrode/name", "fApertureName"),
-        ("measurement/instrument/instrument_name", "fAtomProbeName"),
+        ("measurement/instrument/name", "fAtomProbeName"),
         ("measurement/instrument/fabrication/model", "fLeapModel"),
         ("measurement/instrument/fabrication/serial_number", "fSerialNumber"),
         (

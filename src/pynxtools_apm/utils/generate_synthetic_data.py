@@ -410,9 +410,7 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # print("Parsing instrument header...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
-        template[f"{trg}instrument_name"] = str(
-            f"test instrument {np.random.choice(100, 1)[0]}"
-        )
+        template[f"{trg}name"] = str(f"test instrument {np.random.choice(100, 1)[0]}")
         template[f"{trg}flight_path_length"] = np.float64(
             np.random.normal(loc=1.0, scale=0.05)
         )

@@ -116,6 +116,56 @@ class NxApmNomadOasisCamecaParser:
         template[f"/ENTRY[entry{self.entry_id}]/experiment_description"] = free_text
         return template
 
+    def assume_pulse_mode(self, template: dict) -> dict:
+        """Assume the pulse mode from specific values."""
+        # WHETHER OR NOT THIS ASSUMPTION IS RIGHT has not been confirmed by Cameca
+        # the assumption is here only implemented to show a typical example to
+        # technology partners where challenges exists and offer an elaborated guess
+        # for RDM that should however better be confirmed by tech partners and would
+        # profit from having qualifiers attached to how sure one is for each mapped
+        # quantity and concept
+        if "fInitialPulserFreq" in self.yml:
+            if self.yml["fInitialPulserFreq"] < 0.0:
+                pulse_mode = "laser"
+            elif self.yml[f"fInitialPulserFreq"] >= 0.0:
+                pulse_mode = "voltage"
+            else:
+                pulse_mode = "unknown"
+            template[
+                f"/ENTRY[entry{self.entry_id}]/measurement/instrument/pulser/pulse_mode"
+            ] = pulse_mode
+        return template
+
+    def assume_leap_model_enum_for_rdm(self, template: dict) -> dict:
+        """Try to recover the APT instrument model avoiding possible typos via enum."""
+        # WHETHER OR NOT THIS ASSUMPTION IS RIGHT has not been confirmed by Cameca
+        # we rely on examples here
+        # ["Inspico", "3DAP, "LAWATAP", "LEAP 3000 Si", "LEAP 3000X Si",
+        # "LEAP 3000 HR", "LEAP 3000X HR", "LEAP 4000 Si", "LEAP 4000X Si",
+        # "LEAP 4000 HR", "LEAP 4000X HR",
+        # "LEAP 5000 XS", "LEAP 5000 XR", "LEAP 5000 R", "EIKOS", "EIKOS-UV",
+        # "LEAP 6000 XR", "LEAP INVIZO", "Photonic AP", "TeraSAT", "TAPHR",
+        #  "Modular AP", "Titanium APT", "Extreme UV APT", "unknown"]
+        if "fLeapModel" in self.yml:
+            for fleap_model, enum_value in [
+                ("10", "LEAP 4000X Si"),
+                ("11", "LEAP 4000 HR"),
+                ("12", "LEAP 4000X HR"),
+                ("14", "LEAP 5000 XS"),
+                ("15", "LEAP 4000 XHR"),
+                ("16", "LEAP 5000 XR"),
+                ("17", "LEAP INVIZO"),
+            ]:
+                if fleap_model == self.yml[f"LeapModel"]:
+                    template[
+                        f"/ENTRY[entry{self.entry_id}]/measurement/instrument/type"
+                    ] = enum_value
+                    return template
+        template[f"/ENTRY[entry{self.entry_id}]/measurement/instrument/type"] = (
+            "unknown"
+        )
+        return template
+
     def parse_acquisition_mode(self, template: dict) -> dict:
         return template
 
@@ -125,7 +175,7 @@ class NxApmNomadOasisCamecaParser:
         if src in self.yml:
             if isinstance(self.yml[src], list):
                 unique_elements = set()
-                add_unknown_iontype(template, entry_id=1)
+                # add_unknown_iontype(template, entry_id=1)
                 ion_id = 0
 
                 for rng_def in self.yml[src]:
@@ -142,33 +192,37 @@ class NxApmNomadOasisCamecaParser:
                         ]
                     ):
                         continue
-                    line = rng_def["fRngComposition"].strip()
-                    tmp = re.split(r"[\s=]+", line)
+
                     atoms = []
-                    for entry in tmp:
-                        element_multiplicity = re.split(r":+", entry)
-                        if len(element_multiplicity) != 2:
-                            raise ValueError(
-                                f"Line {line}, element multiplicity is not "
-                                f"correctly formatted {len(element_multiplicity)}!"
-                            )
-                        if (
-                            element_multiplicity[0] in chemical_symbols[1::]
-                            and np.uint32(element_multiplicity[1])
-                            < MAX_NUMBER_OF_ION_SPECIES
-                        ):
-                            # TODO::check if range is significant
-                            symbol = element_multiplicity[0]
-                            atoms += [symbol] * int(element_multiplicity[1])
-                            unique_elements.add(symbol)
+                    line = rng_def["fRngComposition"].strip()
+                    if line != "":
+                        tmp = re.split(r"[\s=]+", line)
+                        for entry in tmp:
+                            element_multiplicity = re.split(r":+", entry)
+                            if len(element_multiplicity) != 2:
+                                raise ValueError(
+                                    f"Line {line}, element multiplicity is not "
+                                    f"correctly formatted {len(element_multiplicity)}!"
+                                )
+                            if (
+                                element_multiplicity[0] in chemical_symbols[1::]
+                                and np.uint32(element_multiplicity[1])
+                                < MAX_NUMBER_OF_ION_SPECIES
+                            ):
+                                # TODO::check if range is significant
+                                symbol = element_multiplicity[0]
+                                atoms += [symbol] * int(element_multiplicity[1])
+                                unique_elements.add(symbol)
 
                     ion = NxIon(nuclide_hash=create_nuclide_hash(atoms), charge_state=0)
                     ion.add_range(
                         rng_def["fMassToChargeLow"], rng_def["fMassToChargeHigh"]
                     )
-                    ion.comment = NxField(rng_def["fRngName"], "")
+                    ion.comment = NxField(rng_def["fRngName"].strip(), "")
                     ion.apply_combinatorics()
                     ion.update_human_readable_name()
+                    if ion.name.values == "" and rng_def["fRngName"].strip() != "":
+                        ion.name.values = rng_def["fRngName"].strip()
                     # print(ion.report())
 
                     trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/ionID[ion{ion_id}]/"
@@ -282,7 +336,8 @@ class NxApmNomadOasisCamecaParser:
         self.parse_event_statistics(template)
         self.parse_versions(template)
         self.parse_comments(template)
-        # self.parse_acquisition_mode(template)
+        self.assume_pulse_mode(template)
+        self.assume_leap_model_enum_for_rdm(template)
         self.parse_ranging_definitions(template)
         identifier = [self.entry_id, 1]
         add_specific_metadata_pint(APM_CAMECA_TO_NEXUS, self.yml, identifier, template)

@@ -118,7 +118,7 @@ APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_src": "instrument/",
     "map": [
         "status",
-        "instrument_name",
+        ("name", "instrument_name"),
         "location",
         ("fabrication/vendor", "fabrication_vendor"),
         ("fabrication/model", "fabrication_model"),
