@@ -59,20 +59,19 @@ class NxApmNomadOasisCamecaParser:
 
     def parse_event_statistics(self, template: dict) -> dict:
         """Interpret event statistics resulting from hit-finding algorithm."""
-        event_type_names = ["Golden", "Incomplete", "Multiple", "Partials", "Records"]
-        vals = []
-        for evn_name in event_type_names:
-            vals.append(f"fTotalEvent{evn_name}")
-
-        if all(val in self.yml for val in vals):
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/"
-            template[f"{trg}hit_quality_types"] = str(
-                [evn_name.lower() for evn_name in event_type_names]
-            )
-            cnts = np.zeros((5,), np.uint64)
-            for idx, evn_name in enumerate(event_type_names):
-                cnts[idx] = self.yml[f"fTotalEvent{evn_name}"]
-            template[f"{trg}total_hit_quality"] = cnts
+        event_type_names = [
+            ("Golden", "golden"),
+            ("Incomplete", "incomplete"),
+            ("Multiple", "multiple"),
+            ("Partials", "partial"),
+            ("Records", "record"),
+        ]
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/"
+        for cameca_name, nexus_name in event_type_names:
+            if f"fTotalEvent{cameca_name}" in self.yml:
+                template[f"{trg}total_event_{nexus_name}"] = self.yml[
+                    f"fTotalEvent{cameca_name}"
+                ]
         return template
 
     def parse_versions(self, template: dict) -> dict:
@@ -186,7 +185,6 @@ class NxApmNomadOasisCamecaParser:
                     template[f"{trg}nuclide_list"] = ion.nuclide_list.values
                     template[f"{trg}name"] = ion.name.values
 
-                    """
                     if ion.charge_state_model["n_cand"] > 0:
                         path = f"{trg}charge_state_analysis/"
                         template[f"{path}nuclides"] = np.asarray(
@@ -264,7 +262,6 @@ class NxApmNomadOasisCamecaParser:
                                 "strength": 1,
                             }
                             template[f"{path}shortest_half_life/@units"] = "s"
-                    """
 
                 trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
                 template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
