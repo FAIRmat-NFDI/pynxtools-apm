@@ -156,7 +156,7 @@ class NxApmNomadOasisCamecaParser:
                 ("16", "LEAP 5000 XR"),
                 ("17", "LEAP INVIZO"),
             ]:
-                if fleap_model == self.yml[f"LeapModel"]:
+                if fleap_model == self.yml[f"fLeapModel"]:
                     template[
                         f"/ENTRY[entry{self.entry_id}]/measurement/instrument/type"
                     ] = enum_value
