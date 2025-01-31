@@ -1,6 +1,6 @@
 site_name: pynxtools-apm
 site_description: |
-  The documentation for the pynxtools-apm plugin
+  The documentation of the pynxtools-apm plugin
 site_author: The NOMAD authors
 repo_url: https://github.com/FAIRmat-NFDI/pynxtools-apm
 edit_uri: ""
@@ -46,15 +46,21 @@ theme:
     accent: '#008A67'
   font:
     text: 'Titillium Web'
-  logo: assets/nomad-logo.png
+  logo: assets/nomad-plugin-logo.png
   favicon: assets/favicon.png
   features:
     - navigation.instant
+    - navigation.footer
     - content.code.copy
     - content.code.annotate
+    - search.suggest
   custom_dir: docs/theme
+  icon:
+    repo: fontawesome/brands/github
 
 markdown_extensions:
+  - markdown_include.include:
+      base_path: docs
   - attr_list
   - md_in_html
   - admonition
@@ -78,7 +84,7 @@ markdown_extensions:
 
 extra:
   generator: false
-  homepage: https://nomad-lab.eu
+  # homepage: https://fairmat-nfdi.github.io/pynxtools-apm/
 
 use_directory_urls: false
 
