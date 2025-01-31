@@ -148,13 +148,13 @@ class NxApmNomadOasisCamecaParser:
         #  "Modular AP", "Titanium APT", "Extreme UV APT", "unknown"]
         if "fLeapModel" in self.yml:
             for fleap_model, enum_value in [
-                ("10", "LEAP 4000X Si"),
-                ("11", "LEAP 4000 HR"),
-                ("12", "LEAP 4000X HR"),
-                ("14", "LEAP 5000 XS"),
-                ("15", "LEAP 4000 XHR"),
-                ("16", "LEAP 5000 XR"),
-                ("17", "LEAP INVIZO"),
+                (10, "LEAP 4000X Si"),
+                (11, "LEAP 4000 HR"),
+                (12, "LEAP 4000X HR"),
+                (14, "LEAP 5000 XS"),
+                (15, "LEAP 4000 XHR"),
+                (16, "LEAP 5000 XR"),
+                (17, "LEAP INVIZO"),
             ]:
                 if fleap_model == self.yml[f"fLeapModel"]:
                     template[

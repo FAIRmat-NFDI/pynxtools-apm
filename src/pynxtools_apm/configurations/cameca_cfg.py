@@ -49,8 +49,8 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ("specimen/description", "fSpecimenCondition"),
         ("specimen/alias", "fSpecimenName"),
         ("start_time", "fStartISO8601"),
-        ("run_number", "fRunNumber"),
     ],
+    "map_to_u4": [("run_number", "fRunNumber")],
     "map_to_f8": [
         ("atom_probe/reconstruction/efficiency", "fEfficiency"),
         (
