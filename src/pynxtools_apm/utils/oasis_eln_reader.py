@@ -162,7 +162,8 @@ class NxApmNomadOasisElnSchemaParser:
                     for ldct in self.yml[src]:
                         trg_sta = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"instrument/pulser/sourceID[source{laser_id}]"
+                            f"events/eventID[event1]/instrument/"
+                            f"pulser/sourceID[source{laser_id}]"
                         )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
@@ -174,7 +175,7 @@ class NxApmNomadOasisElnSchemaParser:
 
                         trg_dyn = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"event_data_apm_set/event_data_apm/instrument/"
+                            f"events/eventID[event1]/instrument/"
                             f"pulser/sourceID[source{laser_id}]"
                         )
                         quantities = ["power", "pulse_energy"]

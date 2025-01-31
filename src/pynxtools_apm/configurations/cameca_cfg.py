@@ -32,11 +32,11 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ("measurement/instrument/fabrication/model", "fLeapModel"),
         ("measurement/instrument/fabrication/serial_number", "fSerialNumber"),
         (
-            "measurement/instrument/pulser/SOURCE[source*]/fabrication/model",
+            "measurement/instrument/pulser/sourceID[source*]/fabrication/model",
             "fLaserModelString",
         ),
         (
-            "measurement/instrument/pulser/SOURCE[source*]/fabrication/serial_number",
+            "measurement/instrument/pulser/sourceID[source*]/fabrication/serial_number",
             "fLaserSerialNumber",
         ),
         (
@@ -73,18 +73,18 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ("atom_probe/reconstruction/tip_radius_zero", ureg.nanometer, "fTipRadius0"),
         ("atom_probe/reconstruction/voltage_zero", ureg.volt, "fVoltage0"),
         (
-            "measurement/instrument/analysis_chamber/pressure",
+            "measurement/events/eventID[event*]/instrument/analysis_chamber/pressure",
             ureg.torr,
             "fAnalysisPressure",
         ),
         (
-            "measurement/instrument/local_electrode/voltage",
+            "measurement/events/eventID[event*]/instrument/local_electrode/voltage",
             ureg.volt,
             "fAnodeAccelVoltage",
         ),
         ("elapsed_time", ureg.second, "fElapsedTime"),
         (
-            "measurement/instrument/pulser/pulse_frequency",
+            "measurement/events/eventID[event*]/instrument/pulser/pulse_frequency",
             ureg.kilohertz,
             "fInitialPulserFreq",
         ),
@@ -96,7 +96,7 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
             "fMaximumFlightPathMm",
         ),
         (
-            "measurement/instrument/stage/specimen_temperature",
+            "measurement/events/eventID[event*]/instrument/stage/specimen_temperature",
             ureg.kelvin,
             "fSpecimenTemperature",
         ),

@@ -132,7 +132,7 @@ class NxApmNomadOasisCamecaParser:
             else:
                 pulse_mode = "unknown"
             template[
-                f"/ENTRY[entry{self.entry_id}]/measurement/instrument/pulser/pulse_mode"
+                f"/ENTRY[entry{self.entry_id}]/measurement/events/eventID[event1]/instrument/pulser/pulse_mode"
             ] = pulse_mode
         return template
 

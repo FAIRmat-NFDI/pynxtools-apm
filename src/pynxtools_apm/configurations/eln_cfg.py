@@ -22,21 +22,21 @@ from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 APM_ENTRY_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "entry/",
-    "map": [
-        "run_number",
+    "map_to_str": [
         "operation_mode",
         "start_time",
         "end_time",
         "experiment_description",
         ("experiment_alias", "run_number"),
     ],
+    "map_to_u4": ["run_number"],
 }
 
 
 APM_SAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
-    "map": [
+    "map_to_str": [
         "alias",
         "description",
         ("type", "method"),
@@ -88,7 +88,7 @@ APM_SAMPLE_TO_NEXUS = {
 APM_SPECIMEN_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "specimen/",
-    "map": [
+    "map_to_str": [
         "alias",
         "preparation_date",
         "description",
@@ -116,16 +116,15 @@ APM_SPECIMEN_TO_NEXUS = {
 APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
     "prefix_src": "instrument/",
-    "map": [
-        "status",
-        ("name", "instrument_name"),
+    "map_to_str": [
+        # "status",
         "location",
+        ("name", "instrument_name"),
         ("fabrication/vendor", "fabrication_vendor"),
         ("fabrication/model", "fabrication_model"),
         ("fabrication/identifier/identifier", "fabrication_identifier"),
         ("reflectron/status", "reflectron_status"),
         ("local_electrode/name", "local_electrode_name"),
-        ("pulser/pulse_mode", "pulser/pulse_mode"),
     ],
     "map_to_f8": [
         (
@@ -139,11 +138,11 @@ APM_INSTRUMENT_STATIC_TO_NEXUS = {
 
 
 APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/event_data_apm/instrument",
+    "prefix_trg": "/ENTRY[entry*]/measurement/events/eventID[event*]/instrument",
     "prefix_src": "instrument/",
     "use": [("control/target_detection_rate/@units", "ions/pulse")],
-    "map": [
-        "pulser_pulse_mode",
+    "map_to_str": [
+        ("pulser/pulse_mode", "pulser/pulse_mode"),
         ("control/evaporation_control", "evaporation_control"),
     ],
     "map_to_f8": [
@@ -156,7 +155,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
         ),
         ("pulser/pulse_fraction", "pulser/pulse_fraction"),
         (
-            "analysis_chamber/chamber_pressure",
+            "analysis_chamber/pressure",
             ureg.bar,
             "chamber_pressure/value",
             "chamber_pressure/unit",
@@ -174,7 +173,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
 APM_RANGE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
     "prefix_src": "ranging/",
-    "map": [
+    "map_to_str": [
         ("programID[program1]/program", "program"),
         ("programID[program1]/program/@version", "program_version"),
     ],
@@ -184,7 +183,7 @@ APM_RANGE_TO_NEXUS = {
 APM_RECON_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
     "prefix_src": "reconstruction/",
-    "map": [
+    "map_to_str": [
         "protocol_name",
         "crystallographic_calibration",
         "parameter",

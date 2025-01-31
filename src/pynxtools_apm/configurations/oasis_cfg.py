@@ -49,7 +49,7 @@ APM_OASISCONFIG_TO_NEXUS = {
             f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
         ),
     ],
-    "map": ["operation_mode"],
+    "map_to_str": ["operation_mode"],
 }
 
 
@@ -89,5 +89,5 @@ APM_CSYS_MCSTASLIKE_TO_NEXUS = {
 APM_EXAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
     "prefix_src": "",
-    "map": ["authors", "doi", "description", "url"],
+    "map_to_str": ["authors", "doi", "description", "url"],
 }
