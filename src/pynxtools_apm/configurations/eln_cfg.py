@@ -27,7 +27,6 @@ APM_ENTRY_TO_NEXUS = {
         "start_time",
         "end_time",
         "experiment_description",
-        ("experiment_alias", "run_number"),
     ],
     "map_to_u4": ["run_number"],
 }
