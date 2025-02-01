@@ -161,25 +161,22 @@ class NxApmNomadOasisElnSchemaParser:
                     # custom schema delivers a list of dictionaries...
                     for ldct in self.yml[src]:
                         trg_sta = (
+                            f"/ENTRY[entry{self.entry_id}]/measurement/instrument/"
+                            f"pulser/sourceID[source{laser_id}]"
+                        )
+                        trg_dyn = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/"
                             f"events/eventID[event1]/instrument/"
                             f"pulser/sourceID[source{laser_id}]"
                         )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
-                        qnt = "wavelength"
-                        if qnt in ldct:
-                            if "value" in ldct[qnt] and "unit" in ldct[qnt]:
-                                template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
-                                template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
-
-                        trg_dyn = (
-                            f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"events/eventID[event1]/instrument/"
-                            f"pulser/sourceID[source{laser_id}]"
-                        )
-                        quantities = ["power", "pulse_energy"]
-                        for qnt in quantities:
+                        # qnt = "wavelength"
+                        # if qnt in ldct:
+                        #     if "value" in ldct[qnt] and "unit" in ldct[qnt]:
+                        #         template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
+                        #        template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
+                        for qnt in ["power", "pulse_energy", "wavelength"]:
                             if isinstance(ldct[qnt], dict):
                                 if ("value" in ldct[qnt]) and ("unit" in ldct[qnt]):
                                     template[f"{trg_dyn}/{qnt}"] = ldct[qnt]["value"]
@@ -196,7 +193,7 @@ class NxApmNomadOasisElnSchemaParser:
         self.parse_sample_composition(template)
         self.parse_user(template)
         self.parse_pulser_source(template)
-        identifier = [self.entry_id]
+        identifier = [self.entry_id, 1]
         for cfg in [
             APM_ENTRY_TO_NEXUS,
             APM_SAMPLE_TO_NEXUS,

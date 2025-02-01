@@ -300,7 +300,7 @@ class ApmCreateExampleData:
             template[f"{path}name"] = nuclide_hash_to_human_readable_name(ivec, tpl[1])
             ion_id += 1
 
-        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
         template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
         template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
 

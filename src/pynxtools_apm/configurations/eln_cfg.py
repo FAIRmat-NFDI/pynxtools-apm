@@ -161,7 +161,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
             "chamber_pressure/unit",
         ),
         (
-            "stage_lab/base_temperature",
+            "stage/specimen_temperature",
             ureg.kelvin,
             "base_temperature/value",
             "base_temperature/unit",
@@ -191,7 +191,7 @@ APM_RECON_TO_NEXUS = {
         ("programID[program1]/program/@version", "program_version"),
     ],
     "map_to_f8": [
-        ("field_of_view", ureg.centimeter, "field_of_view/value", "field_of_view/unit")
+        ("field_of_view", ureg.nanometer, "field_of_view/value", "field_of_view/unit")
     ],
 }
 

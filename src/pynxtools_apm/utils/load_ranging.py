@@ -159,7 +159,7 @@ def add_standardize_molecular_ions(
                 template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1
 
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
     template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
     return template
 
@@ -265,7 +265,7 @@ class ApmRangingDefinitionsParser:
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
         number_of_ion_types = 1
-        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
         if f"{prefix}number_of_ion_types" in template:
             number_of_ion_types = template[f"{prefix}number_of_ion_types"]
         print(
@@ -306,7 +306,10 @@ class ApmRangingDefinitionsParser:
         with the application definition.
         """
         # resolve the next two program references more informatively
-        trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+        trg = (
+            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+            f"ranging/peak_identification/"
+        )
         template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(
             MAX_NUMBER_OF_ATOMS_PER_ION
         )
@@ -314,11 +317,6 @@ class ApmRangingDefinitionsParser:
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
-
-        trg = (
-            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
-            f"ranging/peak_identification/"
-        )
         template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
         template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
@@ -350,10 +348,10 @@ class ApmRangingDefinitionsParser:
                     self.meta["file_path"], template, self.meta["entry_id"]
                 )
             else:
-                trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+                trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
                 template[f"{trg}number_of_ion_types"] = 1
         else:
-            trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/"
+            trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
             template[f"{trg}number_of_ion_types"] = 1
 
         self.update_atom_types_ranging_definitions_based(template)

@@ -336,7 +336,7 @@ def map_functor(
             # both of these cases can be avoided in an implementation when the
             # src quantity is already a pint quantity instead of some
             # pure python or numpy value or array respectively
-            raise ValueError(
+            raise NotImplementedError(
                 f"Hitting unimplemented case_four, instead refactor implementation such"
                 f"that values on the src side are pint.Quantities already!"
             )
