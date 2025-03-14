@@ -59,7 +59,7 @@ WARNING_TOO_MANY_DEFINITIONS = (
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on the unknown type
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/ionID[ion0]/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/ION[ion0]/"
     ivec = create_nuclide_hash([])
     template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
     template[f"{trg}charge_state"] = np.int8(0)
@@ -80,7 +80,7 @@ def add_standardize_molecular_ions(
     ion_id = 1
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
     for ion in ion_lst:
-        path = f"{trg}ionID[ion{ion_id}]/"
+        path = f"{trg}ION[ion{ion_id}]/"
         template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash.values, np.uint16)
         template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
         template[f"{path}mass_to_charge_range"] = np.asarray(
@@ -91,7 +91,7 @@ def add_standardize_molecular_ions(
         template[f"{path}name"] = ion.name.values
 
         if ion.charge_state_model["n_cand"] > 0:
-            path = f"{trg}ionID[ion{ion_id}]/charge_state_analysis/"
+            path = f"{trg}ION[ion{ion_id}]/charge_state_analysis/"
             template[f"{path}nuclides"] = np.asarray(ion.nuclide_hash.values, np.uint16)
             template[f"{path}mass_to_charge_range"] = np.asarray(
                 ion.ranges.values, np.float32
@@ -279,7 +279,7 @@ class ApmRangingDefinitionsParser:
             f"ranging/peak_identification/"
         )
         for ion_id in np.arange(1, number_of_ion_types):
-            trg = f"{prefix}ionID[ion{ion_id}]/nuclide_list"
+            trg = f"{prefix}ION[ion{ion_id}]/nuclide_list"
             if trg in template:
                 nuclide_list = template[trg][:, 1]
                 # second row of NXion/nuclide_list yields atom number to decode element
@@ -317,8 +317,8 @@ class ApmRangingDefinitionsParser:
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         add_unknown_iontype(template, self.meta["entry_id"])
 

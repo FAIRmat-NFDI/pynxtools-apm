@@ -442,14 +442,11 @@ def filehash_functor(
                 trg = var_path_to_spcfc_path(f"{prfx_trg}/{cmd[0]}", ids)
                 try:
                     with open(mdata[f"{prfx_src}{cmd[1]}"], "rb") as fp:
-                        template[f"{rchop(trg, 'checksum')}checksum"] = (
-                            get_sha256_of_file_content(fp)
-                        )
-                        template[f"{rchop(trg, 'checksum')}type"] = "file"
-                        template[f"{rchop(trg, 'checksum')}path"] = mdata[
-                            f"{prfx_src}{cmd[1]}"
-                        ]
-                        template[f"{rchop(trg, 'checksum')}algorithm"] = "sha256"
+                        fragment = rchop(trg, "checksum")
+                        template[f"{fragment}checksum"] = get_sha256_of_file_content(fp)
+                        template[f"{fragment}type"] = "file"
+                        template[f"{fragment}file_name"] = mdata[f"{prfx_src}{cmd[1]}"]
+                        template[f"{fragment}algorithm"] = "sha256"
                 except (FileNotFoundError, IOError):
                     print(f"File {mdata[f'''{prfx_src}{cmd[1]}''']} not found !")
     return template

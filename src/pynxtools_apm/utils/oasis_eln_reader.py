@@ -107,7 +107,7 @@ class NxApmNomadOasisElnSchemaParser:
                     # to enable using ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ionID[ion{ion_id}]"
+                            trg = f"{prfx}/ION[ion{ion_id}]"
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
@@ -162,12 +162,12 @@ class NxApmNomadOasisElnSchemaParser:
                     for ldct in self.yml[src]:
                         trg_sta = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/instrument/"
-                            f"pulser/sourceID[source{laser_id}]"
+                            f"pulser/SOURCE[source{laser_id}]"
                         )
                         trg_dyn = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"events/eventID[event1]/instrument/"
-                            f"pulser/sourceID[source{laser_id}]"
+                            f"events/EVENT_DATA_APM[event1]/instrument/"
+                            f"pulser/SOURCE[source{laser_id}]"
                         )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]

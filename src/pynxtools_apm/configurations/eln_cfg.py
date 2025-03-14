@@ -35,14 +35,7 @@ APM_ENTRY_TO_NEXUS = {
 APM_SAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
-    "map_to_str": [
-        "alias",
-        "description",
-        ("type", "method"),
-        ("identifier/identifier", "identifier/identifier"),
-        ("identifier/service", "identifier/service"),
-    ],
-    "map_to_bool": [("identifier/is_persistent", "identifier/is_persistent")],
+    "map_to_str": ["alias", "description"],
     "map_to_f8": [
         (
             "grain_diameter",
@@ -91,9 +84,6 @@ APM_SPECIMEN_TO_NEXUS = {
         "alias",
         "preparation_date",
         "description",
-        ("type", "method"),
-        ("identifier/identifier", "identifier/identifier"),
-        ("identifier/service", "identifier/service"),
     ],
     "map_to_f8": [
         (
@@ -107,7 +97,6 @@ APM_SPECIMEN_TO_NEXUS = {
     "map_to_bool": [
         "is_polycrystalline",
         "is_amorphous",
-        ("identifier/is_persistent", "identifier/is_persistent"),
     ],
 }
 
@@ -116,28 +105,19 @@ APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
     "prefix_src": "instrument/",
     "map_to_str": [
-        # "status",
         "location",
         ("name", "instrument_name"),
         ("fabrication/vendor", "fabrication_vendor"),
         ("fabrication/model", "fabrication_model"),
-        ("fabrication/identifier/identifier", "fabrication_identifier"),
-        ("reflectron/status", "reflectron_status"),
+        ("fabrication/serial_number", "fabrication_serial_number"),
+        ("reflectron/applied", "reflectron_applied"),
         ("local_electrode/name", "local_electrode_name"),
-    ],
-    "map_to_f8": [
-        (
-            "analysis_chamber/flight_path",
-            ureg.meter,
-            "nominal_flight_path/value",
-            "nominal_flight_path/unit",
-        )
     ],
 }
 
 
 APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/measurement/events/eventID[event*]/instrument",
+    "prefix_trg": "/ENTRY[entry*]/measurement/events/EVENT_DATA_APM[event*]/instrument",
     "prefix_src": "instrument/",
     "use": [("control/target_detection_rate/@units", "ions/pulse")],
     "map_to_str": [
@@ -173,8 +153,8 @@ APM_RANGE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
     "prefix_src": "ranging/",
     "map_to_str": [
-        ("programID[program1]/program", "program"),
-        ("programID[program1]/program/@version", "program_version"),
+        ("PROGRAM[program1]/program", "program_name"),
+        ("PROGRAM[program1]/program/@version", "program_version"),
     ],
 }
 
@@ -186,11 +166,12 @@ APM_RECON_TO_NEXUS = {
         "protocol_name",
         "crystallographic_calibration",
         "parameter",
-        ("programID[program1]/program", "program"),
-        ("programID[program1]/program/@version", "program_version"),
+        ("PROGRAM[program1]/program", "program_name"),
+        ("PROGRAM[program1]/program/@version", "program_version"),
     ],
     "map_to_f8": [
-        ("field_of_view", ureg.nanometer, "field_of_view/value", "field_of_view/unit")
+        ("field_of_view", ureg.nanometer, "field_of_view/value", "field_of_view/unit"),
+        ("flight_path", ureg.meter, "flight_path/value", "flight_path/unit"),
     ],
 }
 
@@ -199,8 +180,8 @@ APM_WORKFLOW_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe",
     "prefix_src": "workflow/",
     "sha256": [
-        ("raw_data/serialized/checksum", "raw_dat_file"),
-        ("hit_finding/serialized/checksum", "hit_dat_file"),
+        ("raw_data/source/checksum", "raw_dat_file"),
+        ("hit_finding/source/checksum", "hit_dat_file"),
         ("reconstruction/config/checksum", "recon_cfg_file"),
     ],
 }
@@ -224,7 +205,8 @@ APM_USER_TO_NEXUS = {
     ],
 }
 
-
+"""
+# TODO
 APM_IDENTIFIER_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
     "prefix_src": "",
@@ -232,3 +214,4 @@ APM_IDENTIFIER_TO_NEXUS = {
     "map": [("identifier/identifier", "orcid")],
     "map_to_bool": [("identifier/is_persistent", "identifier/is_persistent")],
 }
+"""

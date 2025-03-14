@@ -1,10 +1,26 @@
 instrument:
-  fabrication_identifier: '12'
-  fabrication_model: LEAP3000
   fabrication_vendor: Cameca
+  fabrication_model: LEAP3000
+  fabrication_serial_number: '12'
   instrument_name: LEAP
   local_electrode_name: L1
   location: Denton
+  reflectron_applied: used
+  evaporation_control: detection_rate
+  target_detection_rate: 0.01
+  chamber_pressure:
+    unit: torr
+    value: 2.0e-10
+  base_temperature:
+    unit: K
+    value: 20.0
+  status: success
+  initial_radius:
+    unit: nm
+    value: 12.
+  shank_angle:
+    unit: °
+    value: 5.
   pulser:
     laser_source:
     - name: laser1
@@ -32,19 +48,6 @@ instrument:
       unit: kHz
       value: 250.
     pulse_mode: laser_and_voltage
-  reflectron_status: used
-  evaporation_control: detection_rate
-  target_detection_rate: 0.01
-  chamber_pressure:
-    unit: torr
-    value: 2.0e-10
-  base_temperature:
-    unit: K
-    value: 20.0
-  nominal_flight_path:
-    unit: m
-    value: 1.2
-  status: success
 entry:
   experiment_description: '<p>Normal</p>
 
@@ -53,7 +56,7 @@ entry:
     <p><em>Italics</em></p>'
   start_time: '2023-06-11T11:20:00+00:00'
   end_time: '2023-06-11T11:20:00+00:00'
-  run_number: '2121'
+  run_number: 2121
   operation_mode: apt
 workflow:
   raw_dat_file: str.str
@@ -62,14 +65,17 @@ workflow:
   # recon_res_file: recon.apt
   # range_dat_file: recon.rrng
 ranging:
-  program: IVAS
+  program_name: IVAS
   program_version: '3.6.8'
 reconstruction:
-  program: IVAS
+  program_name: IVAS
   program_version: '3.6.8'
   crystallographic_calibration: n/a
   parameter: kf = 1.8, icf = 3.3
   protocol_name: bas
+  flight_path:
+    unit: m
+    value: 1.2
   field_of_view:
     unit: nm
     value: 20.
@@ -79,12 +85,8 @@ sample:
   - Al 12 +- 3
   - B 50 ppm +- 12
   - C 3.6
-  method: experiment
+  is_simulation: False
   alias: Si
-  identifier:
-    service: undefined
-    identifier: 'Si in sample'
-    is_persistent: false
   grain_diameter:
     unit: µm
     value: 200.
@@ -105,12 +107,8 @@ sample:
     value: 10.
   description: '<p>nothing</p>'
 specimen:
-  method: experiment
+  is_simulation: False
   alias: usa_denton_smith_si
-  identifier:
-    service: undefined
-    identifier: 'Si in specimen'
-    is_persistent: false
   description: '<p>normal</p>
 
     <p><em>bold</em></p>
@@ -119,12 +117,6 @@ specimen:
   is_polycrystalline: true
   is_amorphous: false
   preparation_date: '2023-06-11T12:51:00+00:00'
-  initial_radius:
-    unit: nm
-    value: 12.
-  shank_angle:
-    unit: °
-    value: 5.
 user:
 - name: MarkusK
   orcid: '0000'

@@ -80,10 +80,10 @@ class NxApmNomadOasisCamecaParser:
             val in self.yml
             for val in ["fCernRootVersion", "fImagoRootVersion"]  # "fImagoRootDate"
         ):
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/programID[program1]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/PROGRAM[program1]/"
             template[f"{trg}program"] = "CernRoot"
             template[f"{trg}program/@version"] = self.yml["fCernRootVersion"].strip()
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/programID[program2]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/PROGRAM[program2]/"
             template[f"{trg}program"] = "ImagoRoot"
             template[f"{trg}program/@version"] = self.yml["fImagoRootVersion"].strip()
             # template[f"{trg}program/@date"] = self.yml["fImagoRootDate"].strip()
@@ -95,9 +95,7 @@ class NxApmNomadOasisCamecaParser:
                 "fAcqMinorVersion",
             ]  # fStreamVersion
         ):
-            trg = (
-                f"/ENTRY[entry{self.entry_id}]/atom_probe/raw_data/programID[program1]/"
-            )
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/raw_data/PROGRAM[program1]/"
             template[f"{trg}program"] = "IVAS or AP Suite Acquisition"
             template[f"{trg}program/@version"] = (
                 f"{self.yml['fAcqMajorVersion']}.{self.yml['fAcqMinorVersion']}.{self.yml['fAcqBuildVersion']}"
@@ -132,7 +130,7 @@ class NxApmNomadOasisCamecaParser:
             else:
                 pulse_mode = "unknown"
             template[
-                f"/ENTRY[entry{self.entry_id}]/measurement/events/eventID[event1]/instrument/pulser/pulse_mode"
+                f"/ENTRY[entry{self.entry_id}]/measurement/events/EVENT_DATA_APM[event1]/instrument/pulser/pulse_mode"
             ] = pulse_mode
         return template
 
@@ -225,7 +223,7 @@ class NxApmNomadOasisCamecaParser:
                         ion.name.values = rng_def["fRngName"].strip()
                     # print(ion.report())
 
-                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/ionID[ion{ion_id}]/"
+                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/ION[ion{ion_id}]/"
                     template[f"{trg}nuclide_hash"] = np.asarray(
                         ion.nuclide_hash.values, np.uint16
                     )

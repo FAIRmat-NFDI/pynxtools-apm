@@ -252,9 +252,9 @@ class ApmCreateExampleData:
         for idx in self.nrm_composition:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
-        assert self.xyz != [], (
-            "self.xyz must not be an empty dataset, create a geometry first!"
-        )
+        assert (
+            self.xyz != []
+        ), "self.xyz must not be an empty dataset, create a geometry first!"
         # print("Accept/reject sampling m/q values for "
         #       + str(np.shape(self.xyz)[0]) + " ions")
 
@@ -275,12 +275,12 @@ class ApmCreateExampleData:
         raise NotImplementedError()
         assert len(self.nrm_composition) > 0, "Composition is not defined!"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
-        template[f"{trg}programID[program1]/program"] = "synthetic"
-        template[f"{trg}programID[program1]/program/@version"] = "synthetic data"
+        template[f"{trg}PROGRAM[program1]/program"] = "synthetic"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = "synthetic data"
 
         add_unknown_iontype(template, self.entry_id)
 
@@ -312,8 +312,8 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # print("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
         msg = """
@@ -408,8 +408,8 @@ class ApmCreateExampleData:
         raise NotImplementedError()
         # print("Parsing control software...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}programID[program1]/program"] = "IVAS"
-        template[f"{trg}programID[program1]/program/@version"] = str(
+        template[f"{trg}PROGRAM[program1]/program"] = "IVAS"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = str(
             f"3.{np.random.choice(9, 1)[0]}.{np.random.choice(9, 1)[0]}"
         )
         return template
@@ -559,11 +559,11 @@ class ApmCreateExampleData:
         # print("Parsing reconstruction...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/reconstruction/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}programID[program1]/program"] = template[
-            f"{src}programID[program1]/program"
+        template[f"{trg}PROGRAM[program1]/program"] = template[
+            f"{src}PROGRAM[program1]/program"
         ]
-        template[f"{trg}programID[program1]/program/@version"] = template[
-            f"{src}programID[program1]/program/@version"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
+            f"{src}PROGRAM[program1]/program/@version"
         ]
         template[f"{trg}protocol_name"] = str(
             np.random.choice(["bas", "geiser", "gault", "cameca", "other"], 1)[0]
@@ -578,11 +578,11 @@ class ApmCreateExampleData:
         # print("Parsing ranging...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}programID[program1]/program"] = template[
-            f"{src}programID[program1]/program"
+        template[f"{trg}PROGRAM[program1]/program"] = template[
+            f"{src}PROGRAM[program1]/program"
         ]
-        template[f"{trg}programID[program1]/program/@version"] = template[
-            f"{src}programID[program1]/program/@version"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
+            f"{src}PROGRAM[program1]/program/@version"
         ]
         return template
 
