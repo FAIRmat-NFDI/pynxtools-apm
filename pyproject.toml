@@ -45,10 +45,7 @@ dev = [
     "types-requests",
     "pip-tools",
     "uv",
-    "pre-commit",
-    "jupyter",
-    "jupyterlab",
-    "jupyterlab-h5web"
+    "pre-commit"
 ]
 docs = [
     "mkdocs",
@@ -57,6 +54,11 @@ docs = [
     "mkdocs-macros-plugin",
     "mkdocs-click",
     "markdown-include"
+]
+ipynb = [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab_h5web"
 ]
 nomad = [
     "python-json-logger==2.0.2",

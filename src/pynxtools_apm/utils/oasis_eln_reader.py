@@ -26,7 +26,6 @@ from ase.data import chemical_symbols
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.eln_cfg import (
     APM_ENTRY_TO_NEXUS,
-    APM_IDENTIFIER_TO_NEXUS,
     APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
     APM_INSTRUMENT_STATIC_TO_NEXUS,
     APM_RANGE_TO_NEXUS,

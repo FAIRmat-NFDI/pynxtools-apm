@@ -65,7 +65,7 @@ definitions:
                   given for this experiment.
                 m_annotations:
                   eln:
-                    component: StringEditQuantity
+                    component: NumberEditQuantity
               operation_mode:
                 type:
                   type_kind: Enum
