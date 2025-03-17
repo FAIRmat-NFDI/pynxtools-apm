@@ -51,7 +51,7 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = posfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32),
+        "compress": np.asarray(m_z.values, np.float32).flatten(),
         "strength": 1,
     }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
@@ -76,7 +76,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = eposfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32),
+        "compress": np.asarray(m_z.values, np.float32).flatten(),
         "strength": 1,
     }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
@@ -153,7 +153,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = aptfile.get_named_quantity("Mass")
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32),
+        "compress": np.asarray(m_z.values, np.float32).flatten(),
         "strength": 1,
     }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
@@ -183,7 +183,7 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = atofile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32),
+        "compress": np.asarray(m_z.values, np.float32).flatten(),
         "strength": 1,
     }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
@@ -208,7 +208,7 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = csvfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32),
+        "compress": np.asarray(m_z.values, np.float32).flatten(),
         "strength": 1,
     }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit
@@ -233,7 +233,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = pycfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32),
+        "compress": np.asarray(m_z.values, np.float32).flatten(),
         "strength": 1,
     }
     template[f"{trg}mass_to_charge/@units"] = m_z.unit

@@ -154,7 +154,7 @@ class ApmUseCaseSelector:
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
-                template[f"{prfx}/path"] = f"{fpath}"
+                template[f"{prfx}/file_name"] = f"{fpath}"
                 template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = "SHA256"
         for fpath in self.ranging:
@@ -163,7 +163,7 @@ class ApmUseCaseSelector:
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
-                template[f"{prfx}/path"] = f"{fpath}"
+                template[f"{prfx}/file_name"] = f"{fpath}"
                 template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = "SHA256"
         # FAU/Erlangen's pyccapt control and calibration file have not functional

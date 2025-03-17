@@ -44,7 +44,7 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
             "fPulserType",
         ),
         ("measurement/instrument/comment", "fInstrumentComment"),
-        ("atom_probe/raw_data/source/path", "fRawPathName"),
+        ("atom_probe/raw_data/source/file_name", "fRawPathName"),
         ("measurement/status", "fResults"),
         ("specimen/description", "fSpecimenCondition"),
         ("specimen/alias", "fSpecimenName"),

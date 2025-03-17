@@ -5,7 +5,7 @@ instrument:
   instrument_name: LEAP
   local_electrode_name: L1
   location: Denton
-  reflectron_applied: used
+  reflectron_applied: false
   evaporation_control: detection_rate
   target_detection_rate: 0.01
   chamber_pressure:
@@ -15,12 +15,6 @@ instrument:
     unit: K
     value: 20.0
   status: success
-  initial_radius:
-    unit: nm
-    value: 12.
-  shank_angle:
-    unit: °
-    value: 5.
   pulser:
     laser_source:
     - name: laser1
@@ -85,7 +79,7 @@ sample:
   - Al 12 +- 3
   - B 50 ppm +- 12
   - C 3.6
-  is_simulation: False
+  is_simulation: false
   alias: Si
   grain_diameter:
     unit: µm
@@ -107,7 +101,7 @@ sample:
     value: 10.
   description: '<p>nothing</p>'
 specimen:
-  is_simulation: False
+  is_simulation: false
   alias: usa_denton_smith_si
   description: '<p>normal</p>
 
@@ -117,6 +111,12 @@ specimen:
   is_polycrystalline: true
   is_amorphous: false
   preparation_date: '2023-06-11T12:51:00+00:00'
+  initial_radius:
+    unit: nm
+    value: 12.
+  shank_angle:
+    unit: °
+    value: 5.
 user:
 - name: MarkusK
   orcid: '0000'

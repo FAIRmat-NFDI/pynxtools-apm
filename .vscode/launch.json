@@ -25,7 +25,7 @@
                      "apm",
                      "--nxdl",
                      "NXapm",
-                     "--output=Si.nxs"],
+                     "--output=examples/Si.nxs"],
                      //"--output=tests/prod/usa_idaho_boise.088.44.nxs"]
                      //"--output=tests/prod/usa_portland_grimm.091.0.nxs"]
                      //"--output=tests/prod/out_recon.nxs"]

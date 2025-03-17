@@ -35,6 +35,7 @@ APM_ENTRY_TO_NEXUS = {
 APM_SAMPLE_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
+    "map_to_bool": ["is_simulation"],
     "map_to_str": ["alias", "description"],
     "map_to_f8": [
         (
@@ -51,13 +52,13 @@ APM_SAMPLE_TO_NEXUS = {
         ),
         (
             "heat_treatment_temperature",
-            ureg.degC,
+            ureg.kelvin,
             "heat_treatment_temperature/value",
             "heat_treatment_temperature/unit",
         ),
         (
             "heat_treatment_temperature_error",
-            ureg.degC,
+            ureg.kelvin,
             "heat_treatment_temperature_error/value",
             "heat_treatment_temperature_error/unit",
         ),
@@ -97,20 +98,44 @@ APM_SPECIMEN_TO_NEXUS = {
     "map_to_bool": [
         "is_polycrystalline",
         "is_amorphous",
+        "is_simulation",
     ],
+}
+
+
+APM_INSTRUMENT_SPECIMEN_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/specimen",
+    "prefix_src": "instrument/",
+    "map_to_f8": [
+        (
+            "initial_radius",
+            ureg.nanometer,
+            "initial_radius/value",
+            "initial_radius/unit",
+        ),
+        ("shank_angle", ureg.degree, "shank_angle/value", "shank_angle/unit"),
+    ],
+}
+
+
+APM_MEASUREMENT_TO_NEXUS = {
+    "prefix_trg": "/ENTRY[entry*]/measurement",
+    "prefix_src": "instrument/",
+    "map_to_str": ["status"],
 }
 
 
 APM_INSTRUMENT_STATIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
     "prefix_src": "instrument/",
+    "map_to_bool": [("reflectron/applied", "reflectron_applied")],
     "map_to_str": [
+        "status",
         "location",
         ("name", "instrument_name"),
         ("fabrication/vendor", "fabrication_vendor"),
         ("fabrication/model", "fabrication_model"),
         ("fabrication/serial_number", "fabrication_serial_number"),
-        ("reflectron/applied", "reflectron_applied"),
         ("local_electrode/name", "local_electrode_name"),
     ],
 }
@@ -119,7 +144,11 @@ APM_INSTRUMENT_STATIC_TO_NEXUS = {
 APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/measurement/events/EVENT_DATA_APM[event*]/instrument",
     "prefix_src": "instrument/",
-    "use": [("control/target_detection_rate/@units", "ions/pulse")],
+    "use": [
+        ("control/target_detection_rate/@units", "ions/pulse"),
+        ("analysis_chamber/pressure_sensor/measurement", "pressure"),
+        ("stage/temperature_sensor/measurement", "temperature"),
+    ],
     "map_to_str": [
         ("pulser/pulse_mode", "pulser/pulse_mode"),
         ("control/evaporation_control", "evaporation_control"),
@@ -134,13 +163,13 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
         ),
         ("pulser/pulse_fraction", "pulser/pulse_fraction"),
         (
-            "analysis_chamber/pressure",
+            "analysis_chamber/pressure_sensor/value",
             ureg.bar,
             "chamber_pressure/value",
             "chamber_pressure/unit",
         ),
         (
-            "stage/specimen_temperature",
+            "stage/temperature_sensor/value",
             ureg.kelvin,
             "base_temperature/value",
             "base_temperature/unit",
@@ -200,8 +229,6 @@ APM_USER_TO_NEXUS = {
         "email",
         "telephone_number",
         "role",
-        "social_media_name",
-        "social_media_platform",
     ],
 }
 

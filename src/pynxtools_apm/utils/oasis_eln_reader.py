@@ -27,7 +27,9 @@ from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_p
 from pynxtools_apm.configurations.eln_cfg import (
     APM_ENTRY_TO_NEXUS,
     APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
+    APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
     APM_INSTRUMENT_STATIC_TO_NEXUS,
+    APM_MEASUREMENT_TO_NEXUS,
     APM_RANGE_TO_NEXUS,
     APM_RECON_TO_NEXUS,
     APM_SAMPLE_TO_NEXUS,
@@ -100,20 +102,18 @@ class NxApmNomadOasisElnSchemaParser:
                         template[f"{prfx}/normalization"] = "weight_percent"
                     else:
                         return template
-                ion_id = 1
                 for symbol in chemical_symbols[1::]:
                     # ase convention is that chemical_symbols[0] == "X"
                     # to enable using ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ION[ion{ion_id}]"
+                            trg = f"{prfx}/ATOM[{symbol}]"
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
                             if dct[symbol][1] is not None:
                                 template[f"{trg}/composition_error"] = dct[symbol][1]
                                 template[f"{trg}/composition_error/@units"] = unit
-                            ion_id += 1
         return template
 
     def parse_user(self, template: dict) -> dict:
@@ -134,14 +134,10 @@ class NxApmNomadOasisElnSchemaParser:
                             identifier,
                             template,
                         )
-                        if "orcid" not in user_dict:
-                            continue
-                        add_specific_metadata_pint(
-                            APM_IDENTIFIER_TO_NEXUS,
-                            user_dict,
-                            identifier,
-                            template,
-                        )
+                        if "orcid" in user_dict:
+                            trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]"
+                            template[f"{trg}/identifier"] = user_dict["orcid"]
+                            template[f"{trg}/identifier/@type"] = "DOI"
                         user_id += 1
         return template
 
@@ -197,8 +193,10 @@ class NxApmNomadOasisElnSchemaParser:
             APM_ENTRY_TO_NEXUS,
             APM_SAMPLE_TO_NEXUS,
             APM_SPECIMEN_TO_NEXUS,
+            APM_MEASUREMENT_TO_NEXUS,
             APM_INSTRUMENT_STATIC_TO_NEXUS,
             APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
+            APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
             APM_RANGE_TO_NEXUS,
             APM_RECON_TO_NEXUS,
             APM_WORKFLOW_TO_NEXUS,
