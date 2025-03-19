@@ -252,9 +252,9 @@ class ApmCreateExampleData:
         for idx in self.nrm_composition:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
-        assert (
-            self.xyz != []
-        ), "self.xyz must not be an empty dataset, create a geometry first!"
+        assert self.xyz != [], (
+            "self.xyz must not be an empty dataset, create a geometry first!"
+        )
         # print("Accept/reject sampling m/q values for "
         #       + str(np.shape(self.xyz)[0]) + " ions")
 
