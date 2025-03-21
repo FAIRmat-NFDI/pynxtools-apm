@@ -54,7 +54,7 @@ APM_OASISCONFIG_TO_NEXUS = {
 
 
 APM_CSYS_MCSTASLIKE_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/coordinate_system_set/COORDINATE_SYSTEM[coordinate_system]",
+    "prefix_trg": "/ENTRY[entry*]/COORDINATE_SYSTEM[coordinate_system]",
     "prefix_src": "",
     "use": [
         (

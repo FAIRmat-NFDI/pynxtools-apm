@@ -9,12 +9,12 @@ definitions:
       m_annotations:
         template:
           reader: apm
-          nxdl: NXapm.nxdl
+          nxdl: NXapm
         # Listing quantities in the hide component will not show them in the ELN.
         # This would be useful to make the default values set in `template` fixed.
         # Leave the hide key even if you want to pass an empty list like in this example.
         eln:
-          hide: []
+          hide: ['nxdl', 'reader']
       sub_sections:
         entry:
           section:
@@ -27,34 +27,34 @@ definitions:
               experiment_description:
                 type: str
                 description: |
-                  Free-text description about the experiment.
+                  Free-text details about the experiment.
                 m_annotations:
                   eln:
                     component: RichTextEditQuantity
               start_time:
                 type: Datetime
                 description: |
-                  ISO 8601 time code with local time zone offset to UTC information
-                  included when the atom probe session started.
+                  ISO 8601 time code with local time zone offset
+                  to UTC when the experiment started.
                 m_annotations:
                   eln:
                     component: DateTimeEditQuantity
               end_time:
                 type: Datetime
                 description: |
-                  ISO 8601 time code with local time zone offset to UTC information
-                  included when the atom probe session ended.
+                  ISO 8601 time code with local time zone offset
+                  to UTC when the experiment ended.
                 m_annotations:
                   eln:
                     component: DateTimeEditQuantity
               run_number:
-                type: str
+                type: np.uint32
                 description: |
-                  The identifier whereby the experiment is referred
-                  to in the control software.
+                  Identifier in the instrument control software
+                  given for this experiment.
                 m_annotations:
                   eln:
-                    component: StringEditQuantity
+                    component: NumberEditQuantity
               operation_mode:
                 type:
                   type_kind: Enum
@@ -62,7 +62,6 @@ definitions:
                     - apt
                     - fim
                     - apt_fim
-                    - other
                 description: |
                   What type of atom probe microscope experiment is performed.
                   APT experiments use no imaging gas while FIM does.
@@ -115,18 +114,14 @@ definitions:
             m_annotations:
               eln:
             quantities:
-              method:
-                type:
-                  type_kind: Enum
-                  type_data:
-                    - experiment
-                    - simulation
+              is_simulation:
+                type: bool
                 description: |
-                   A qualifier whether the sample is a real one
-                   or a virtual one (in a computer simulation).
+                  False, if working with a real sample.
+                  True, if performing a simulation for a sample.
                 m_annotations:
                   eln:
-                    component: RadioEnumEditQuantity
+                    component: BoolEditQuantity
               alias:
                 type: str
                 description: |
@@ -238,29 +233,26 @@ definitions:
             m_annotations:
               eln:
             quantities:
-              method:
-                type:
-                  type_kind: Enum
-                  type_data:
-                    - experiment
-                    - simulation
+              is_simulation:
+                type: bool
                 description: |
-                  A qualifier whether the specimen is a real one or a virtual one.
+                  False, if working with a real specimen.
+                  True, if performing a simulation for a specimen.
                 m_annotations:
                   eln:
-                    component: RadioEnumEditQuantity
+                    component: BoolEditQuantity
               alias:
                 type: str
                 description: |
-                  Given name as an alias of the specimen.
+                  Given name/alias to the specimen.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
               preparation_date:
                 type: Datetime
                 description: |
-                  ISO 8601 time code with local time zone offset to UTC when the
-                  measured specimen surface was prepared last time.
+                  ISO 8601 time code with local time zone offset to UTC
+                  when the measured specimen surface was prepared last time.
                 m_annotations:
                   eln:
                     component: DateTimeEditQuantity
@@ -278,6 +270,17 @@ definitions:
                 m_annotations:
                   eln:
                     component: BoolEditQuantity
+              atom_types:
+                type: str
+                shape: ['*']
+                description: |
+                  List of comma-separated elements from the periodic
+                  table that are contained in the specimen.
+                  When ranging definitions are available the parser will
+                  attempt to fill this field automatically.
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
               description:
                 type: str
                 description: |
@@ -318,7 +321,7 @@ definitions:
           section:
             description: |
               Contact information and eventually details of at least one
-              person who was involved in taking the microscope session.
+              person who was involved in the microscope session.
             m_annotations:
               eln:
             quantities:
@@ -362,8 +365,8 @@ definitions:
               telephone_number:
                 type: str
                 description: |
-                  (Business) (tele)phone number of the user at the point in time
-                  when the experiment was performed.
+                  (Business) (tele)phone number of the user at the point
+                  in time when the experiment was performed.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
@@ -391,7 +394,6 @@ definitions:
                   type_data:
                     - success
                     - failure
-                    - unknown
                 description: |
                   A statement whether the measurement was
                   successful or failed prematurely.
@@ -413,56 +415,43 @@ definitions:
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              nominal_flight_path:
-                type: np.float64
-                unit: meter
-                description: |
-                  The space inside the atom probe which ions pass nominally
-                  when they leave the specimen and travel to the detector.
-                m_annotations:
-                  eln:
-                    component: NumberEditQuantity
-                    defaultDisplayUnit: meter
-                    minValue: 0.0
-                    maxValue: 10.0
               fabrication_vendor:
                 type: str
                 description: |
-                  Company name of the manufacturer.
+                  Name of the manufacturer/company, i.e. AMETEK/Cameca.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
               fabrication_model:
                 type: str
                 description: |
-                  Version or model of the component named by the manufacturer.
+                  Model name of the instrument
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              fabrication_identifier:
+              fabrication_serial_number:
                 type: str
                 description: |
-                  Ideally, (globally) unique persistent identifier, i.e. a serial
-                  number or hash identifier of the component.
+                  Serial number of the instrument as issued by the manufacturer.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
-              reflectron_status:
-                type:
-                  type_kind: Enum
-                  type_data:
-                    - used
-                    - present
-                    - none
+              reflectron_applied:
+                type: bool
+                            
+                          
+                             
+                          
+                              
                 description: |
-                  Is a reflectron installed and was it used?
+                  True, if a reflectron was used.
                 m_annotations:
                   eln:
-                    component: RadioEnumEditQuantity
+                    component: BoolEditQuantity
               local_electrode_name:
                 type: str
                 description: |
-                  Identifier of the local_electrode in the control software database.
+                  Name of the local_electrode in the control software database.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
@@ -470,7 +459,8 @@ definitions:
                 type: np.float64
                 unit: kelvin
                 description: |
-                  Average temperature (at the specimen base) during the measurement.
+                  Average temperature at the specimen base, i.e.
+                  base temperature, during the measurement.
                 m_annotations:
                   eln:
                     component: NumberEditQuantity
@@ -488,6 +478,29 @@ definitions:
                     defaultDisplayUnit: torr
                     minValue: 0.0
                     maxValue: 1500.12
+              initial_radius:
+                type: np.float64
+                unit: nanometer
+                description: |
+                  Ideally measured or best elaborated guess of the initial radius of the specimen.
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: nanometer
+                    minValue: 1.0
+                    maxValue: 1000.0
+              shank_angle:
+                type: np.float64
+                unit: degree
+                descriptions: |
+                  Ideally measured or best elaborated guess of the shank angle.
+                  This is a measure of the specimen taper.
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: degree
+                    minValue: 0.0
+                    maxValue: 90.0
               target_detection_rate:
                 type: np.float64
                 descriptions: |
@@ -498,16 +511,28 @@ definitions:
                     minValue: 0.0
                     maxValue: 1000.0
               evaporation_control:
-                type:
-                  type_kind: Enum
-                  type_data:
-                    - detection_rate
-                  description: |
-                    Control software setting (for LEAP systems) how
-                    field-evaporation is controlled.
-                  m_annotations:
-                    eln:
-                      component: RadioEnumEditQuantity
+                type: str
+                description: |
+                  detection_rate
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+              control_software_program_name:
+                type: str
+                description: |
+                  Name of the control software of the microscope
+                  used during acquisition (e.g. IVAS/APSuite).
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
+              control_software_program_version:
+                type: str
+                description: |
+                  Version plus build number, commit hash, or description
+                  of the program to support reproducibility.
+                m_annotations:
+                  eln:
+                    component: StringEditQuantity
             sub_sections:
               pulser:
                 section:
@@ -532,7 +557,7 @@ definitions:
                       type: np.float64
                       unit: kilohertz
                       description: |
-                        Frequency with which the pulser fire(s).
+                        Pulse frequency
                       m_annotations:
                         eln:
                           component: NumberEditQuantity
@@ -542,9 +567,9 @@ definitions:
                     pulse_fraction:
                       type: np.float64
                       description: |
-                        Fraction of the pulse_voltage that is applied in addition to the standing_voltage at peak voltage of a pulse. If a standing voltage
-                        is applied, this gives nominal pulse fraction (as a function
-                        of standing voltage). Otherwise, this field should not be present.
+                        Fraction of the pulse_voltage that is applied in addition to the standing_voltage
+                        at peak voltage of a pulse. If a standing voltage is applied, this gives nominal pulse fraction (as a function of standing voltage).
+                        Otherwise, this field should not be present.
                       m_annotations:
                         eln:
                           component: NumberEditQuantity
@@ -556,8 +581,8 @@ definitions:
                       repeats: True
                       section:
                         description: |
-                          Details about each laser pulsing unit. LEAP6000-type
-                          instruments can use up to two lasers.
+                          Details about each laser pulsing unit.
+                          LEAP6000-type instruments can use up to two lasers.
                         m_annotations:
                           eln:
                         quantities:
@@ -607,10 +632,11 @@ definitions:
             m_annotations:
               eln:
             quantities:
-              program:
+              program_name:
                 type: str
                 description: |
-                  Name of the program used to generate the reconstruction.
+                  Name of the program used to perform the reconstruction with.
+                  Examples are IVAS, APSuite, or names of open-source tools.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
@@ -623,19 +649,14 @@ definitions:
                   eln:
                     component: StringEditQuantity
               protocol_name:
-                type:
-                  type_kind: Enum
-                  type_data:
-                    - bas
-                    - geiser
-                    - gault
-                    - cameca
-                    - other
+                type: str
                 description: |
                   Qualitative statement about which reconstruction protocol was used.
+                  Use either the following controlled terms (bas, geiser, gault, cameca)
+                  or a custom term if a different protocol was used.
                 m_annotations:
                   eln:
-                    component: RadioEnumEditQuantity
+                    component: StringEditQuantity
               parameter:
                 type: str
                 description: |
@@ -651,20 +672,31 @@ definitions:
                 type: str
                 description: |
                   Different strategies for crystallographic calibration of the reconstruction
-                  are possible. Therefore, we collect first such feedback before
-                  parameterizing this further. If no crystallographic calibration was
-                  performed, the field should be filled with the n/a,
-                  meaning not applied.
+                  are possible. Therefore, we collect first such feedback before parameterizing
+                  the data model further. If no crystallographic calibration was performed,
+                  the field should be filled with the n/a, meaning not applied.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
+              flight_path_length:
+                type: np.float64
+                unit: meter
+                description: |
+                  The space inside the atom probe that ions pass through nominally
+                  when they leave the specimen and travel to the detector.
+                m_annotations:
+                  eln:
+                    component: NumberEditQuantity
+                    defaultDisplayUnit: meter
+                    minValue: 0.0
+                    maxValue: 10.0
               field_of_view:
                 type: np.float64
                 unit: nanometer
                 description: |
                   The nominal diameter of the specimen ROI which is measured in the
-                  experiment. The physical specimen cannot be measured completely
-                  because ions may launch but hit in locations other than the detector.
+                  experiment. The physical volume of the specimen cannot be measured
+                  completely because ions may launch but hit in locations other than the detector.
                 m_annotations:
                   eln:
                     component: NumberEditQuantity
@@ -678,18 +710,19 @@ definitions:
             m_annotations:
               eln:
             quantities:
-              program:
+              program_name:
                 type: str
                 description: |
-                  Name of the program whereby ranging definitions were defined.
+                  Name of the program used to perform the ranging with.
+                  Examples are IVAS, APSuite, or names of open-source tools.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
               program_version:
                 type: str
                 description: |
-                  Version plus build number, commit hash, or description of the
-                  program to support reproducibility.
+                  Version plus build number, commit hash, or description
+                  of the program to support reproducibility.
                 m_annotations:
                   eln:
                     component: StringEditQuantity

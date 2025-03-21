@@ -3,7 +3,7 @@ citation:
   description: DOI to the respective entry in a data repository.
 - doi: https://doi.org/paper
   description: DOI to the respective publication.
-coordinate_system_set:
+coordinate_system:
 - alias: Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen.
   type: cartesian
   handedness: right_handed
