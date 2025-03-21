@@ -20,7 +20,10 @@
 from typing import Dict, List, Tuple
 
 from pynxtools_apm.concepts.mapping_functors_pint import var_path_to_spcfc_path
-from pynxtools_apm.utils.get_file_checksum import get_sha256_of_file_content
+from pynxtools_apm.utils.get_file_checksum import (
+    DEFAULT_CHECKSUM_ALGORITHM,
+    get_sha256_of_file_content,
+)
 
 VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
 VALID_FILE_NAME_SUFFIX_RANGE = [
@@ -156,7 +159,7 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
                 template[f"{prfx}/file_name"] = f"{fpath}"
                 template[f"{prfx}/type"] = "file"
-                template[f"{prfx}/algorithm"] = "SHA256"
+                template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
             prfx = var_path_to_spcfc_path(
                 "/ENTRY[entry*]/atom_probe/ranging/definitions", identifier
@@ -165,7 +168,7 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
                 template[f"{prfx}/file_name"] = f"{fpath}"
                 template[f"{prfx}/type"] = "file"
-                template[f"{prfx}/algorithm"] = "SHA256"
+                template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         # FAU/Erlangen's pyccapt control and calibration file have not functional
         # distinction which makes it non-trivial to decide if a given HDF5 qualifies
         # as control or calibration file TODO::for this reason it is currently ignored
