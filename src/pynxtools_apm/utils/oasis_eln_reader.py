@@ -107,7 +107,7 @@ class NxApmNomadOasisElnSchemaParser:
                     # to enable using ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ATOM[{symbol}]"
+                            trg = f"{prfx}/ELEMENT[{symbol}]"
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit

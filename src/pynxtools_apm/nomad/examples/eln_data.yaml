@@ -111,6 +111,7 @@ specimen:
   is_polycrystalline: true
   is_amorphous: false
   preparation_date: '2023-06-11T12:51:00+00:00'
+  atom_types: Si
   initial_radius:
     unit: nm
     value: 12.

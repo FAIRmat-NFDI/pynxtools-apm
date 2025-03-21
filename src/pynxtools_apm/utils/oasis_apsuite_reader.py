@@ -258,7 +258,7 @@ class NxApmNomadOasisCamecaParser:
                             ion.charge_state_model["min_half_life"]
                         )
                         template[f"{path}min_half_life/@units"] = "s"
-                        template[f"{path}sacrifice_isotopic_uniqueness"] = np.uint8(
+                        template[f"{path}sacrifice_isotopic_uniqueness"] = bool(
                             ion.charge_state_model["sacrifice_isotopic_uniqueness"]
                         )
                         if ion.charge_state_model["n_cand"] == 1:

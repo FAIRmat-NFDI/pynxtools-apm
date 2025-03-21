@@ -38,7 +38,7 @@ def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
         symbol_e = path[idx + 1].find("]")
         if 0 <= symbol_s < symbol_e:
             template[f"{trg}@default"] = f"{path[idx + 1][symbol_s + 1 : symbol_e]}"
-            trg += f"{path[idx + 1][symbol_s + 1 : symbol_e]}/"
+            trg += f"{path[idx + 1]}/"
         else:
             template[f"{trg}@default"] = f"{path[idx + 1]}"
             trg += f"{path[idx + 1]}/"
