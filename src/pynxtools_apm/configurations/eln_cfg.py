@@ -83,7 +83,7 @@ APM_SAMPLE_TO_NEXUS: Dict[str, Any] = {
 APM_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "specimen/",
-    "map_to_str": ["alias", "preparation_date", "description", "atom_types"],
+    "map_to_str": ["alias", "preparation_date", "description"],
     "map_to_f8": [
         (
             "initial_radius",

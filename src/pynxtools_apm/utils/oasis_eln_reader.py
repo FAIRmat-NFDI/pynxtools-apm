@@ -116,6 +116,22 @@ class NxApmNomadOasisElnSchemaParser:
                                 template[f"{trg}/composition_error/@units"] = unit
         return template
 
+    def parse_atom_types(self, template: dict) -> dict:
+        """Copy atom_types, try to polish problematic user input."""
+        src = "specimen/atom_types"
+        if src in self.yml:
+            unique_elements = set()
+            for token in self.yml[src].split(","):
+                symbol = token.strip()
+                if symbol in chemical_symbols[1::]:
+                    unique_elements.add(symbol)
+                # silently ignoring all incorrect user input
+            if len(unique_elements) > 0:
+                template[f"/ENTRY[entry{self.entry_id}]/specimen/atom_types"] = (
+                    ", ".join(list(unique_elements))
+                )
+        return template
+
     def parse_user(self, template: dict) -> dict:
         """Copy data from user section into template."""
         src = "user"
@@ -186,6 +202,7 @@ class NxApmNomadOasisElnSchemaParser:
     def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_sample_composition(template)
+        self.parse_atom_types(template)
         self.parse_user(template)
         self.parse_pulser_source(template)
         identifier = [self.entry_id, 1]
