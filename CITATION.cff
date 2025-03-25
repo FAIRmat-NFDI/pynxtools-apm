@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: 'pynxtools-apm: A pynxtools reader plugin for atom probe tomography and related field-ion microscopy (APM) data'
-version: 0.2.2
+version: 0.2.3
 message:
   If you use this software, please cite it using the metadata from this file.
 type: software
@@ -22,7 +22,7 @@ authors:
     orcid: 'https://orcid.org/0000-0002-6403-9022'
   - given-names: Christoph
     family-names: Koch
-    orcid: 'https://orcid.org/0000-0002-9700-4803'
+    orcid: 'https://orcid.org/0000-0002-3984-1523'
   - given-names: Claudia
     family-names: Draxl
     orcid: 'https://orcid.org/0000-0003-3523-6657'
