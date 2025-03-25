@@ -23,9 +23,9 @@ classifiers = [
 ]
 dependencies = [
     "pint==0.17",
-    # "pynxtools>=0.10.1",
+    "pynxtools>=0.10.1",
     "ifes_apt_tc_data_modeling>=0.2.2",
-    "numpy>=1.22.4,<2.0.0",
+    "numpy>=1.22.4,<2.0.0"
 ]
 
 [project.urls]
