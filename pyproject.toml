@@ -23,9 +23,9 @@ classifiers = [
 ]
 dependencies = [
     "pint==0.17",
-    "pynxtools>=0.9.0",
+    "pynxtools>=0.10.1",
     "ifes_apt_tc_data_modeling>=0.2.2",
-    "numpy<=1.26.4",
+    "numpy>=1.22.4,<2.0.0"
 ]
 
 [project.urls]
@@ -35,21 +35,17 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "mypy",
-    "ruff>=0.6.0",
+    "ruff>=0.9.3",
     "pytest",
     "pytest-cov",
     "pytest-timeout",
-    "pytest-cov",
     "structlog",
     "types-pyyaml",
     "types-pytz",
     "types-requests",
     "pip-tools",
     "uv",
-    "pre-commit",
-    "jupyter",
-    "jupyterlab",
-    "jupyterlab-h5web"
+    "pre-commit"
 ]
 docs = [
     "mkdocs",
@@ -59,12 +55,17 @@ docs = [
     "mkdocs-click",
     "markdown-include"
 ]
+ipynb = [
+    "jupyter",
+    "jupyterlab"
+]
 
 [project.entry-points."pynxtools.reader"]
 apm = "pynxtools_apm.reader:APMReader"
 
 [project.entry-points.'nomad.plugin']
 apm_example = "pynxtools_apm.nomad.entrypoints:apm_example"
+# apm_app = "pynxtools_apm.nomad.entrypoints:apm_app"
 
 [tool.setuptools.packages.find]
 where = [

@@ -68,6 +68,8 @@ class ApmCreateExampleData:
     """A synthesized dataset meant to be used for development purposes only!."""
 
     def __init__(self, synthesis_id):
+        """Construct class."""
+        raise NotImplementedError()
         # assure deterministic behaviour of the PRNG
         np.random.seed(seed=synthesis_id)
 
@@ -106,6 +108,7 @@ class ApmCreateExampleData:
 
         # assumptions:
         # identity orientation, no periodic boundary conditions
+        raise NotImplementedError()
         print(f"Using the following version of ase {ase.__version__}")
         xyz = np.asarray(
             FaceCenteredCubic(
@@ -159,6 +162,7 @@ class ApmCreateExampleData:
         create (hypothetical) charged molecular ions from them
         and evaluate their mass-to-charge-state ratio to be used
         as values in the example dataset."""
+        raise NotImplementedError()
 
         # uniform random model for how many different ions
         # !! warning: for real world datasets this depends on real specimen composition
@@ -248,9 +252,9 @@ class ApmCreateExampleData:
         for idx in self.nrm_composition:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
-        assert (
-            self.xyz != []
-        ), "self.xyz must not be an empty dataset, create a geometry first!"
+        assert self.xyz != [], (
+            "self.xyz must not be an empty dataset, create a geometry first!"
+        )
         # print("Accept/reject sampling m/q values for "
         #       + str(np.shape(self.xyz)[0]) + " ions")
 
@@ -268,14 +272,15 @@ class ApmCreateExampleData:
 
     def composition_to_ranging_definitions(self, template: dict) -> dict:
         """Create ranging definitions based on composition."""
+        raise NotImplementedError()
         assert len(self.nrm_composition) > 0, "Composition is not defined!"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
-        template[f"{trg}programID[program1]/program"] = "synthetic"
-        template[f"{trg}programID[program1]/program/@version"] = "synthetic data"
+        template[f"{trg}PROGRAM[program1]/program"] = "synthetic"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = "synthetic data"
 
         add_unknown_iontype(template, self.entry_id)
 
@@ -295,7 +300,7 @@ class ApmCreateExampleData:
             template[f"{path}name"] = nuclide_hash_to_human_readable_name(ivec, tpl[1])
             ion_id += 1
 
-        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
         template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
         template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(32)
 
@@ -303,11 +308,12 @@ class ApmCreateExampleData:
 
     def emulate_entry(self, template: dict) -> dict:
         """Copy data in entry section."""
+        raise NotImplementedError()
         # check if required fields exists and are valid
         # print("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
         msg = """
@@ -328,6 +334,7 @@ class ApmCreateExampleData:
 
     def emulate_user(self, template: dict) -> dict:
         """Copy data in user section."""
+        raise NotImplementedError()
         # check if required fields exists and are valid
         # print("Parsing user...")
         prefix = f"/ENTRY[entry{self.entry_id}]/"
@@ -367,6 +374,7 @@ class ApmCreateExampleData:
 
     def emulate_specimen(self, template: dict) -> dict:
         """Copy data in specimen section."""
+        raise NotImplementedError()
         # check if required fields exists and are valid
         # print("Parsing specimen...")
         trg = f"/ENTRY[entry{self.entry_id}]/specimen/"
@@ -397,22 +405,22 @@ class ApmCreateExampleData:
 
     def emulate_control_software(self, template: dict) -> dict:
         """Copy data in control software section."""
+        raise NotImplementedError()
         # print("Parsing control software...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}programID[program1]/program"] = "IVAS"
-        template[f"{trg}programID[program1]/program/@version"] = str(
+        template[f"{trg}PROGRAM[program1]/program"] = "IVAS"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = str(
             f"3.{np.random.choice(9, 1)[0]}.{np.random.choice(9, 1)[0]}"
         )
         return template
 
     def emulate_instrument_header(self, template: dict) -> dict:
         """Copy data in instrument_header section."""
+        raise NotImplementedError()
         # check if required fields exists and are valid
         # print("Parsing instrument header...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/"
-        template[f"{trg}instrument_name"] = str(
-            f"test instrument {np.random.choice(100, 1)[0]}"
-        )
+        template[f"{trg}name"] = str(f"test instrument {np.random.choice(100, 1)[0]}")
         template[f"{trg}flight_path_length"] = np.float64(
             np.random.normal(loc=1.0, scale=0.05)
         )
@@ -421,6 +429,7 @@ class ApmCreateExampleData:
 
     def emulate_fabrication(self, template: dict) -> dict:
         """Copy data in fabrication section."""
+        raise NotImplementedError()
         # print("Parsing fabrication...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/FABRICATION[fabrication]/"
         template[f"{trg}vendor"] = str(
@@ -448,6 +457,7 @@ class ApmCreateExampleData:
 
     def emulate_analysis_chamber(self, template: dict) -> dict:
         """Copy data in analysis_chamber section."""
+        raise NotImplementedError()
         # print("Parsing analysis chamber...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/analysis_chamber/"
         template[f"{trg}pressure"] = np.float64(
@@ -458,6 +468,7 @@ class ApmCreateExampleData:
 
     def emulate_reflectron(self, template: dict) -> dict:
         """Copy data in reflectron section."""
+        raise NotImplementedError()
         # print("Parsing reflectron...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/REFLECTRON[reflectron]/"
         template[f"{trg}applied"] = bool(np.random.choice([0, 1], 1)[0])
@@ -465,6 +476,7 @@ class ApmCreateExampleData:
 
     def emulate_local_electrode(self, template: dict) -> dict:
         """Copy data in local_electrode section."""
+        raise NotImplementedError()
         # print("Parsing local electrode...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/local_electrode/"
         template[f"{trg}name"] = str(f"electrode {np.random.choice(1000, 1)[0]}")
@@ -472,6 +484,7 @@ class ApmCreateExampleData:
 
     def emulate_detector(self, template: dict) -> dict:
         """Copy data in ion_detector section."""
+        raise NotImplementedError()
         # print("Parsing detector...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ion_detector/"
         detector_model_type = str(np.random.choice(["cameca", "mcp", "custom"], 1)[0])
@@ -485,6 +498,7 @@ class ApmCreateExampleData:
 
     def emulate_stage_lab(self, template: dict) -> dict:
         """Copy data in stage lab section."""
+        raise NotImplementedError()
         # print("Parsing stage lab...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/stage_lab/"
         template[f"{trg}base_temperature"] = np.float64(10 + np.random.choice(50, 1)[0])
@@ -493,6 +507,7 @@ class ApmCreateExampleData:
 
     def emulate_specimen_monitoring(self, template: dict) -> dict:
         """Copy data in specimen_monitoring section."""
+        raise NotImplementedError()
         # print("Parsing specimen monitoring...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/specimen_monitoring/"
         eta = np.min((np.random.normal(loc=0.6, scale=0.1), 1.0))
@@ -505,6 +520,7 @@ class ApmCreateExampleData:
 
     def emulate_pulser(self, template: dict) -> dict:
         """Copy data in pulser section."""
+        raise NotImplementedError()
         # print("Parsing pulser...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/pulser/"
         pulse_mode = str(
@@ -539,14 +555,15 @@ class ApmCreateExampleData:
 
     def emulate_reconstruction(self, template: dict) -> dict:
         """Copy data in reconstruction section."""
+        raise NotImplementedError()
         # print("Parsing reconstruction...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/reconstruction/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}programID[program1]/program"] = template[
-            f"{src}programID[program1]/program"
+        template[f"{trg}PROGRAM[program1]/program"] = template[
+            f"{src}PROGRAM[program1]/program"
         ]
-        template[f"{trg}programID[program1]/program/@version"] = template[
-            f"{src}programID[program1]/program/@version"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
+            f"{src}PROGRAM[program1]/program/@version"
         ]
         template[f"{trg}protocol_name"] = str(
             np.random.choice(["bas", "geiser", "gault", "cameca", "other"], 1)[0]
@@ -557,19 +574,21 @@ class ApmCreateExampleData:
 
     def emulate_ranging(self, template: dict) -> dict:
         """Copy data in ranging section."""
+        raise NotImplementedError()
         # print("Parsing ranging...")
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/"
         src = f"/ENTRY[entry{self.entry_id}]/atom_probe/control_software/"
-        template[f"{trg}programID[program1]/program"] = template[
-            f"{src}programID[program1]/program"
+        template[f"{trg}PROGRAM[program1]/program"] = template[
+            f"{src}PROGRAM[program1]/program"
         ]
-        template[f"{trg}programID[program1]/program/@version"] = template[
-            f"{src}programID[program1]/program/@version"
+        template[f"{trg}PROGRAM[program1]/program/@version"] = template[
+            f"{src}PROGRAM[program1]/program/@version"
         ]
         return template
 
     def emulate_random_input_from_eln(self, template: dict) -> dict:
         """Emulate random input as could come from an ELN."""
+        raise NotImplementedError()
         self.emulate_entry(template)
         self.emulate_user(template)
         self.emulate_specimen(template)
@@ -596,6 +615,7 @@ class ApmCreateExampleData:
 
     def synthesize(self, template: dict) -> dict:
         """Hand-over instantiated dataset to dataconverter template."""
+        raise NotImplementedError()
         # heavy data, synthetic/mocked dataset
         for entry_id in np.arange(1, self.n_entries + 1):
             self.entry_id = entry_id

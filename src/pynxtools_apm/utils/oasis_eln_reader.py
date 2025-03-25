@@ -26,9 +26,10 @@ from ase.data import chemical_symbols
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.eln_cfg import (
     APM_ENTRY_TO_NEXUS,
-    APM_IDENTIFIER_TO_NEXUS,
     APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
+    APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
     APM_INSTRUMENT_STATIC_TO_NEXUS,
+    APM_MEASUREMENT_TO_NEXUS,
     APM_RANGE_TO_NEXUS,
     APM_RECON_TO_NEXUS,
     APM_SAMPLE_TO_NEXUS,
@@ -101,20 +102,34 @@ class NxApmNomadOasisElnSchemaParser:
                         template[f"{prfx}/normalization"] = "weight_percent"
                     else:
                         return template
-                ion_id = 1
                 for symbol in chemical_symbols[1::]:
                     # ase convention is that chemical_symbols[0] == "X"
                     # to enable using ordinal number for indexing
                     if symbol in dct:
                         if isinstance(dct[symbol], tuple) and len(dct[symbol]) == 2:
-                            trg = f"{prfx}/ionID[ion{ion_id}]"
+                            trg = f"{prfx}/ELEMENT[{symbol}]"
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
                             if dct[symbol][1] is not None:
                                 template[f"{trg}/composition_error"] = dct[symbol][1]
                                 template[f"{trg}/composition_error/@units"] = unit
-                            ion_id += 1
+        return template
+
+    def parse_atom_types(self, template: dict) -> dict:
+        """Copy atom_types, try to polish problematic user input."""
+        src = "specimen/atom_types"
+        if src in self.yml:
+            unique_elements = set()
+            for token in self.yml[src].split(","):
+                symbol = token.strip()
+                if symbol in chemical_symbols[1::]:
+                    unique_elements.add(symbol)
+                # silently ignoring all incorrect user input
+            if len(unique_elements) > 0:
+                template[f"/ENTRY[entry{self.entry_id}]/specimen/atom_types"] = (
+                    ", ".join(list(unique_elements))
+                )
         return template
 
     def parse_user(self, template: dict) -> dict:
@@ -135,14 +150,10 @@ class NxApmNomadOasisElnSchemaParser:
                             identifier,
                             template,
                         )
-                        if "orcid" not in user_dict:
-                            continue
-                        add_specific_metadata_pint(
-                            APM_IDENTIFIER_TO_NEXUS,
-                            user_dict,
-                            identifier,
-                            template,
-                        )
+                        if "orcid" in user_dict:
+                            trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]"
+                            template[f"{trg}/identifier"] = user_dict["orcid"]
+                            template[f"{trg}/identifier/@type"] = "DOI"
                         user_id += 1
         return template
 
@@ -161,24 +172,22 @@ class NxApmNomadOasisElnSchemaParser:
                     # custom schema delivers a list of dictionaries...
                     for ldct in self.yml[src]:
                         trg_sta = (
+                            f"/ENTRY[entry{self.entry_id}]/measurement/instrument/"
+                            f"pulser/SOURCE[source{laser_id}]"
+                        )
+                        trg_dyn = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"instrument/pulser/sourceID[source{laser_id}]"
+                            f"events/EVENT_DATA_APM[event1]/instrument/"
+                            f"pulser/SOURCE[source{laser_id}]"
                         )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
-                        qnt = "wavelength"
-                        if qnt in ldct:
-                            if "value" in ldct[qnt] and "unit" in ldct[qnt]:
-                                template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
-                                template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
-
-                        trg_dyn = (
-                            f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"event_data_apm_set/event_data_apm/instrument/"
-                            f"pulser/sourceID[source{laser_id}]"
-                        )
-                        quantities = ["power", "pulse_energy"]
-                        for qnt in quantities:
+                        # qnt = "wavelength"
+                        # if qnt in ldct:
+                        #     if "value" in ldct[qnt] and "unit" in ldct[qnt]:
+                        #         template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
+                        #        template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
+                        for qnt in ["power", "pulse_energy", "wavelength"]:
                             if isinstance(ldct[qnt], dict):
                                 if ("value" in ldct[qnt]) and ("unit" in ldct[qnt]):
                                     template[f"{trg_dyn}/{qnt}"] = ldct[qnt]["value"]
@@ -193,15 +202,18 @@ class NxApmNomadOasisElnSchemaParser:
     def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance."""
         self.parse_sample_composition(template)
+        self.parse_atom_types(template)
         self.parse_user(template)
         self.parse_pulser_source(template)
-        identifier = [self.entry_id]
+        identifier = [self.entry_id, 1]
         for cfg in [
             APM_ENTRY_TO_NEXUS,
             APM_SAMPLE_TO_NEXUS,
             APM_SPECIMEN_TO_NEXUS,
+            APM_MEASUREMENT_TO_NEXUS,
             APM_INSTRUMENT_STATIC_TO_NEXUS,
             APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
+            APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
             APM_RANGE_TO_NEXUS,
             APM_RECON_TO_NEXUS,
             APM_WORKFLOW_TO_NEXUS,

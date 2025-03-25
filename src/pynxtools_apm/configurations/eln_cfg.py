@@ -17,33 +17,28 @@
 #
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
+from typing import Any, Dict
+
 from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 
-APM_ENTRY_TO_NEXUS = {
+APM_ENTRY_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "entry/",
-    "map": [
-        "run_number",
+    "map_to_str": [
         "operation_mode",
         "start_time",
         "end_time",
         "experiment_description",
-        ("experiment_alias", "run_number"),
     ],
+    "map_to_u4": ["run_number"],
 }
 
 
-APM_SAMPLE_TO_NEXUS = {
+APM_SAMPLE_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
-    "map": [
-        "alias",
-        "description",
-        ("type", "method"),
-        ("identifier/identifier", "identifier/identifier"),
-        ("identifier/service", "identifier/service"),
-    ],
-    "map_to_bool": [("identifier/is_persistent", "identifier/is_persistent")],
+    "map_to_bool": ["is_simulation"],
+    "map_to_str": ["alias", "description"],
     "map_to_f8": [
         (
             "grain_diameter",
@@ -59,13 +54,13 @@ APM_SAMPLE_TO_NEXUS = {
         ),
         (
             "heat_treatment_temperature",
-            ureg.degC,
+            ureg.kelvin,
             "heat_treatment_temperature/value",
             "heat_treatment_temperature/unit",
         ),
         (
             "heat_treatment_temperature_error",
-            ureg.degC,
+            ureg.kelvin,
             "heat_treatment_temperature_error/value",
             "heat_treatment_temperature_error/unit",
         ),
@@ -85,17 +80,10 @@ APM_SAMPLE_TO_NEXUS = {
 }
 
 
-APM_SPECIMEN_TO_NEXUS = {
+APM_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "specimen/",
-    "map": [
-        "alias",
-        "preparation_date",
-        "description",
-        ("type", "method"),
-        ("identifier/identifier", "identifier/identifier"),
-        ("identifier/service", "identifier/service"),
-    ],
+    "map_to_str": ["alias", "preparation_date", "description"],
     "map_to_f8": [
         (
             "initial_radius",
@@ -108,42 +96,59 @@ APM_SPECIMEN_TO_NEXUS = {
     "map_to_bool": [
         "is_polycrystalline",
         "is_amorphous",
-        ("identifier/is_persistent", "identifier/is_persistent"),
+        "is_simulation",
     ],
 }
 
 
-APM_INSTRUMENT_STATIC_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
+APM_INSTRUMENT_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
+    "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "instrument/",
-    "map": [
-        "status",
-        "instrument_name",
-        "location",
-        ("fabrication/vendor", "fabrication_vendor"),
-        ("fabrication/model", "fabrication_model"),
-        ("fabrication/identifier/identifier", "fabrication_identifier"),
-        ("reflectron/status", "reflectron_status"),
-        ("local_electrode/name", "local_electrode_name"),
-        ("pulser/pulse_mode", "pulser/pulse_mode"),
-    ],
     "map_to_f8": [
         (
-            "analysis_chamber/flight_path",
-            ureg.meter,
-            "nominal_flight_path/value",
-            "nominal_flight_path/unit",
-        )
+            "initial_radius",
+            ureg.nanometer,
+            "initial_radius/value",
+            "initial_radius/unit",
+        ),
+        ("shank_angle", ureg.degree, "shank_angle/value", "shank_angle/unit"),
     ],
 }
 
 
-APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/measurement/event_data_apm_set/event_data_apm/instrument",
+APM_MEASUREMENT_TO_NEXUS: Dict[str, Any] = {
+    "prefix_trg": "/ENTRY[entry*]/measurement",
     "prefix_src": "instrument/",
-    "use": [("control/target_detection_rate/@units", "ions/pulse")],
-    "map": [
-        "pulser_pulse_mode",
+    "map_to_str": ["status"],
+}
+
+
+APM_INSTRUMENT_STATIC_TO_NEXUS: Dict[str, Any] = {
+    "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
+    "prefix_src": "instrument/",
+    "map_to_bool": [("reflectron/applied", "reflectron_applied")],
+    "map_to_str": [
+        "status",
+        "location",
+        ("name", "instrument_name"),
+        ("fabrication/vendor", "fabrication_vendor"),
+        ("fabrication/model", "fabrication_model"),
+        ("fabrication/serial_number", "fabrication_serial_number"),
+        ("local_electrode/name", "local_electrode_name"),
+    ],
+}
+
+
+APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
+    "prefix_trg": "/ENTRY[entry*]/measurement/events/EVENT_DATA_APM[event*]/instrument",
+    "prefix_src": "instrument/",
+    "use": [
+        ("control/target_detection_rate/@units", "ions/pulse"),
+        ("analysis_chamber/pressure_sensor/measurement", "pressure"),
+        ("stage/temperature_sensor/measurement", "temperature"),
+    ],
+    "map_to_str": [
+        ("pulser/pulse_mode", "pulser/pulse_mode"),
         ("control/evaporation_control", "evaporation_control"),
     ],
     "map_to_f8": [
@@ -156,13 +161,13 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
         ),
         ("pulser/pulse_fraction", "pulser/pulse_fraction"),
         (
-            "analysis_chamber/chamber_pressure",
+            "analysis_chamber/pressure_sensor/value",
             ureg.bar,
             "chamber_pressure/value",
             "chamber_pressure/unit",
         ),
         (
-            "stage_lab/base_temperature",
+            "stage/temperature_sensor/value",
             ureg.kelvin,
             "base_temperature/value",
             "base_temperature/unit",
@@ -171,38 +176,39 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS = {
 }
 
 
-APM_RANGE_TO_NEXUS = {
+APM_RANGE_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
     "prefix_src": "ranging/",
-    "map": [
-        ("programID[program1]/program", "program"),
-        ("programID[program1]/program/@version", "program_version"),
+    "map_to_str": [
+        ("PROGRAM[program1]/program", "program_name"),
+        ("PROGRAM[program1]/program/@version", "program_version"),
     ],
 }
 
 
-APM_RECON_TO_NEXUS = {
+APM_RECON_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
     "prefix_src": "reconstruction/",
-    "map": [
+    "map_to_str": [
         "protocol_name",
         "crystallographic_calibration",
         "parameter",
-        ("programID[program1]/program", "program"),
-        ("programID[program1]/program/@version", "program_version"),
+        ("PROGRAM[program1]/program", "program_name"),
+        ("PROGRAM[program1]/program/@version", "program_version"),
     ],
     "map_to_f8": [
-        ("field_of_view", ureg.centimeter, "field_of_view/value", "field_of_view/unit")
+        ("field_of_view", ureg.nanometer, "field_of_view/value", "field_of_view/unit"),
+        ("flight_path", ureg.meter, "flight_path/value", "flight_path/unit"),
     ],
 }
 
 
-APM_WORKFLOW_TO_NEXUS = {
+APM_WORKFLOW_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/atom_probe",
     "prefix_src": "workflow/",
     "sha256": [
-        ("raw_data/serialized/checksum", "raw_dat_file"),
-        ("hit_finding/serialized/checksum", "hit_dat_file"),
+        ("raw_data/source/checksum", "raw_dat_file"),
+        ("hit_finding/source/checksum", "hit_dat_file"),
         ("reconstruction/config/checksum", "recon_cfg_file"),
     ],
 }
@@ -211,7 +217,7 @@ APM_WORKFLOW_TO_NEXUS = {
 # NOMAD Oasis custom schema implementation delivers them as a list of dictionaries instead
 # of a directly flattenable list of key, value pairs
 
-APM_USER_TO_NEXUS = {
+APM_USER_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/USER[user*]",
     "prefix_src": "",
     "map": [
@@ -221,16 +227,5 @@ APM_USER_TO_NEXUS = {
         "email",
         "telephone_number",
         "role",
-        "social_media_name",
-        "social_media_platform",
     ],
-}
-
-
-APM_IDENTIFIER_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/USER[user*]",
-    "prefix_src": "",
-    "use": [("identifier/service", "orcid")],
-    "map": [("identifier/identifier", "orcid")],
-    "map_to_bool": [("identifier/is_persistent", "identifier/is_persistent")],
 }

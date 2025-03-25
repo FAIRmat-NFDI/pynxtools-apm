@@ -37,8 +37,8 @@ def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
         symbol_s = path[idx + 1].find("[")
         symbol_e = path[idx + 1].find("]")
         if 0 <= symbol_s < symbol_e:
-            template[f"{trg}@default"] = f"{path[idx + 1][symbol_s + 1:symbol_e]}"
-            trg += f"{path[idx + 1][symbol_s + 1:symbol_e]}/"
+            template[f"{trg}@default"] = f"{path[idx + 1][symbol_s + 1 : symbol_e]}"
+            trg += f"{path[idx + 1]}/"
         else:
             template[f"{trg}@default"] = f"{path[idx + 1]}"
             trg += f"{path[idx + 1]}/"
@@ -91,8 +91,8 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
             raise ValueError(f"Dimensions {idx} has no length!")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/naive_discretization/"
-    template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-    template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+    template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+    template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
         f"naive_discretization/DATA[data]/"
@@ -155,8 +155,8 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
             raise ValueError(f"Dimensions {idx} has no length!")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/mass_to_charge_distribution/"
-    template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-    template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+    template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
+    template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
     template[f"{trg}min_incr_max"] = np.asarray([mqmin, mqincr, mqmax], np.float32)
     template[f"{trg}min_incr_max/@units"] = "Da"

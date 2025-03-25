@@ -43,6 +43,7 @@ MAP_TO_DTYPES: Dict[str, type] = {
     "i8": np.int64,
     "f8": np.float64,
     "bool": bool,
+    "str": str,
 }
 
 # general conversion workflow
@@ -201,7 +202,9 @@ def set_value(template: dict, trg: str, src_val: Any, trg_dtype: str = "") -> di
             )
     else:  # do an explicit type conversion
         # e.g. in cases when tech partner writes float32 but e.g. NeXus assumes float64
-        if isinstance(src_val, (str, bool)):
+        if isinstance(src_val, str):
+            template[f"{trg}"] = f"{src_val}"
+        if isinstance(src_val, bool):
             template[f"{trg}"] = try_interpret_as_boolean(src_val)
         elif isinstance(src_val, ureg.Quantity):
             if isinstance(src_val.magnitude, (np.ndarray, np.generic)):
@@ -296,9 +299,7 @@ def map_functor(
             if isinstance(src_val, ureg.Quantity):
                 set_value(template, trg, src_val.to(cmd[1]), trg_dtype_key)
             else:
-                set_value(
-                    template, trg, ureg.Quantity(src_val, cmd[1].units), trg_dtype_key
-                )
+                set_value(template, trg, ureg.Quantity(src_val, cmd[1]), trg_dtype_key)
         elif case == "case_three_list":  # str, ureg.Unit, list
             if len(cmd[2]) == 0:
                 continue
@@ -335,7 +336,7 @@ def map_functor(
             # both of these cases can be avoided in an implementation when the
             # src quantity is already a pint quantity instead of some
             # pure python or numpy value or array respectively
-            raise ValueError(
+            raise NotImplementedError(
                 f"Hitting unimplemented case_four, instead refactor implementation such"
                 f"that values on the src side are pint.Quantities already!"
             )
@@ -441,14 +442,11 @@ def filehash_functor(
                 trg = var_path_to_spcfc_path(f"{prfx_trg}/{cmd[0]}", ids)
                 try:
                     with open(mdata[f"{prfx_src}{cmd[1]}"], "rb") as fp:
-                        template[f"{rchop(trg, 'checksum')}checksum"] = (
-                            get_sha256_of_file_content(fp)
-                        )
-                        template[f"{rchop(trg, 'checksum')}type"] = "file"
-                        template[f"{rchop(trg, 'checksum')}path"] = mdata[
-                            f"{prfx_src}{cmd[1]}"
-                        ]
-                        template[f"{rchop(trg, 'checksum')}algorithm"] = "sha256"
+                        fragment = rchop(trg, "checksum")
+                        template[f"{fragment}checksum"] = get_sha256_of_file_content(fp)
+                        template[f"{fragment}type"] = "file"
+                        template[f"{fragment}file_name"] = mdata[f"{prfx_src}{cmd[1]}"]
+                        template[f"{fragment}algorithm"] = "sha256"
                 except (FileNotFoundError, IOError):
                     print(f"File {mdata[f'''{prfx_src}{cmd[1]}''']} not found !")
     return template
