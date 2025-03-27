@@ -322,11 +322,11 @@ class ApmCreateExampleData:
               for verifying NOMAD search capabilities.
               """
         template[f"{trg}experiment_description"] = msg
-        experiment_identifier = str(
+        identifier_experiment = str(
             f"R{np.random.choice(100, 1)[0]}-{np.random.choice(100000, 1)[0]}"
         )
-        template[f"{trg}experiment_identifier"] = experiment_identifier
-        template[f"{trg}run_number"] = experiment_identifier.split("-")[1]
+        template[f"{trg}identifier_experiment"] = identifier_experiment
+        template[f"{trg}run_number"] = identifier_experiment.split("-")[1]
         template[f"{trg}operation_mode"] = str(
             np.random.choice(["apt", "fim", "apt_fim"], 1)[0]
         )

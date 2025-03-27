@@ -46,10 +46,15 @@ def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
 
 
 def iedge(imi, imx, resolution):
-    """Generate linearly space support position."""
+    """Generate linearly-spaced support positions."""
     return np.linspace(
         imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1, endpoint=True
     )
+
+
+def icenter(imi, imx, resolution):
+    """Generate approximate center of linearly-spaced support positions."""
+    return int(np.ceil((imx - imi) / resolution) / 2) + 1
 
 
 def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
@@ -100,6 +105,11 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     template[f"{trg}title"] = "Discretized reconstruction space"
     # template[f"{trg}@long_name"] = "Discretized reconstruction space"
     template[f"{trg}@signal"] = "intensity"
+    template[f"{trg}@default_slice"] = [
+        ".",
+        f"{icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)}",
+        ".",
+    ]
     col = 0
     dims = ["x", "y", "z"]
     axes = []
