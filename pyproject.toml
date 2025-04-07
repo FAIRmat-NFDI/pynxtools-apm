@@ -47,6 +47,12 @@ dev = [
     "uv",
     "pre-commit"
 ]
+dev-nomad = [
+    "urllib3==1.26.20",
+    "python-json-logger==2.0.2",
+    "jsonschema==4.17.3",
+    "filelock==3.3.1"
+]
 docs = [
     "mkdocs",
     "mkdocs-material",
