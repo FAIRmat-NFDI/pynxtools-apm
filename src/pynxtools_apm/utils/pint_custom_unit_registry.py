@@ -19,6 +19,7 @@
 
 import pint
 from pint import UnitRegistry
+from pint import Unit
 
 ureg = UnitRegistry()
 # ureg.formatter.default_format = "D"
@@ -35,7 +36,7 @@ NX_DIMENSIONLESS = ureg.Quantity(1, ureg.nx_dimensionless)
 NX_ANY = ureg.Quantity(1, ureg.nx_any)
 
 
-def is_not_special_unit(units: pint.Unit) -> bool:
+def is_not_special_unit(units: Unit) -> bool:
     """True if not a special NeXus unit category."""
     for special_units in [NX_UNITLESS.units, NX_DIMENSIONLESS.units, NX_ANY.units]:
         if units == special_units:
