@@ -539,7 +539,7 @@ tomli==2.2.1 ; python_full_version <= '3.11'
     # via coverage
 toposort==1.10
     # via pynxtools
-tornado==6.4.2
+tornado==6.5.1
     # via
     #   ipykernel
     #   jupyter-client
