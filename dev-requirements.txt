@@ -503,7 +503,7 @@ scipy==1.15.2
     #   radioactivedecay
 send2trash==1.8.3
     # via jupyter-server
-setuptools==78.1.0
+setuptools==78.1.1
     # via
     #   jupyterlab
     #   pip-tools
