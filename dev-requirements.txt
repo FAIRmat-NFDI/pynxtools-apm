@@ -106,7 +106,7 @@ fqdn==1.5.1
     # via jsonschema
 ghp-import==2.1.0
     # via mkdocs
-h11==0.14.0
+h11==0.16.0
     # via httpcore
 h5grove==2.3.0
     # via jupyterlab-h5web
