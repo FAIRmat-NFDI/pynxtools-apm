@@ -39,8 +39,9 @@ class NxApmNomadOasisConfigurationParser:
             f"Extracting data from deployment-specific configuration file: {file_path}"
         )
         if (
-            pathlib.Path(file_path).name.endswith(".oasis.specific.yaml")
-            or pathlib.Path(file_path).name.endswith(".oasis.specific.yml")
+            pathlib.Path(file_path).name.endswith(
+                (".oasis.specific.yaml", ".oasis.specific.yml")
+            )
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
@@ -75,7 +76,7 @@ class NxApmNomadOasisConfigurationParser:
         src = "citation"
         if src in self.yml:
             if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                if all(isinstance(entry, dict) for entry in self.yml[src]):
                     cite_id = 1
                     # custom schema delivers a list of dictionaries...
                     for cite_dict in self.yml[src]:

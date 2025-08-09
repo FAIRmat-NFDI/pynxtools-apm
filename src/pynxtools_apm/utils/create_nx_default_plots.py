@@ -231,7 +231,7 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
         return template
 
     # generate default plottable and add path
-    if has_valid_m_z is True:
+    if has_valid_m_z:
         create_default_plot_mass_spectrum(template, entry_id)
         decorate_path_to_default_plot(
             template,
@@ -239,7 +239,7 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
             f"mass_to_charge_distribution/mass_spectrum",
         )
 
-    if has_valid_xyz is True:
+    if has_valid_xyz:
         create_default_plot_reconstruction(template, entry_id)
         if has_valid_m_z is False:
             decorate_path_to_default_plot(

@@ -136,7 +136,7 @@ class NxApmNomadOasisElnSchemaParser:
         src = "user"
         if src in self.yml:
             if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                if all(isinstance(entry, dict) for entry in self.yml[src]):
                     user_id = 1
                     # custom schema delivers a list of dictionaries...
                     for user_dict in self.yml[src]:
@@ -166,7 +166,7 @@ class NxApmNomadOasisElnSchemaParser:
         src = "instrument/pulser/laser_source"
         if src in self.yml:
             if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                if all(isinstance(entry, dict) for entry in self.yml[src]):
                     laser_id = 1
                     # custom schema delivers a list of dictionaries...
                     for ldct in self.yml[src]:

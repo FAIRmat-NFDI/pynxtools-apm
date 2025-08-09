@@ -251,7 +251,7 @@ class ApmRangingDefinitionsParser:
             "entry_id": entry_id,
         }
         for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
-            if file_path.lower().endswith(suffix) is True:
+            if file_path.lower().endswith(suffix):
                 self.meta["file_format"] = suffix
                 break
         if self.meta["file_format"] is None:

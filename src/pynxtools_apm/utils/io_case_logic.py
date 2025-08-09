@@ -85,10 +85,10 @@ class ApmUseCaseSelector:
                         self.case[suffix].append(fpath)
                         break
                 else:
-                    if fpath.lower().endswith("range_.h5") is True:
+                    if fpath.lower().endswith("range_.h5"):
                         self.case["range_.h5"].append(fpath)
                         break
-                    if fpath.lower().endswith(".h5") is True:
+                    if fpath.lower().endswith(".h5"):
                         self.case[".h5"].append(fpath)
                         break
                 # HDF5 files need special treatment, this already shows that magic numbers
@@ -132,9 +132,7 @@ class ApmUseCaseSelector:
         for suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
             yml += self.case[suffix]
         for entry in yml:
-            if entry.endswith(".oasis.specific.yaml") or entry.endswith(
-                ".oasis.specific.yml"
-            ):
+            if entry.endswith((".oasis.specific.yaml", ".oasis.specific.yml")):
                 self.cfg += [entry]
             else:
                 self.eln += [entry]
