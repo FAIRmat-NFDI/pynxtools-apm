@@ -25,7 +25,7 @@ dependencies = [
     "h5py>=3.6.0",
     "numpy>=1.22.4,<2.0.0",
     "pynxtools>=0.11.1",
-    "ifes_apt_tc_data_modeling>=0.4.0",
+    "ifes_apt_tc_data_modeling>=0.3.0",
     "pint",
     "flatdict",
 ]
