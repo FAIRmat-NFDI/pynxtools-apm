@@ -33,7 +33,7 @@ from ifes_apt_tc_data_modeling.utils.utils import create_nuclide_hash
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.cameca_cfg import APM_CAMECA_TO_NEXUS
-from pynxtools_apm.utils.load_ranging import add_unknown_iontype
+from pynxtools_apm.utils.custom_logging import logger
 
 
 class NxApmNomadOasisCamecaParser:
@@ -41,7 +41,7 @@ class NxApmNomadOasisCamecaParser:
 
     def __init__(self, file_path: str = "", entry_id: int = 1, verbose: bool = False):
         """Construct class"""
-        print(f"Extracting data from IVAS/APSuite file: {file_path}")
+        logger.debug(f"Extracting data from IVAS/APSuite file: {file_path}")
         if pathlib.Path(file_path).name.endswith(".cameca"):
             self.file_path = file_path
         self.entry_id = entry_id if entry_id > 0 else 1
@@ -51,9 +51,9 @@ class NxApmNomadOasisCamecaParser:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
                 if self.verbose:
                     for key, val in self.yml.items():
-                        print(f"key: {key}, value: {val}")
+                        logger.info(f"key: {key}, value: {val}")
         except (FileNotFoundError, IOError):
-            print(f"File {self.file_path} not found !")
+            logger.warning(f"File {self.file_path} not found !")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
 
@@ -221,7 +221,7 @@ class NxApmNomadOasisCamecaParser:
                     ion.update_human_readable_name()
                     if ion.name.values == "" and rng_def["fRngName"].strip() != "":
                         ion.name.values = rng_def["fRngName"].strip()
-                    # print(ion.report())
+                    # logger.info(ion.report())
 
                     trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/ION[ion{ion_id}]/"
                     template[f"{trg}nuclide_hash"] = np.asarray(

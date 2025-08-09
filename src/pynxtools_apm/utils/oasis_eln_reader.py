@@ -37,6 +37,7 @@ from pynxtools_apm.configurations.eln_cfg import (
     APM_USER_TO_NEXUS,
     APM_WORKFLOW_TO_NEXUS,
 )
+from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.parse_composition_table import parse_composition_table
 
 
@@ -59,10 +60,8 @@ class NxApmNomadOasisElnSchemaParser:
     """
 
     def __init__(self, file_path: str = "", entry_id: int = 1, verbose: bool = False):
-        print(f"Extracting data from ELN file: {file_path}")
-        if pathlib.Path(file_path).name.endswith("eln_data.yaml") or pathlib.Path(
-            file_path
-        ).name.endswith("eln_data.yml"):
+        logger.info(f"Extracting data from ELN file: {file_path}")
+        if pathlib.Path(file_path).name.endswith(("eln_data.yaml", "eln_data.yml")):
             self.file_path = file_path
         self.entry_id = entry_id if entry_id > 0 else 1
         self.verbose = verbose
@@ -71,9 +70,9 @@ class NxApmNomadOasisElnSchemaParser:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
                 if self.verbose:
                     for key, val in self.yml.items():
-                        print(f"key: {key}, value: {val}")
+                        logger.info(f"key: {key}, value: {val}")
         except (FileNotFoundError, IOError):
-            print(f"File {self.file_path} not found !")
+            logger.warning(f"File {self.file_path} not found !")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
 
@@ -196,7 +195,7 @@ class NxApmNomadOasisElnSchemaParser:
                                     ]
                         laser_id += 1
                     return template
-        print("WARNING: pulse_mode != voltage but no laser details specified!")
+        logger.warning("pulse_mode != voltage but no laser details specified!")
         return template
 
     def parse(self, template: dict) -> dict:

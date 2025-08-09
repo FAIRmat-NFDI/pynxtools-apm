@@ -19,6 +19,7 @@
 
 import numpy as np
 
+from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.versioning import (
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
@@ -62,7 +63,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/reconstruction/"
     xyz = template[f"{trg}reconstructed_positions"]["compress"]
 
-    print(f"\tEnter histogram computation, np.shape(xyz) {np.shape(xyz)}")
+    logger.debug(f"\tEnter histogram computation, np.shape(xyz) {np.shape(xyz)}")
     # make the bounding box a quadric prism, discretized using cubic voxel edge in nm
     aabb: dict = {
         "x": [0.0, 0.0],
@@ -73,10 +74,10 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         "zedge": None,
     }
     col = 0
-    print("reconstruction aabb3d")
+    logger.debug("reconstruction aabb3d")
     for dim in ["x", "y", "z"]:
         aabb[f"{dim}"] = [np.min(xyz[:, col]), np.max(xyz[:, col])]
-        print(f"\t{dim}: {aabb[f'''{dim}''']}")
+        logger.debug(f"\t{dim}: {aabb[f'''{dim}''']}")
         imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE
         imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE
         aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)
@@ -134,7 +135,9 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         template[f"{trg}AXISNAME[axis_{dim}]/@units"] = "nm"
         template[f"{trg}AXISNAME[axis_{dim}]/@long_name"] = f"{dim} (nm)"
         col += 1
-    print(f"Default plot naive discretization 3D {NAIVE_GRID_DEFAULT_VOXEL_SIZE} nm^3.")
+    logger.debug(
+        f"Default plot naive discretization 3D {NAIVE_GRID_DEFAULT_VOXEL_SIZE} nm^3."
+    )
     return template
 
 
@@ -143,7 +146,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     trg = f"/ENTRY[entry{entry_id}]/atom_probe/mass_to_charge_conversion/"
     m_z = template[f"{trg}mass_to_charge"]["compress"]
 
-    print(f"\tEnter mass spectrum computation, np.shape(m_z) {np.shape(m_z)}")
+    logger.debug(f"\tEnter mass spectrum computation, np.shape(m_z) {np.shape(m_z)}")
     # the next three in u
     mqmin = 0.0
     mqincr = MASS_SPECTRUM_DEFAULT_BINNING
@@ -194,7 +197,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] = (
         "Mass-to-charge-state-ratio (Da)"
     )
-    print(
+    logger.debug(
         f"Plot mass spectrum at {MASS_SPECTRUM_DEFAULT_BINNING} Da binning was created."
     )
     return template
@@ -202,7 +205,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
 
 def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
     """Copy data from self into template the appdef instance."""
-    print("Create default plots on-the-fly...")
+    logger.debug("Create default plots on-the-fly...")
     # default plot is histogram of mass-to-charge-state-ratio values (aka mass spectrum)
     # naively discretized 3D reconstruction as a fallback
 
@@ -220,7 +223,7 @@ def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
             if "compress" in template[trg]:
                 if isinstance(template[trg]["compress"], np.ndarray):
                     has_valid_xyz = True
-    print(f"m_z, xyz: {has_valid_m_z}, {has_valid_xyz}")
+    logger.debug(f"m_z, xyz: {has_valid_m_z}, {has_valid_xyz}")
 
     if (has_valid_m_z is False) and (has_valid_xyz is False):
         # NEW ISSUE: fall-back solution to plot something else, however

@@ -36,6 +36,7 @@ VALID_FILE_NAME_SUFFIX_RANGE = [
 ]
 VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
 VALID_FILE_NAME_SUFFIX_CAMECA = [".cameca"]
+from pynxtools_apm.utils.custom_logging import logger
 
 
 class ApmUseCaseSelector:
@@ -64,8 +65,10 @@ class ApmUseCaseSelector:
             + VALID_FILE_NAME_SUFFIX_CONFIG
             + VALID_FILE_NAME_SUFFIX_CAMECA
         )
-        print(f"self.supported_file_name_suffixes: {self.supported_file_name_suffixes}")
-        print(f"{file_paths}")
+        logger.info(
+            f"self.supported_file_name_suffixes: {self.supported_file_name_suffixes}"
+        )
+        logger.info(f"{file_paths}")
         self.sort_files_by_file_name_suffix(file_paths)
         self.check_validity_of_file_combinations()
 
@@ -115,7 +118,7 @@ class ApmUseCaseSelector:
                     range_input += len(value)
                 if suffix == ".h5":
                     recon_input += len(value)
-        # print(f"{recon_input}, {range_input}, {other_input}")
+        # logger.debug(f"{recon_input}, {range_input}, {other_input}")
 
         # if 1 <= other_input <= 2:  # and (recon_input == 1) and (range_input == 1)
         self.is_valid = True
@@ -137,14 +140,14 @@ class ApmUseCaseSelector:
                 self.eln += [entry]
         for suffix in VALID_FILE_NAME_SUFFIX_CAMECA:
             self.apsuite += self.case[suffix]
-        print(
-            f"recon_results: {self.reconstruction}\n"
-            f"range_results: {self.ranging}\n"
+        logger.info(
+            f"Reconstruction: {self.reconstruction}\n"
+            f"Ranging definitions: {self.ranging}\n"
             f"Oasis ELN: {self.eln}\n"
             f"Oasis local config: {self.cfg}\n"
         )
         if len(self.apsuite) > 0:
-            print(f"IVAS/APSuite: {self.apsuite}\n")
+            logger.info(f"IVAS/APSuite: {self.apsuite}\n")
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""

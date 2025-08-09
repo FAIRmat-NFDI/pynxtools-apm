@@ -29,14 +29,13 @@ from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptCalibrationFileFormat,
 )
 
-from pynxtools_apm.utils.io_case_logic import (
-    VALID_FILE_NAME_SUFFIX_RECON,
-)
+from pynxtools_apm.utils.custom_logging import logger
+from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
 
 
 def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> dict:
     """Add those required information which a POS file has."""
-    print(f"Extracting data from POS file: {file_path}")
+    logger.debug(f"Extracting data from POS file: {file_path}")
     posfile = ReadPosFileFormat(file_path)
 
     trg = f"{prefix}reconstruction/"
@@ -61,7 +60,7 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
 
 def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> dict:
     """Add those required information which an ePOS file has."""
-    print(f"Extracting data from EPOS file: {file_path}")
+    logger.debug(f"Extracting data from EPOS file: {file_path}")
     eposfile = ReadEposFileFormat(file_path)
 
     trg = f"{prefix}reconstruction/"
@@ -138,7 +137,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
 
 def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> dict:
     """Add those required information which a APT file has."""
-    print(f"Extracting data from APT file: {file_path}")
+    logger.debug(f"Extracting data from APT file: {file_path}")
     aptfile = ReadAptFileFormat(file_path)
 
     trg = f"{prefix}reconstruction/"
@@ -168,7 +167,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
 
 def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> dict:
     """Add those required information which a ATO file has."""
-    print(f"Extracting data from ATO file: {file_path}")
+    logger.debug(f"Extracting data from ATO file: {file_path}")
     atofile = ReadAtoFileFormat(file_path)
 
     trg = f"{prefix}reconstruction/"
@@ -193,7 +192,7 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
 
 def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> dict:
     """Add those required information which a CSV file has."""
-    print(f"Extracting data from CSV file: {file_path}")
+    logger.debug(f"Extracting data from CSV file: {file_path}")
     csvfile = ReadCsvFileFormat(file_path)
 
     trg = f"{prefix}reconstruction/"
@@ -218,7 +217,7 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
 
 def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> dict:
     """Add those required information which a pyccapt/calibration HDF5 file has."""
-    print(f"Extracting data from pyccapt/calibration HDF5 file: {file_path}")
+    logger.debug(f"Extracting data from pyccapt/calibration HDF5 file: {file_path}")
     pycfile = ReadPyccaptCalibrationFileFormat(file_path)
 
     trg = f"{prefix}reconstruction/"

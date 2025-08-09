@@ -49,11 +49,8 @@ from pynxtools_apm.utils.versioning import (
     NX_APM_EXEC_VERSION,
 )
 
-WARNING_TOO_MANY_DEFINITIONS = (
-    f"WARNING::Range file contains more than {MAX_NUMBER_OF_ION_SPECIES} "
-    f"WARNING::definitions! This is often a signature of duplicates or "
-    f"WARNING::contradicting definitions."
-)
+WARNING_TOO_MANY_DEFINITIONS = f"More than {MAX_NUMBER_OF_ION_SPECIES} ranging definitions. Check if there are duplicates."
+from pynxtools_apm.utils.custom_logging import logger
 
 
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
@@ -174,10 +171,10 @@ def add_standardize_molecular_ions(
 
 def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which a ENV file has."""
-    print(f"Extracting data from ENV file: {file_path}")
+    logger.debug(f"Extracting data from ENV file: {file_path}")
     rangefile = ReadEnvFileFormat(file_path)
     if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        print(WARNING_TOO_MANY_DEFINITIONS)
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(rangefile.env["molecular_ions"], template, entry_id)
     return template
@@ -187,10 +184,10 @@ def extract_data_from_fig_txt_file(
     file_path: str, template: dict, entry_id: int
 ) -> dict:
     """Add those required information which a FIG.TXT file has."""
-    print(f"Extracting data from FIG.TXT file: {file_path}")
+    logger.debug(f"Extracting data from FIG.TXT file: {file_path}")
     rangefile = ReadFigTxtFileFormat(file_path)
     if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        print(WARNING_TOO_MANY_DEFINITIONS)
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(rangefile.fig["molecular_ions"], template, entry_id)
     return template
@@ -200,10 +197,10 @@ def extract_data_from_pyccapt_file(
     file_path: str, template: dict, entry_id: int
 ) -> dict:
     """Add those required information which a pyccapt/ranging HDF5 file has."""
-    print(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
+    logger.debug(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
     rangefile = ReadPyccaptRangingFileFormat(file_path)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        print(WARNING_TOO_MANY_DEFINITIONS)
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
     return template
@@ -211,10 +208,10 @@ def extract_data_from_pyccapt_file(
 
 def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information from XML-serialized IVAS state dumps."""
-    print(f"Extracting data from XML-serialized IVAS analysis file: {file_path}")
+    logger.debug(f"Extracting data from XML-serialized IVAS analysis file: {file_path}")
     rangefile = ReadImagoAnalysisFileFormat(file_path)
     if len(rangefile.imago["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        print(WARNING_TOO_MANY_DEFINITIONS)
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(
         rangefile.imago["molecular_ions"], template, entry_id
@@ -224,10 +221,10 @@ def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) 
 
 def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which an RNG file has."""
-    print(f"Extracting data from RNG file: {file_path}")
+    logger.debug(f"Extracting data from RNG file: {file_path}")
     rangefile = ReadRngFileFormat(file_path)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        print(WARNING_TOO_MANY_DEFINITIONS)
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
     return template
@@ -235,10 +232,10 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
 
 def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dict:
     """Add those required information which an RRNG file has."""
-    print(f"Extracting data from RRNG file: {file_path}")
+    logger.debug(f"Extracting data from RRNG file: {file_path}")
     rangefile = ReadRrngFileFormat(file_path, unique=False)
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
-        print(WARNING_TOO_MANY_DEFINITIONS)
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(rangefile.rrng["molecular_ions"], template, entry_id)
     return template
@@ -268,7 +265,7 @@ class ApmRangingDefinitionsParser:
         prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
         if f"{prefix}number_of_ion_types" in template:
             number_of_ion_types = template[f"{prefix}number_of_ion_types"]
-        print(
+        logger.info(
             f"Auto-detecting elements from ranging {number_of_ion_types} ion types..."
         )
 
@@ -286,11 +283,11 @@ class ApmRangingDefinitionsParser:
                 for atom_number in nuclide_list:
                     if 0 < atom_number <= max_atom_number:
                         unique_atom_numbers.add(atom_number)
-        print(f"Unique atom numbers are: {list(unique_atom_numbers)}")
+        logger.info(f"Unique atom numbers are: {list(unique_atom_numbers)}")
         unique_elements = set()
         for atom_number in unique_atom_numbers:
             unique_elements.add(chemical_symbols[atom_number])
-        print(f"Unique elements are: {list(unique_elements)}")
+        logger.info(f"Unique elements are: {list(unique_elements)}")
 
         atom_types_str = ", ".join(list(unique_elements))
         if atom_types_str != "":
