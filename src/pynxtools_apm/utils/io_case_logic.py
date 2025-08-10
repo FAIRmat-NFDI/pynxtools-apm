@@ -20,7 +20,7 @@
 from typing import Dict, List, Tuple
 
 from pynxtools_apm.concepts.mapping_functors_pint import var_path_to_spcfc_path
-from pynxtools_apm.utils.get_file_checksum import (
+from pynxtools_apm.utils.get_checksum import (
     DEFAULT_CHECKSUM_ALGORITHM,
     get_sha256_of_file_content,
 )
