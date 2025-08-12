@@ -56,7 +56,7 @@ from pynxtools_apm.utils.custom_logging import logger
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on the unknown type
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/ION[ion0]/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ION[ion0]/"
     ivec = create_nuclide_hash([])
     template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
     template[f"{trg}charge_state"] = np.int8(0)
@@ -75,7 +75,7 @@ def add_standardize_molecular_ions(
 ) -> dict:
     """Added standard formatted molecular ion entries."""
     ion_id = 1
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
     for ion in ion_lst:
         path = f"{trg}ION[ion{ion_id}]/"
         template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash.values, np.uint16)
@@ -156,7 +156,7 @@ def add_standardize_molecular_ions(
                 template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1
 
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
     template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
     return template
 
@@ -262,7 +262,7 @@ class ApmRangingDefinitionsParser:
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
         number_of_ion_types = 1
-        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
+        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/ranging/peak_identification/"
         if f"{prefix}number_of_ion_types" in template:
             number_of_ion_types = template[f"{prefix}number_of_ion_types"]
         logger.info(
@@ -272,7 +272,7 @@ class ApmRangingDefinitionsParser:
         unique_atom_numbers = set()
         max_atom_number = len(chemical_symbols) - 1
         prefix = (
-            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
             f"ranging/peak_identification/"
         )
         for ion_id in np.arange(1, number_of_ion_types):
@@ -304,7 +304,7 @@ class ApmRangingDefinitionsParser:
         """
         # resolve the next two program references more informatively
         trg = (
-            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
             f"ranging/peak_identification/"
         )
         template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(
@@ -345,10 +345,10 @@ class ApmRangingDefinitionsParser:
                     self.meta["file_path"], template, self.meta["entry_id"]
                 )
             else:
-                trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
+                trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/ranging/peak_identification/"
                 template[f"{trg}number_of_ion_types"] = 1
         else:
-            trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
+            trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/ranging/peak_identification/"
             template[f"{trg}number_of_ion_types"] = 1
 
         self.update_atom_types_ranging_definitions_based(template)

@@ -177,7 +177,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
 
 
 APM_RANGE_TO_NEXUS: Dict[str, Any] = {
-    "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
+    "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging",
     "prefix_src": "ranging/",
     "map_to_str": [
         ("PROGRAM[program1]/program", "program_name"),
@@ -187,7 +187,7 @@ APM_RANGE_TO_NEXUS: Dict[str, Any] = {
 
 
 APM_RECON_TO_NEXUS: Dict[str, Any] = {
-    "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
+    "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction",
     "prefix_src": "reconstruction/",
     "map_to_str": [
         "protocol_name",

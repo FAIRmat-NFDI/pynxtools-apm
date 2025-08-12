@@ -66,7 +66,7 @@ class NxApmNomadOasisCamecaParser:
             ("Partials", "partial"),
             ("Records", "record"),
         ]
-        trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/"
+        trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/hit_finding/"
         for cameca_name, nexus_name in event_type_names:
             if f"fTotalEvent{cameca_name}" in self.yml.as_dict().keys():
                 template[f"{trg}total_event_{nexus_name}"] = np.uint64(
@@ -80,10 +80,10 @@ class NxApmNomadOasisCamecaParser:
             val in self.yml
             for val in ["fCernRootVersion", "fImagoRootVersion"]  # "fImagoRootDate"
         ):
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/PROGRAM[program1]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/hit_finding/PROGRAM[program1]/"
             template[f"{trg}program"] = "CernRoot"
             template[f"{trg}program/@version"] = self.yml["fCernRootVersion"].strip()
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/hit_finding/PROGRAM[program2]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/hit_finding/PROGRAM[program2]/"
             template[f"{trg}program"] = "ImagoRoot"
             template[f"{trg}program/@version"] = self.yml["fImagoRootVersion"].strip()
             # template[f"{trg}program/@date"] = self.yml["fImagoRootDate"].strip()
@@ -95,7 +95,7 @@ class NxApmNomadOasisCamecaParser:
                 "fAcqMinorVersion",
             ]  # fStreamVersion
         ):
-            trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/raw_data/PROGRAM[program1]/"
+            trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/raw_data/PROGRAM[program1]/"
             template[f"{trg}program"] = "IVAS or AP Suite Acquisition"
             template[f"{trg}program/@version"] = (
                 f"{self.yml['fAcqMajorVersion']}.{self.yml['fAcqMinorVersion']}.{self.yml['fAcqBuildVersion']}"
@@ -223,7 +223,7 @@ class NxApmNomadOasisCamecaParser:
                         ion.name.values = rng_def["fRngName"].strip()
                     # logger.info(ion.report())
 
-                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/ION[ion{ion_id}]/"
+                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ION[ion{ion_id}]/"
                     template[f"{trg}nuclide_hash"] = np.asarray(
                         ion.nuclide_hash.values, np.uint16
                     )
@@ -315,7 +315,7 @@ class NxApmNomadOasisCamecaParser:
                             }
                             template[f"{path}shortest_half_life/@units"] = "s"
 
-                trg = f"/ENTRY[entry{self.entry_id}]/atom_probe/ranging/peak_identification/"
+                trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
                 template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
                 template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(
                     MAX_NUMBER_OF_ATOMS_PER_ION
