@@ -75,7 +75,9 @@ def add_standardize_molecular_ions(
 ) -> dict:
     """Added standard formatted molecular ion entries."""
     ion_id = 1
-    trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
+    )
     for ion in ion_lst:
         path = f"{trg}ION[ion{ion_id}]/"
         template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash.values, np.uint16)
@@ -156,7 +158,9 @@ def add_standardize_molecular_ions(
                 template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1
 
-    trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
+    )
     template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
     return template
 

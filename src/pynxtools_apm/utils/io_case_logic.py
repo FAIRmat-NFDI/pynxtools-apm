@@ -154,7 +154,8 @@ class ApmUseCaseSelector:
         # rely on assumption made in check_validity_of_file_combination
         for fpath in self.reconstruction:
             prfx = var_path_to_spcfc_path(
-                "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction/results", identifier
+                "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction/results",
+                identifier,
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
@@ -163,7 +164,8 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
             prfx = var_path_to_spcfc_path(
-                "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging/definitions", identifier
+                "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging/definitions",
+                identifier,
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)

@@ -524,9 +524,8 @@ class ApmCreateExampleData:
         raise NotImplementedError()
         # logger.debug("Parsing pulser...")
         trg = f"/ENTRY[entry{self.entry_id}]/measurement/eventID[eventid]/instrument/pulser/"
-
-        template[f"{trg}pulse_mode"] = f"{np.random.choice(
-            ['laser', 'voltage', 'laser_and_voltage'], 1)[0]}"
+        pulse_mode = np.random.choice(["laser", "voltage", "laser_and_voltage"], 1)[0]
+        template[f"{trg}pulse_mode"] = pulse_mode
         template[f"{trg}pulse_fraction"] = np.float64(
             np.random.normal(loc=0.1, scale=0.02)
         )
@@ -535,9 +534,7 @@ class ApmCreateExampleData:
         )
         template[f"{trg}pulse_frequency/@units"] = "kHz"
         if pulse_mode != "voltage":
-            trg = (
-                f"/ENTRY[entry{self.entry_id}]/measurement/eventID[eventid]/instrument/pulser/sourceID[source1]/"
-            )
+            trg = f"/ENTRY[entry{self.entry_id}]/measurement/eventID[eventid]/instrument/pulser/sourceID[source1]/"
             template[f"{trg}name"] = "laser"
             template[f"{trg}wavelength"] = np.float64(
                 (30 + np.random.choice(30, 1)) * 1.0e-8
