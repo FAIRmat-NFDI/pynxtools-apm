@@ -164,7 +164,7 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
             prfx = var_path_to_spcfc_path(
-                "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging/definitions",
+                "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging/source",
                 identifier,
             )
             with open(fpath, "rb") as fp:
