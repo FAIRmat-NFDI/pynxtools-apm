@@ -526,7 +526,7 @@ class ApmCreateExampleData:
         trg = f"/ENTRY[entry{self.entry_id}]/measurement/eventID[eventid]/instrument/pulser/"
 
         template[f"{trg}pulse_mode"] = f"{np.random.choice(
-            ["laser", "voltage", "laser_and_voltage"], 1)[0]}"
+            ['laser', 'voltage', 'laser_and_voltage'], 1)[0]}"
         template[f"{trg}pulse_fraction"] = np.float64(
             np.random.normal(loc=0.1, scale=0.02)
         )
