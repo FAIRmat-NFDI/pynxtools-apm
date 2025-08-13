@@ -1,2 +1,34 @@
 # Custom Dictionary Words
 
+# Names
+Cameca
+Erlangen
+Felfer
+Forschungsgemeinschaft
+IFES
+Inspico
+Monajem
+NFDI
+RHIT
+RRAW
+RRNG
+Schmitz
+ifes
+iontypes
+metainfo
+nuclides
+
+# software
+APSuite
+IVAS
+Pyccapt
+Pynxtools
+dataconverter
+paraprobe
+pyccapt
+pynxtools
+rosettasciio
+
+
+# en-US
+unphysical
