@@ -37,6 +37,7 @@ from pynxtools_apm.configurations.eln_cfg import (
     APM_USER_TO_NEXUS,
     APM_WORKFLOW_TO_NEXUS,
 )
+from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.parse_composition_table import parse_composition_table
 
 
@@ -59,10 +60,8 @@ class NxApmNomadOasisElnSchemaParser:
     """
 
     def __init__(self, file_path: str = "", entry_id: int = 1, verbose: bool = False):
-        print(f"Extracting data from ELN file: {file_path}")
-        if pathlib.Path(file_path).name.endswith("eln_data.yaml") or pathlib.Path(
-            file_path
-        ).name.endswith("eln_data.yml"):
+        logger.info(f"Extracting data from ELN file: {file_path}")
+        if pathlib.Path(file_path).name.endswith(("eln_data.yaml", "eln_data.yml")):
             self.file_path = file_path
         self.entry_id = entry_id if entry_id > 0 else 1
         self.verbose = verbose
@@ -71,9 +70,9 @@ class NxApmNomadOasisElnSchemaParser:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
                 if self.verbose:
                     for key, val in self.yml.items():
-                        print(f"key: {key}, value: {val}")
+                        logger.info(f"key: {key}, value: {val}")
         except (FileNotFoundError, IOError):
-            print(f"File {self.file_path} not found !")
+            logger.warning(f"File {self.file_path} not found !")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
 
@@ -112,8 +111,8 @@ class NxApmNomadOasisElnSchemaParser:
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
                             if dct[symbol][1] is not None:
-                                template[f"{trg}/composition_error"] = dct[symbol][1]
-                                template[f"{trg}/composition_error/@units"] = unit
+                                template[f"{trg}/composition_errors"] = dct[symbol][1]
+                                template[f"{trg}/composition_errors/@units"] = unit
         return template
 
     def parse_atom_types(self, template: dict) -> dict:
@@ -137,7 +136,7 @@ class NxApmNomadOasisElnSchemaParser:
         src = "user"
         if src in self.yml:
             if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                if all(isinstance(entry, dict) for entry in self.yml[src]):
                     user_id = 1
                     # custom schema delivers a list of dictionaries...
                     for user_dict in self.yml[src]:
@@ -151,9 +150,11 @@ class NxApmNomadOasisElnSchemaParser:
                             template,
                         )
                         if "orcid" in user_dict:
-                            trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]"
-                            template[f"{trg}/identifier"] = user_dict["orcid"]
-                            template[f"{trg}/identifier/@type"] = "DOI"
+                            trg = f"/ENTRY[entry{self.entry_id}]/userID[user{user_id}]"
+                            template[f"{trg}/identifierNAME[identifier]"] = user_dict[
+                                "orcid"
+                            ]
+                            template[f"{trg}/identifierNAME[identifier]/@type"] = "DOI"
                         user_id += 1
         return template
 
@@ -167,18 +168,17 @@ class NxApmNomadOasisElnSchemaParser:
         src = "instrument/pulser/laser_source"
         if src in self.yml:
             if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                if all(isinstance(entry, dict) for entry in self.yml[src]):
                     laser_id = 1
                     # custom schema delivers a list of dictionaries...
                     for ldct in self.yml[src]:
                         trg_sta = (
-                            f"/ENTRY[entry{self.entry_id}]/measurement/instrument/"
-                            f"pulser/SOURCE[source{laser_id}]"
+                            f"/ENTRY[entry{self.entry_id}]/measurement/eventID[event1]/instrument/"
+                            f"pulser/sourceID[source{laser_id}]"
                         )
                         trg_dyn = (
-                            f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"events/EVENT_DATA_APM[event1]/instrument/"
-                            f"pulser/SOURCE[source{laser_id}]"
+                            f"/ENTRY[entry{self.entry_id}]/measurement/eventID[event1]/instrument/"
+                            f"pulser/sourceID[source{laser_id}]"
                         )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
@@ -196,7 +196,7 @@ class NxApmNomadOasisElnSchemaParser:
                                     ]
                         laser_id += 1
                     return template
-        print("WARNING: pulse_mode != voltage but no laser details specified!")
+        logger.warning("pulse_mode != voltage but no laser details specified!")
         return template
 
     def parse(self, template: dict) -> dict:
