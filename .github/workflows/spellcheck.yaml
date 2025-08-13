@@ -1,14 +1,6 @@
 name: Spell Check
 
-on:
-  pull_request:
-    branches: [main]
-    paths:
-      - "docs/tutorial/**/*"
-      - "docs/explanation/**/*"
-      - "docs/how-tos/**/*"
-      - "docs/reference/**/*"
-      - "docs/*"
+on: [push]
 
 jobs:
   spellcheck:
@@ -24,7 +16,7 @@ jobs:
 
     - name: Run cspell
       run: |
-        cspell --config cspell.json "docs/tutorial/**/*" "docs/how-tos/**/*" "docs/explanation/**/*" "docs/reference/**/*" "docs/*"
+        cspell --config cspell.json "docs/tutorial/*" "docs/how-tos/*" "docs/explanation/*" "docs/reference/*" "docs/*"
 
     - name: Fail on errors
       run: |
