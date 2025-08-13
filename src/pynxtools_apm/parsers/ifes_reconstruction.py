@@ -240,7 +240,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     return template
 
 
-class ApmReconstructionParser:
+class IfesReconstructionParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
@@ -262,7 +262,7 @@ class ApmReconstructionParser:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
-        prfx = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+        prfx = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
         if self.meta["file_path"] != "" and self.meta["file_format"] is not None:
             if self.meta["file_format"] == ".apt":
                 extract_data_from_apt_file(self.meta["file_path"], prfx, template)
