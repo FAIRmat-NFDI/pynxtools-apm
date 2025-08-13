@@ -118,7 +118,7 @@ APM_INSTRUMENT_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
 
 APM_MEASUREMENT_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/measurement",
-    "prefix_src": "instrument/",
+    "prefix_src": "",
     "map_to_str": ["status"],
 }
 
@@ -128,7 +128,6 @@ APM_INSTRUMENT_STATIC_TO_NEXUS: Dict[str, Any] = {
     "prefix_src": "instrument/",
     "map_to_bool": [("reflectron/applied", "reflectron_applied")],
     "map_to_str": [
-        "status",
         "location",
         ("name", "instrument_name"),
         ("fabrication/vendor", "fabrication_vendor"),
@@ -148,7 +147,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
         ("stage/temperature_sensor/measurement", "temperature"),
     ],
     "map_to_str": [
-        ("pulser/pulse_mode", "pulser/pulse_mode"),
+        ("pulser/pulse_mode", "pulse_mode"),
         ("control/evaporation_control", "evaporation_control"),
     ],
     "map_to_f8": [
@@ -156,10 +155,10 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
         (
             "pulser/pulse_frequency",
             ureg.kilohertz,
-            "pulser/pulse_frequency/value",
-            "pulser/pulse_frequency/unit",
+            "pulse_frequency/value",
+            "pulse_frequency/unit",
         ),
-        ("pulser/pulse_fraction", "pulser/pulse_fraction"),
+        ("pulser/pulse_fraction", "pulse_fraction"),
         (
             "analysis_chamber/pressure_sensor/value",
             ureg.bar,
@@ -190,9 +189,9 @@ APM_RECON_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction",
     "prefix_src": "reconstruction/",
     "map_to_str": [
-        "protocol_name",
-        "crystallographic_calibration",
-        "parameter",
+        ("config/protocol_name", "protocol_name"),
+        ("config/crystallographic_calibration", "crystallographic_calibration"),
+        ("config/comment", "parameter"),
         ("programID[program1]/program", "program_name"),
         ("programID[program1]/program/@version", "program_version"),
     ],

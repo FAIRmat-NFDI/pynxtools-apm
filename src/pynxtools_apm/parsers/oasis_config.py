@@ -23,7 +23,7 @@ import flatdict as fd
 import yaml
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
-from pynxtools_apm.configurations.oasis_cfg import (
+from pynxtools_apm.configurations.oasis_eln_config_cfg import (
     APM_CSYS_MCSTASLIKE_TO_NEXUS,
     APM_EXAMPLE_TO_NEXUS,
     APM_OASISCONFIG_TO_NEXUS,
