@@ -151,12 +151,11 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     mqmin = 0.0
     mqincr = MASS_SPECTRUM_DEFAULT_BINNING
     mqmax = np.ceil(np.max(m_z[:]))
+    nmqchrg = int(np.ceil((mqmax - mqmin) / mqincr)) + 1
 
     hist1d = np.histogram(
         m_z[:],
-        np.linspace(
-            mqmin, mqmax, num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1, endpoint=True
-        ),
+        np.linspace(mqmin, mqmax, num=nmqchrg, endpoint=True),
     )
     del m_z
     if isinstance(hist1d[0], np.ndarray) is False:
@@ -175,6 +174,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}min_mass_charge/@units"] = "Da"
     template[f"{trg}max_mass_charge"] = np.float32(mqmax)
     template[f"{trg}max_mass_charge/@units"] = "Da"
+    template[f"{trg}n_mass_charge"] = np.uint32(nmqchrg)
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/"
         f"mass_to_charge_distribution/mass_spectrum/"

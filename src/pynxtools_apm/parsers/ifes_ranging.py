@@ -103,9 +103,9 @@ def add_standardize_molecular_ions(
             template[f"{path}config/min_abundance"] = np.float64(
                 ion.charge_state_model["min_abundance"]
             )
-            template[f"{path}config/min_abundance_product"] = np.float64(
-                ion.charge_state_model["min_abundance_product"]
-            )
+            # template[f"{path}config/min_abundance_product"] = np.float64(
+            #     ion.charge_state_model["min_abundance_product"]
+            # )
             template[f"{path}config/min_half_life"] = np.float64(
                 ion.charge_state_model["min_half_life"]
             )
