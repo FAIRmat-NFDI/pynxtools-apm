@@ -26,7 +26,7 @@ from pynxtools.dataconverter.convert import convert, get_reader
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 
 # from pynxtools.testing.nexus_conversion import ReaderTest
-from pynxtools_apm.utils.hfive_base import (
+from pynxtools_apm.parsers.hfive_base import (
     NXAPM_VOLATILE_NAMED_HDF_PATHS,
     NXAPM_VOLATILE_SUFFIX_HDF_PATHS,
     HdfFiveBaseParser,
