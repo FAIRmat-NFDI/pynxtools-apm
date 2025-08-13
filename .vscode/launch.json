@@ -6,30 +6,54 @@
     "configurations": [
         {
             "name": "pynx-apm debug",
-            "type": "python",
+            "type": "python",  //"debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "../../.py3.11.11/bin/dataconverter",
+            "program": "../../.py3.12.3/bin/dataconverter",
             "args": [//workflow files str.str, hits.hits, root.root should be created via touch str.str ...
-                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/cameca/001.0.c4b1b412f46833ef7b72164858f3fa2daea60de212b2a62cd7121c07a92d5837.rhit.CRunHeader.dat.Parsed.cameca",
-                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/cameca/019.0.8d12016f3d152ce8a02194b126bd6c896f517928dada673864e93e4dfc418738.root.CAnalysis.dat.Parsed.cameca",
-                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/cameca/091.0.638c14a699bce8644b1df4690c86b5f0d2fdc60fc4cbfdeb8bc89def735193b6.rhit.CRunHeader.dat.Parsed.cameca",
-                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/cameca/091.0.68466f6cc6a751a23126c82f8a5a04c9c91f1c7e03bb44e6d2c2c9375e07a624.root.CAnalysis.dat.Parsed.cameca",
-                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/cameca/008.1.1f7a63e5a16239bcaebe71c8ac2812b5f6cdb1175f1a4618db7c9435c3ead06c.rhit.CRunHeader.dat.Parsed.cameca",
-                     //"../../../../paper_paper_paper/scidat_nomad_apt/bb_analysis/analysis/harvest_examples/data/production/cameca/088.44.1444afcbc8114aa6832716877ea9dc3360968458ce1ce74bb4c9ea21f4fe8678.rhit.CRunHeader.dat.Parsed.cameca",
-                     "examples/apm.oasis.specific.yaml",
-                     "examples/eln_data.yaml",
-                     "examples/Si.apt",
-                     "examples/Si.RRNG",
+                     //"tests/data/apt/Si.apt",
+                     //"tests/data/ato3/R31_11378-v01.ato",
+                     //"tests/data/cameca_hdf5/R69_152985-v01 Top Level ROI.hdf5",
+                     //"tests/data/cameca_root/091.2.76a40871c28c3801a7370ef7030e35120616e2e9cd18874dcc724468ddfad9b4.root.CAnalysis.dat.Parsed.cameca",
+                     //"tests/data/csv/Annealed_CoCrNi_100.csv",
+                     //"tests/data/default/Si.RRNG",
+                     //"tests/data/default/root.root",
+                     //"tests/data/default/str.str",
+                     //"tests/data/default/Si.apt",
+                     //"tests/data/default/hits.hits",
+                     //"tests/data/eln/apm.oasis.specific.yaml",
+                     //"tests/data/eln/output.nxs_eln_data.yaml",
+                     //"tests/data/env/ErMnO.env",
+                     //"tests/data/epos/R45_04472-v03.epos",
+                     //"tests/data/fig/Superalloy_MassSpec_ranged.fig.txt",
+                     //"tests/data/ifes_apth5/201125-valid.apth5",
+                     //"tests/data/imago1/default.analysis",
+                     //"tests/data/pos/ErMnO_pole.pos",
+                     //"tests/data/pyccapt/1748_Al_range_.h5",
+                     //"tests/data/pyccapt/1748_Al.h5",
+                     //"tests/data/rng/87D_1.rng",
+                     //"tests/data/rrng/VAlN_film_plan-view_700C.rrng",
                      "--reader",
                      "apm",
                      "--nxdl",
                      "NXapm",
-                     "--output=examples/Si.nxs"],
-                     //"--output=tests/prod/usa_idaho_boise.088.44.nxs"]
-                     //"--output=tests/prod/usa_portland_grimm.091.0.nxs"]
-                     //"--output=tests/prod/out_recon.nxs"]
-                     //"--output=tests/prod/out_range.nxs"]
+                     //"--skip-verify",
+                     //"--output=tests/prod/apt/output.nxs"]
+                     //"--output=tests/prod/ato3/output.nxs"]
+                     //"--output=tests/prod/cameca_hdf5/output.nxs"]
+                     //"--output=tests/prod/cameca_root/output.nxs"]
+                     //"--output=tests/prod/csv/output.nxs"]
+                     //"--output=tests/prod/default/output.nxs"]
+                     //"--output=tests/prod/eln/output.nxs"]
+                     //"--output=tests/prod/env/output.nxs"]
+                     //"--output=tests/prod/epos/output.nxs"]
+                     //"--output=tests/prod/fig/output.nxs"]
+                     //"--output=tests/prod/ifes_apth5/output.nxs"]
+                     //"--output=tests/prod/imago1/output.nxs"]
+                     //"--output=tests/prod/pos/output.nxs"]
+                     //"--output=tests/prod/pyccapt/output.nxs"]
+                     //"--output=tests/prod/rng/output.nxs"]
+                     //"--output=tests/prod/rrng/output.nxs"]
         }
     ]
 }
