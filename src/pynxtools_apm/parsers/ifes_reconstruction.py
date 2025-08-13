@@ -240,7 +240,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     return template
 
 
-class ApmReconstructionParser:
+class IfesReconstructionParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):

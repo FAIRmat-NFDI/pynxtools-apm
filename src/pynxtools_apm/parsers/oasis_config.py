@@ -31,7 +31,7 @@ from pynxtools_apm.configurations.oasis_cfg import (
 from pynxtools_apm.utils.custom_logging import logger
 
 
-class NxApmNomadOasisConfigurationParser:
+class NxApmNomadOasisConfigParser:
     """Parse deployment specific configuration."""
 
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
