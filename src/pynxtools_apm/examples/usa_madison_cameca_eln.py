@@ -36,7 +36,7 @@ from pynxtools_apm.configurations.cameca_cfg import APM_CAMECA_TO_NEXUS
 from pynxtools_apm.utils.custom_logging import logger
 
 
-class NxApmNomadOasisCamecaParser:
+class NxApmCustomElnCamecaRoot:
     """Parse manually collected content from an IVAS / AP Suite YAML."""
 
     def __init__(self, file_path: str = "", entry_id: int = 1, verbose: bool = False):

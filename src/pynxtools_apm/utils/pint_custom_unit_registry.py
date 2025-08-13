@@ -17,7 +17,6 @@
 #
 """A customized unit registry for handling units with pint."""
 
-import numpy as np
 import pint
 
 try:

@@ -249,7 +249,7 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     return template
 
 
-class ApmRangingDefinitionsParser:
+class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
