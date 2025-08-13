@@ -28,18 +28,20 @@ from pynxtools_apm.configurations.oasis_cfg import (
     APM_EXAMPLE_TO_NEXUS,
     APM_OASISCONFIG_TO_NEXUS,
 )
+from pynxtools_apm.utils.custom_logging import logger
 
 
-class NxApmNomadOasisConfigurationParser:
+class NxApmNomadOasisConfigParser:
     """Parse deployment specific configuration."""
 
     def __init__(self, file_path: str, entry_id: int, verbose: bool = False):
-        print(
+        logger.info(
             f"Extracting data from deployment-specific configuration file: {file_path}"
         )
         if (
-            pathlib.Path(file_path).name.endswith(".oasis.specific.yaml")
-            or pathlib.Path(file_path).name.endswith(".oasis.specific.yml")
+            pathlib.Path(file_path).name.endswith(
+                (".oasis.specific.yaml", ".oasis.specific.yml")
+            )
         ) and entry_id > 0:
             self.entry_id = entry_id
             self.file_path = file_path
@@ -47,7 +49,7 @@ class NxApmNomadOasisConfigurationParser:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
                 if verbose:
                     for key, val in self.yml.items():
-                        print(f"key: {key}, val: {val}")
+                        logger.info(f"key: {key}, val: {val}")
         else:
             self.entry_id = 1
             self.file_path = ""
@@ -74,7 +76,7 @@ class NxApmNomadOasisConfigurationParser:
         src = "citation"
         if src in self.yml:
             if isinstance(self.yml[src], list):
-                if all(isinstance(entry, dict) for entry in self.yml[src]) is True:
+                if all(isinstance(entry, dict) for entry in self.yml[src]):
                     cite_id = 1
                     # custom schema delivers a list of dictionaries...
                     for cite_dict in self.yml[src]:
