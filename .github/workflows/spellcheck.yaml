@@ -1,6 +1,7 @@
 name: Spell Check
 
-on: [push]
+on:
+  push:
   # pull_request:
   #  branches: [main]
     paths:
