@@ -17,20 +17,21 @@
 #
 """Generic parser for loading atom probe microscopy data into NXapm."""
 
+import os
 from time import perf_counter_ns
 from typing import Any, Tuple
 
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
+from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
+from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
+from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
+from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
+from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
 from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
-from pynxtools_apm.utils.load_ranging import ApmRangingDefinitionsParser
-from pynxtools_apm.utils.load_reconstruction import ApmReconstructionParser
-from pynxtools_apm.utils.oasis_apsuite_reader import NxApmNomadOasisCamecaParser
-from pynxtools_apm.utils.oasis_config_reader import NxApmNomadOasisConfigurationParser
-from pynxtools_apm.utils.oasis_eln_reader import NxApmNomadOasisElnSchemaParser
 
 
 class APMReader(BaseReader):
@@ -51,13 +52,16 @@ class APMReader(BaseReader):
         objects: Tuple[Any] = None,
     ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
+        logger.info(os.getcwd())
         tic = perf_counter_ns()
         template.clear()
 
         entry_id = 1
 
         # eln_data, and ideally recon and ranging definitions from technology partner file
-        logger.debug("Parse ELN and technology partner file(s)...")
+        logger.debug(
+            "Identify information sources (RDM config, ELN, tech-partner files) to deal with..."
+        )
         case = ApmUseCaseSelector(file_paths)
         if not case.is_valid:
             logger.warning(
@@ -67,39 +71,39 @@ class APMReader(BaseReader):
         case.report_workflow(template, entry_id)
 
         if len(case.cfg) == 1:
-            logger.debug("Parse (meta)data coming from a configuration of an RDM...")
-            nx_apm_cfg = NxApmNomadOasisConfigurationParser(
-                case.cfg[0], entry_id, False
-            )
+            logger.debug("Parse (meta)data coming from a custom NOMAD OASIS RDM...")
+            nx_apm_cfg = NxApmNomadOasisConfigParser(case.cfg[0], entry_id, False)
             nx_apm_cfg.parse(template)
 
         if len(case.eln) == 1:
-            logger.debug("Parse (meta)data coming from an ELN...")
+            logger.debug("Parse (meta)data coming from an ELN exemplified for NOMAD")
             nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
             nx_apm_eln.parse(template)
 
+        if 1 <= len(case.apsuite) <= 2:
+            logger.debug("Parse (meta)data coming from a customized ELN...")
+            for cameca_input_file in case.apsuite:
+                nx_apm_cameca = NxApmCustomElnCamecaRoot(cameca_input_file, entry_id)
+                nx_apm_cameca.parse(template)
+
         if len(case.reconstruction) == 1:
             logger.debug("Parse (meta)data from a reconstructed dataset file...")
-            nx_apm_recon = ApmReconstructionParser(case.reconstruction[0], entry_id)
+            nx_apm_recon = IfesReconstructionParser(case.reconstruction[0], entry_id)
             nx_apm_recon.parse(template)
 
         if len(case.ranging) == 1:
             logger.debug("Parse (meta)data from a ranging definitions file...")
-            nx_apm_range = ApmRangingDefinitionsParser(case.ranging[0], entry_id)
+            nx_apm_range = IfesRangingDefinitionsParser(case.ranging[0], entry_id)
             nx_apm_range.parse(template)
-
-        if 1 <= len(case.apsuite) <= 2:
-            logger.debug("Parse from a file with IVAS/APSuite-specific concepts...")
-            for cameca_input_file in case.apsuite:
-                nx_apm_cameca = NxApmNomadOasisCamecaParser(cameca_input_file, entry_id)
-                nx_apm_cameca.parse(template)
 
         logger.debug("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)
 
         debugging = False
         if debugging:
-            logger.info("Reporting state of template before passing to HDF5 writing...")
+            logger.debug(
+                "Reporting state of template before passing to HDF5 writing..."
+            )
             for keyword, value in sorted(template.items()):
                 logger.info(f"{keyword}____{type(value)}____{value}")
 

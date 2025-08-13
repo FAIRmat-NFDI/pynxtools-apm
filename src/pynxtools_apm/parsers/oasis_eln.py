@@ -111,8 +111,8 @@ class NxApmNomadOasisElnSchemaParser:
                             template[f"{trg}/composition"] = dct[symbol][0]
                             template[f"{trg}/composition/@units"] = unit
                             if dct[symbol][1] is not None:
-                                template[f"{trg}/composition_error"] = dct[symbol][1]
-                                template[f"{trg}/composition_error/@units"] = unit
+                                template[f"{trg}/composition_errors"] = dct[symbol][1]
+                                template[f"{trg}/composition_errors/@units"] = unit
         return template
 
     def parse_atom_types(self, template: dict) -> dict:
@@ -150,9 +150,11 @@ class NxApmNomadOasisElnSchemaParser:
                             template,
                         )
                         if "orcid" in user_dict:
-                            trg = f"/ENTRY[entry{self.entry_id}]/USER[user{user_id}]"
-                            template[f"{trg}/identifier"] = user_dict["orcid"]
-                            template[f"{trg}/identifier/@type"] = "DOI"
+                            trg = f"/ENTRY[entry{self.entry_id}]/userID[user{user_id}]"
+                            template[f"{trg}/identifierNAME[identifier]"] = user_dict[
+                                "orcid"
+                            ]
+                            template[f"{trg}/identifierNAME[identifier]/@type"] = "DOI"
                         user_id += 1
         return template
 
@@ -171,13 +173,12 @@ class NxApmNomadOasisElnSchemaParser:
                     # custom schema delivers a list of dictionaries...
                     for ldct in self.yml[src]:
                         trg_sta = (
-                            f"/ENTRY[entry{self.entry_id}]/measurement/instrument/"
-                            f"pulser/SOURCE[source{laser_id}]"
+                            f"/ENTRY[entry{self.entry_id}]/measurement/eventID[event1]/instrument/"
+                            f"pulser/sourceID[source{laser_id}]"
                         )
                         trg_dyn = (
-                            f"/ENTRY[entry{self.entry_id}]/measurement/"
-                            f"events/EVENT_DATA_APM[event1]/instrument/"
-                            f"pulser/SOURCE[source{laser_id}]"
+                            f"/ENTRY[entry{self.entry_id}]/measurement/eventID[event1]/instrument/"
+                            f"pulser/sourceID[source{laser_id}]"
                         )
                         if "name" in ldct:
                             template[f"{trg_sta}/name"] = ldct["name"]
