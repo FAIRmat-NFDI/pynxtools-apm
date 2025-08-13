@@ -25,7 +25,7 @@ import numpy as np
 import pytz
 
 from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.get_file_checksum import (
+from pynxtools_apm.utils.get_checksum import (
     DEFAULT_CHECKSUM_ALGORITHM,
     get_sha256_of_file_content,
 )

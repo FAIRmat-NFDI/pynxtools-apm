@@ -56,7 +56,7 @@ from pynxtools_apm.utils.custom_logging import logger
 def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     """Add default unknown iontype."""
     # all unidentifiable ions are mapped on the unknown type
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/ION[ion0]/"
+    trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ionID[ion0]/"
     ivec = create_nuclide_hash([])
     template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
     template[f"{trg}charge_state"] = np.int8(0)
@@ -75,9 +75,11 @@ def add_standardize_molecular_ions(
 ) -> dict:
     """Added standard formatted molecular ion entries."""
     ion_id = 1
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
+    )
     for ion in ion_lst:
-        path = f"{trg}ION[ion{ion_id}]/"
+        path = f"{trg}ionID[ion{ion_id}]/"
         template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash.values, np.uint16)
         template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
         template[f"{path}mass_to_charge_range"] = np.asarray(
@@ -88,23 +90,27 @@ def add_standardize_molecular_ions(
         template[f"{path}name"] = ion.name.values
 
         if ion.charge_state_model["n_cand"] > 0:
-            path = f"{trg}ION[ion{ion_id}]/charge_state_analysis/"
-            template[f"{path}nuclides"] = np.asarray(ion.nuclide_hash.values, np.uint16)
-            template[f"{path}mass_to_charge_range"] = np.asarray(
+            path = f"{trg}ionID[ion{ion_id}]/charge_state_analysis/"
+            template[f"{path}config/nuclides"] = np.asarray(
+                ion.nuclide_hash.values, np.uint16
+            )
+            template[f"{path}config/mass_to_charge_range"] = np.asarray(
                 ion.ranges.values, np.float32
             )
-            template[f"{path}mass_to_charge_range/@units"] = "Da"  # ion.ranges.unit
-            template[f"{path}min_abundance"] = np.float64(
+            template[f"{path}config/mass_to_charge_range/@units"] = (
+                "Da"  # ion.ranges.unit
+            )
+            template[f"{path}config/min_abundance"] = np.float64(
                 ion.charge_state_model["min_abundance"]
             )
-            template[f"{path}min_abundance_product"] = np.float64(
+            template[f"{path}config/min_abundance_product"] = np.float64(
                 ion.charge_state_model["min_abundance_product"]
             )
-            template[f"{path}min_half_life"] = np.float64(
+            template[f"{path}config/min_half_life"] = np.float64(
                 ion.charge_state_model["min_half_life"]
             )
-            template[f"{path}min_half_life/@units"] = "s"
-            template[f"{path}sacrifice_isotopic_uniqueness"] = bool(
+            template[f"{path}config/min_half_life/@units"] = "s"
+            template[f"{path}config/sacrifice_isotopic_uniqueness"] = bool(
                 ion.charge_state_model["sacrifice_isotopic_uniqueness"]
             )
             if ion.charge_state_model["n_cand"] == 1:
@@ -156,7 +162,9 @@ def add_standardize_molecular_ions(
                 template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1
 
-    trg = f"/ENTRY[entry{entry_id}]/atom_probe/ranging/peak_identification/"
+    trg = (
+        f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
+    )
     template[f"{trg}number_of_ion_types"] = np.uint32(ion_id)
     return template
 
@@ -241,7 +249,7 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     return template
 
 
-class ApmRangingDefinitionsParser:
+class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
@@ -262,7 +270,7 @@ class ApmRangingDefinitionsParser:
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
         number_of_ion_types = 1
-        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
+        prefix = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/ranging/peak_identification/"
         if f"{prefix}number_of_ion_types" in template:
             number_of_ion_types = template[f"{prefix}number_of_ion_types"]
         logger.info(
@@ -272,11 +280,11 @@ class ApmRangingDefinitionsParser:
         unique_atom_numbers = set()
         max_atom_number = len(chemical_symbols) - 1
         prefix = (
-            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
             f"ranging/peak_identification/"
         )
         for ion_id in np.arange(1, number_of_ion_types):
-            trg = f"{prefix}ION[ion{ion_id}]/nuclide_list"
+            trg = f"{prefix}ionID[ion{ion_id}]/nuclide_list"
             if trg in template:
                 nuclide_list = template[trg][:, 1]
                 # second row of NXion/nuclide_list yields atom number to decode element
@@ -304,7 +312,7 @@ class ApmRangingDefinitionsParser:
         """
         # resolve the next two program references more informatively
         trg = (
-            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/"
+            f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
             f"ranging/peak_identification/"
         )
         template[f"{trg}maximum_number_of_atoms_per_molecular_ion"] = np.uint32(
@@ -314,8 +322,8 @@ class ApmRangingDefinitionsParser:
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
-        template[f"{trg}PROGRAM[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}PROGRAM[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
+        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
         add_unknown_iontype(template, self.meta["entry_id"])
 
@@ -345,10 +353,10 @@ class ApmRangingDefinitionsParser:
                     self.meta["file_path"], template, self.meta["entry_id"]
                 )
             else:
-                trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
+                trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/ranging/peak_identification/"
                 template[f"{trg}number_of_ion_types"] = 1
         else:
-            trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probe/ranging/peak_identification/"
+            trg = f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/ranging/peak_identification/"
             template[f"{trg}number_of_ion_types"] = 1
 
         self.update_atom_types_ranging_definitions_based(template)

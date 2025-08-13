@@ -20,7 +20,7 @@
 from typing import Dict, List, Tuple
 
 from pynxtools_apm.concepts.mapping_functors_pint import var_path_to_spcfc_path
-from pynxtools_apm.utils.get_file_checksum import (
+from pynxtools_apm.utils.get_checksum import (
     DEFAULT_CHECKSUM_ALGORITHM,
     get_sha256_of_file_content,
 )
@@ -154,7 +154,8 @@ class ApmUseCaseSelector:
         # rely on assumption made in check_validity_of_file_combination
         for fpath in self.reconstruction:
             prfx = var_path_to_spcfc_path(
-                "/ENTRY[entry*]/atom_probe/reconstruction/results", identifier
+                "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction/results",
+                identifier,
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
@@ -163,7 +164,8 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
             prfx = var_path_to_spcfc_path(
-                "/ENTRY[entry*]/atom_probe/ranging/definitions", identifier
+                "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging/source",
+                identifier,
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
