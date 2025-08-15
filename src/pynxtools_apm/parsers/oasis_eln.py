@@ -24,7 +24,7 @@ import yaml
 from ase.data import chemical_symbols
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
-from pynxtools_apm.configurations.eln_cfg import (
+from pynxtools_apm.configurations.oasis_eln_cfg import (
     APM_ENTRY_TO_NEXUS,
     APM_INSTRUMENT_DYNAMIC_TO_NEXUS,
     APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
@@ -165,7 +165,7 @@ class NxApmNomadOasisElnSchemaParser:
             if self.yml["instrument/pulser/pulse_mode"] == "voltage":
                 return template
 
-        src = "instrument/pulser/laser_source"
+        src = "instrument/laser_source"
         if src in self.yml:
             if isinstance(self.yml[src], list):
                 if all(isinstance(entry, dict) for entry in self.yml[src]):

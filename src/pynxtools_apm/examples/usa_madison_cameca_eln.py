@@ -63,7 +63,7 @@ class NxApmCustomElnCamecaRoot:
             ("Golden", "golden"),
             ("Incomplete", "incomplete"),
             ("Multiple", "multiple"),
-            ("Partials", "partial"),
+            ("Partials", "partials"),
             ("Records", "record"),
         ]
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/hit_finding/"
@@ -150,7 +150,7 @@ class NxApmCustomElnCamecaRoot:
                 (11, "LEAP 4000 HR"),
                 (12, "LEAP 4000X HR"),
                 (14, "LEAP 5000 XS"),
-                (15, "LEAP 4000 XHR"),
+                (15, "LEAP 4000X HR"),
                 (16, "LEAP 5000 XR"),
                 (17, "LEAP INVIZO"),
             ]:
@@ -223,7 +223,7 @@ class NxApmCustomElnCamecaRoot:
                         ion.name.values = rng_def["fRngName"].strip()
                     # logger.info(ion.report())
 
-                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ION[ion{ion_id}]/"
+                    trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ionID[ion{ion_id}]/"
                     template[f"{trg}nuclide_hash"] = np.asarray(
                         ion.nuclide_hash.values, np.uint16
                     )
@@ -251,9 +251,9 @@ class NxApmCustomElnCamecaRoot:
                         template[f"{path}config/min_abundance"] = np.float64(
                             ion.charge_state_model["min_abundance"]
                         )
-                        template[f"{path}config/min_abundance_product"] = np.float64(
-                            ion.charge_state_model["min_abundance_product"]
-                        )
+                        # template[f"{path}config/min_abundance_product"] = np.float64(
+                        #     ion.charge_state_model["min_abundance_product"]
+                        # )
                         template[f"{path}config/min_half_life"] = np.float64(
                             ion.charge_state_model["min_half_life"]
                         )

@@ -24,9 +24,23 @@ from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "",
+    "use": [
+        (
+            "measurement/eventID[event*]/instrument/analysis_chamber/pressure_sensor/measurement",
+            "pressure",
+        ),
+        (
+            "measurement/eventID[event*]/instrument/stage/temperature_sensor/measurement",
+            "temperature",
+        ),
+    ],
+    "cameca_to_iso8601": [("start_time", "fStartISO8601")],
     "map_to_str": [
         ("atom_probeID[atom_probe]/reconstruction/quality", "fQuality"),
-        ("atom_probeID[atom_probe]/reconstruction/primary_element", "fPrimaryElement"),
+        (
+            "atom_probeID[atom_probe]/reconstruction/config/primary_element",
+            "fPrimaryElement",
+        ),
         ("measurement/instrument/local_electrode/name", "fApertureName"),
         ("measurement/instrument/name", "fAtomProbeName"),
         ("measurement/instrument/fabrication/model", "fLeapModel"),
@@ -48,7 +62,6 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ("measurement/status", "fResults"),
         ("specimen/description", "fSpecimenCondition"),
         ("specimen/alias", "fSpecimenName"),
-        ("start_time", "fStartISO8601"),
     ],
     "map_to_u4": [("run_number", "fRunNumber")],
     "map_to_f8": [
@@ -69,7 +82,7 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ),  # ??
         ("atom_probeID[atom_probe]/reconstruction/config/kfactor", "fKfactor"),  # ??
         (
-            "atom_probeID[atom_probe]/reconstruction/config/ion_volume",
+            "atom_probeID[atom_probe]/reconstruction/volume",
             ureg.nanometer**3,
             "fReconVolume",
         ),
@@ -101,8 +114,9 @@ APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
         ),
         (
             "measurement/eventID[event*]/instrument/analysis_chamber/pressure_sensor/value",
-            ureg.torr,
+            ureg.bar,
             "fAnalysisPressure",
+            ureg.torr,
         ),
         (
             "measurement/eventID[event*]/instrument/local_electrode/voltage",

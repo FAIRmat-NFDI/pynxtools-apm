@@ -419,7 +419,7 @@ def map_functor(
     return template
 
 
-def timestamp_functor(
+def unix_timestamp_functor(
     cmds: list,
     mdata: fd.FlatDict,
     prfx_src: str,
@@ -443,11 +443,35 @@ def timestamp_functor(
                         raise ValueError(
                             f"{tzone} is not a timezone in pytz.all_timezones!"
                         )
-                    var_path_to_spcfc_path
                     trg = var_path_to_spcfc_path(f"{prfx_trg}/{cmd[0]}", ids)
                     template[f"{trg}"] = datetime.fromtimestamp(
                         int(mdata[f"{prfx_src}{cmd[1]}"]),
                         tz=pytz.timezone(tzone),
+                    ).isoformat()
+    return template
+
+
+def cameca_timestamp_functor(
+    cmds: list,
+    mdata: fd.FlatDict,
+    prfx_src: str,
+    prfx_trg: str,
+    ids: list,
+    template: dict,
+) -> dict:
+    """Process concept mapping and time format conversion."""
+    for cmd in cmds:
+        if isinstance(cmd, tuple):
+            if len(cmd) == 2:
+                if all(isinstance(elem, str) for elem in cmd):
+                    if f"{prfx_src}{cmd[1]}" not in mdata:
+                        continue
+                    if mdata[f"{prfx_src}{cmd[1]}"] == "":
+                        continue
+                    # assuming is local time!
+                    trg = var_path_to_spcfc_path(f"{prfx_trg}/{cmd[0]}", ids)
+                    template[f"{trg}"] = datetime.strptime(
+                        mdata[f"{prfx_src}{cmd[1]}"], "%Y-%m-%d %H:%M:%S"
                     ).isoformat()
     return template
 
@@ -540,8 +564,17 @@ def add_specific_metadata_pint(
                 else:
                     raise KeyError(f"Unexpected dtype_key {dtype_key} !")
             elif functor_key == "unix_to_iso8601":
-                timestamp_functor(
+                unix_timestamp_functor(
                     cfg["unix_to_iso8601"], mdata, prefix_src, prefix_trg, ids, template
+                )
+            elif functor_key == "cameca_to_iso8601":
+                cameca_timestamp_functor(
+                    cfg["cameca_to_iso8601"],
+                    mdata,
+                    prefix_src,
+                    prefix_trg,
+                    ids,
+                    template,
                 )
             elif functor_key == DEFAULT_CHECKSUM_ALGORITHM:
                 filehash_functor(

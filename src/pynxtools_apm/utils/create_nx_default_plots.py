@@ -111,6 +111,17 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         f"{icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)}",
         ".",
     ]
+    # there is an issue lately with H5Web in how it reads default_slice
+    # both options, the abovementioned and this one should work but with
+    # jupyterlab_h5web 12.4.0 and hgrove 2.3.0
+    # template[f"{trg}@default_slice"] = []
+    # for dim in ["x", "y", "z"]:
+    #     imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE
+    #     imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE
+    #     template[f"{trg}@default_slice"].append(
+    #         icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)
+    #     )
+
     col = 0
     dims = ["x", "y", "z"]
     axes = []
@@ -151,12 +162,11 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     mqmin = 0.0
     mqincr = MASS_SPECTRUM_DEFAULT_BINNING
     mqmax = np.ceil(np.max(m_z[:]))
+    nmqchrg = int(np.ceil((mqmax - mqmin) / mqincr)) + 1
 
     hist1d = np.histogram(
         m_z[:],
-        np.linspace(
-            mqmin, mqmax, num=int(np.ceil((mqmax - mqmin) / mqincr)) + 1, endpoint=True
-        ),
+        np.linspace(mqmin, mqmax, num=nmqchrg, endpoint=True),
     )
     del m_z
     if isinstance(hist1d[0], np.ndarray) is False:
@@ -171,10 +181,11 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
     template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
 
-    template[f"{trg}min_mass_charge"] = np.float32(mqmin)
-    template[f"{trg}min_mass_charge/@units"] = "Da"
-    template[f"{trg}max_mass_charge"] = np.float32(mqmax)
-    template[f"{trg}max_mass_charge/@units"] = "Da"
+    template[f"{trg}min_mass_to_charge"] = np.float32(mqmin)
+    template[f"{trg}min_mass_to_charge/@units"] = "Da"
+    template[f"{trg}max_mass_to_charge"] = np.float32(mqmax)
+    template[f"{trg}max_mass_to_charge/@units"] = "Da"
+    template[f"{trg}n_mass_to_charge"] = np.uint32(nmqchrg)
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/"
         f"mass_to_charge_distribution/mass_spectrum/"
