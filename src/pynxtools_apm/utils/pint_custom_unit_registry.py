@@ -17,11 +17,14 @@
 #
 """A customized unit registry for handling units with pint."""
 
-import numpy as np
 import pint
-from pint import UnitRegistry
 
-ureg = UnitRegistry()
+try:
+    from pynxtools.units import ureg
+except ImportError as exc:
+    from pint import UnitRegistry
+
+    ureg = UnitRegistry()
 # ureg.formatter.default_format = "D"
 # https://pint.readthedocs.io/en/stable/user/formatting.html
 

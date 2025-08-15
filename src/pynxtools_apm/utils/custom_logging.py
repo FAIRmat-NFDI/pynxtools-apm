@@ -15,19 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Get a digital fingerprint (hash) of a file."""
+"""Event logging capabilities."""
 
-import hashlib
+import logging
 
-
-DEFAULT_CHECKSUM_ALGORITHM = "sha256"
-
-
-def get_sha256_of_file_content(file_hdl) -> str:
-    """Compute a hashvalue of given file, here SHA256."""
-    file_hdl.seek(0)
-    # Read and update hash string value in blocks of 4K
-    sha256_hash = hashlib.sha256()
-    for byte_block in iter(lambda: file_hdl.read(4096), b""):
-        sha256_hash.update(byte_block)
-    return str(sha256_hash.hexdigest())
+logger = logging.getLogger("pynxtools")

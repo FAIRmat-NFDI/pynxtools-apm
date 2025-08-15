@@ -54,7 +54,7 @@ APM_OASISCONFIG_TO_NEXUS = {
 
 
 APM_CSYS_MCSTASLIKE_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/COORDINATE_SYSTEM[coordinate_system]",
+    "prefix_trg": "/ENTRY[entry*]/NAMED_reference_frameID[custom_reference_frame]",
     "prefix_src": "",
     "use": [
         (
@@ -87,7 +87,7 @@ APM_CSYS_MCSTASLIKE_TO_NEXUS = {
 
 
 APM_EXAMPLE_TO_NEXUS = {
-    "prefix_trg": "/ENTRY[entry*]/CITE[cite*]",
+    "prefix_trg": "/ENTRY[entry*]/citeID[cite*]",
     "prefix_src": "",
-    "map_to_str": ["authors", "doi", "description", "url"],
+    "map_to_str": ["author", "doi", "description", "url"],
 }

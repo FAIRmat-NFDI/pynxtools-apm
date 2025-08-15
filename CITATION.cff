@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: 'pynxtools-apm: A pynxtools reader plugin for atom probe tomography and related field-ion microscopy (APM) data'
-version: 0.2.3
+version: 0.4.0
 message:
   If you use this software, please cite it using the metadata from this file.
 type: software
@@ -39,7 +39,7 @@ keywords:
 abstract:
   pynxtools-apm is a reader plugin for pynxtools (https://github.com/FAIRmat-NFDI/pynxtools)
   written in Python. pynxtools-apm is a tool for reading and translating data from various proprietary
-  and open data formats from technology partners and the wider atom probe community and
+  and open-source data formats from technology partners and the wider atom probe community and
   standardizing it such that it is compliant with the NeXus application definition NXapm
   (https://fairmat-nfdi.github.io/nexus_definitions/).
 

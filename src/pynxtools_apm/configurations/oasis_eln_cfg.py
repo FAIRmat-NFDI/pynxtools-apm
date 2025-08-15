@@ -47,7 +47,7 @@ APM_SAMPLE_TO_NEXUS: Dict[str, Any] = {
             "grain_diameter/unit",
         ),
         (
-            "grain_diameter_error",
+            "grain_diameter_errors",
             ureg.micrometer,
             "grain_diameter_error/value",
             "grain_diameter_error/unit",
@@ -59,7 +59,7 @@ APM_SAMPLE_TO_NEXUS: Dict[str, Any] = {
             "heat_treatment_temperature/unit",
         ),
         (
-            "heat_treatment_temperature_error",
+            "heat_treatment_temperature_errors",
             ureg.kelvin,
             "heat_treatment_temperature_error/value",
             "heat_treatment_temperature_error/unit",
@@ -71,7 +71,7 @@ APM_SAMPLE_TO_NEXUS: Dict[str, Any] = {
             "heat_treatment_quenching_rate/unit",
         ),
         (
-            "heat_treatment_quenching_rate_error",
+            "heat_treatment_quenching_rate_errors",
             ureg.kelvin / ureg.second,
             "heat_treatment_quenching_rate_error/value",
             "heat_treatment_quenching_rate_error/unit",
@@ -118,7 +118,7 @@ APM_INSTRUMENT_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
 
 APM_MEASUREMENT_TO_NEXUS: Dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/measurement",
-    "prefix_src": "instrument/",
+    "prefix_src": "",
     "map_to_str": ["status"],
 }
 
@@ -128,7 +128,6 @@ APM_INSTRUMENT_STATIC_TO_NEXUS: Dict[str, Any] = {
     "prefix_src": "instrument/",
     "map_to_bool": [("reflectron/applied", "reflectron_applied")],
     "map_to_str": [
-        "status",
         "location",
         ("name", "instrument_name"),
         ("fabrication/vendor", "fabrication_vendor"),
@@ -140,7 +139,7 @@ APM_INSTRUMENT_STATIC_TO_NEXUS: Dict[str, Any] = {
 
 
 APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
-    "prefix_trg": "/ENTRY[entry*]/measurement/events/EVENT_DATA_APM[event*]/instrument",
+    "prefix_trg": "/ENTRY[entry*]/measurement/eventID[event*]/instrument",
     "prefix_src": "instrument/",
     "use": [
         ("control/target_detection_rate/@units", "ions/pulse"),
@@ -148,7 +147,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
         ("stage/temperature_sensor/measurement", "temperature"),
     ],
     "map_to_str": [
-        ("pulser/pulse_mode", "pulser/pulse_mode"),
+        ("pulser/pulse_mode", "pulse_mode"),
         ("control/evaporation_control", "evaporation_control"),
     ],
     "map_to_f8": [
@@ -156,10 +155,10 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
         (
             "pulser/pulse_frequency",
             ureg.kilohertz,
-            "pulser/pulse_frequency/value",
-            "pulser/pulse_frequency/unit",
+            "pulse_frequency/value",
+            "pulse_frequency/unit",
         ),
-        ("pulser/pulse_fraction", "pulser/pulse_fraction"),
+        ("pulser/pulse_fraction", "pulse_fraction"),
         (
             "analysis_chamber/pressure_sensor/value",
             ureg.bar,
@@ -177,24 +176,24 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
 
 
 APM_RANGE_TO_NEXUS: Dict[str, Any] = {
-    "prefix_trg": "/ENTRY[entry*]/atom_probe/ranging",
+    "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging",
     "prefix_src": "ranging/",
     "map_to_str": [
-        ("PROGRAM[program1]/program", "program_name"),
-        ("PROGRAM[program1]/program/@version", "program_version"),
+        ("programID[program1]/program", "program_name"),
+        ("programID[program1]/program/@version", "program_version"),
     ],
 }
 
 
 APM_RECON_TO_NEXUS: Dict[str, Any] = {
-    "prefix_trg": "/ENTRY[entry*]/atom_probe/reconstruction",
+    "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction",
     "prefix_src": "reconstruction/",
     "map_to_str": [
-        "protocol_name",
-        "crystallographic_calibration",
-        "parameter",
-        ("PROGRAM[program1]/program", "program_name"),
-        ("PROGRAM[program1]/program/@version", "program_version"),
+        ("config/protocol_name", "protocol_name"),
+        ("config/crystallographic_calibration", "crystallographic_calibration"),
+        ("config/comment", "parameter"),
+        ("programID[program1]/program", "program_name"),
+        ("programID[program1]/program/@version", "program_version"),
     ],
     "map_to_f8": [
         ("field_of_view", ureg.nanometer, "field_of_view/value", "field_of_view/unit"),
@@ -204,7 +203,7 @@ APM_RECON_TO_NEXUS: Dict[str, Any] = {
 
 
 APM_WORKFLOW_TO_NEXUS: Dict[str, Any] = {
-    "prefix_trg": "/ENTRY[entry*]/atom_probe",
+    "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]",
     "prefix_src": "workflow/",
     "sha256": [
         ("raw_data/source/checksum", "raw_dat_file"),
@@ -218,7 +217,7 @@ APM_WORKFLOW_TO_NEXUS: Dict[str, Any] = {
 # of a directly flattenable list of key, value pairs
 
 APM_USER_TO_NEXUS: Dict[str, Any] = {
-    "prefix_trg": "/ENTRY[entry*]/USER[user*]",
+    "prefix_trg": "/ENTRY[entry*]/userID[user*]",
     "prefix_src": "",
     "map": [
         "name",
