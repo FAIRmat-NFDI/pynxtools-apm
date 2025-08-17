@@ -216,10 +216,7 @@ class NxApmNomadOasisElnSchemaParser:
             APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
             APM_RANGE_TO_NEXUS,
             APM_RECON_TO_NEXUS,
-            # APM_WORKFLOW_TO_NEXUS,
+            APM_WORKFLOW_TO_NEXUS,
         ]:
             add_specific_metadata_pint(cfg, self.yml, identifier, template)
-        add_specific_metadata_pint(
-            APM_WORKFLOW_TO_NEXUS, self.yml, identifier, template
-        )
         return template
