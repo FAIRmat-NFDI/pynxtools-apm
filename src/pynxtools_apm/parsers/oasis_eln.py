@@ -109,10 +109,10 @@ class NxApmNomadOasisElnSchemaParser:
                             trg = f"{prfx}/ELEMENT[{symbol}]"
                             template[f"{trg}/chemical_symbol"] = symbol
                             template[f"{trg}/composition"] = dct[symbol][0]
-                            template[f"{trg}/composition/@units"] = unit
+                            # template[f"{trg}/composition/@units"] = unit
                             if dct[symbol][1] is not None:
                                 template[f"{trg}/composition_errors"] = dct[symbol][1]
-                                template[f"{trg}/composition_errors/@units"] = unit
+                                # template[f"{trg}/composition_errors/@units"] = unit
         return template
 
     def parse_atom_types(self, template: dict) -> dict:
