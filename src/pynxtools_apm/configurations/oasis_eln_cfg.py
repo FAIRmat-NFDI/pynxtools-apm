@@ -207,8 +207,8 @@ APM_WORKFLOW_TO_NEXUS: Dict[str, Any] = {
     "prefix_src": "workflow/",
     "sha256": [
         ("raw_data/source/checksum", "raw_dat_file"),
-        ("hit_finding/source/checksum", "hit_dat_file"),
-        ("reconstruction/config/checksum", "recon_cfg_file"),
+        ("hit_finding/config/checksum", "hit_dat_file"),
+        ("reconstruction/source/checksum", "recon_cfg_file"),
     ],
 }
 
