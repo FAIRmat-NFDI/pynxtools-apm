@@ -32,6 +32,7 @@ from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
 from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
+from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
 
 
 class APMReader(BaseReader):
@@ -98,6 +99,10 @@ class APMReader(BaseReader):
 
         logger.debug("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)
+
+        logger.debug("Naive removal of concepts that have missing values")
+        # these are introduced via the "use" functor but might not be populated with instance data
+        remove_uninstantiated_sensors(template, entry_id)
 
         debugging = False
         if debugging:
