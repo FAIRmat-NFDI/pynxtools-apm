@@ -35,7 +35,7 @@ VALID_FILE_NAME_SUFFIX_RANGE = [
     ".analysis",
 ]
 VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
-VALID_FILE_NAME_SUFFIX_CAMECA = [".cameca"]
+VALID_FILE_NAME_SUFFIX_CAMECA = [".cameca", ".str", ".rraw", ".rhit", ".hits", ".root"]
 from pynxtools_apm.utils.custom_logging import logger
 
 
