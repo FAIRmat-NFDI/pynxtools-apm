@@ -40,7 +40,7 @@
 
 import datetime as dt
 
-APM_OASISCONFIG_TO_NEXUS = {
+OASISCFG_APM_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "",
     "use": [
@@ -49,45 +49,29 @@ APM_OASISCONFIG_TO_NEXUS = {
             f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
         ),
     ],
-    "map_to_str": ["operation_mode"],
 }
 
 
-APM_CSYS_MCSTASLIKE_TO_NEXUS = {
+OASISCFG_APM_CSYS_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/NAMED_reference_frameID[custom_reference_frame]",
     "prefix_src": "",
-    "use": [
-        (
-            "alias",
-            "Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen",
-        ),
-        ("type", "cartesian"),
-        ("handedness", "right_handed"),
-        (
-            "x_direction",
-            "Direction 1 that is perpendicular to the z_direction for a right_handed cartesian",
-        ),
-        ("x_alias", "x-axis"),
-        (
-            "y_direction",
-            "Direction 2 that is perpendicular to the x_direction and the z_direction for a right_handed cartesian",
-        ),
-        ("y_alias", "y-axis"),
-        (
-            "z_direction",
-            "Direction of an ion travelling hypothetically exactly along the assumed axis that is parallel to the longest direction of the specimen",
-        ),
-        ("z_alias", "z-axis"),
-        (
-            "origin",
-            "E.g. a characteristic point e.g. initial apex or center of the base of the specimen or something else",
-        ),
+    "map_to_str": [
+        "alias",
+        "type",
+        "handedness",
+        "origin",
+        ("x_direction", "xaxis_direction"),
+        ("x_alias", "xaxis_alias"),
+        ("y_direction", "yaxis_direction"),
+        ("y_alias", "yaxis_alias"),
+        ("z_direction", "zaxis_direction"),
+        ("z_alias", "zaxis_alias"),
     ],
 }
 
 
-APM_EXAMPLE_TO_NEXUS = {
+OASISCFG_APM_CITATION_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/citeID[cite*]",
     "prefix_src": "",
-    "map_to_str": ["author", "doi", "description", "url"],
+    "map_to_str": ["authors", "doi", "description", "url"],
 }
