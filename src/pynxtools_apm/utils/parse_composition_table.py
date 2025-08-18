@@ -18,8 +18,8 @@
 """Parse human-readable composition infos from set of ELN string text fields."""
 
 import re
-import numpy as np
 
+import numpy as np
 from ase.data import chemical_symbols
 
 
@@ -125,7 +125,6 @@ def parse_composition_table(composition_list):
         instruction, element, composition, stdev, normalization = (
             parse_human_readable_composition_information(entry)
         )
-        # print(f"{instruction}, {element}, {composition}, {stdev}, {normalization}")
 
         if instruction == "add_element":
             if "normalization" not in composition_table:
@@ -169,7 +168,6 @@ def parse_composition_table(composition_list):
                 total_fractions += tpl[0]
             else:
                 remainder_element = keyword
-    # print(f"Total fractions {total_fractions}, remainder element {remainder_element}")
     if remainder_element is None:
         raise ValueError(
             "Composition list inconsistent because either fractions for \

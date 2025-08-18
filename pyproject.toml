@@ -8,28 +8,26 @@ dynamic = ["version"]
 authors = [
     { name = "The NOMAD Authors" },
 ]
-description = "Make atom probe tomography and field-ion microscopy results interoperable via NeXus"
+description = "A reader for transferring APM from vendor formats to NeXus and NOMAD."
 readme = "README.md"
-license= {text = "Apache-2.0"}
-requires-python = ">=3.9"
+license= { file = "LICENSE" }
+requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools>=0.10.1",
-    "ifes_apt_tc_data_modeling>=0.2.2",
+    "h5py>=3.6.0",
     "numpy>=1.22.4,<2.0.0",
-    "pint"
+    "pynxtools>=0.11.1",
+    "ifes_apt_tc_data_modeling>=0.3.1",
+    "pint",
+    "flatdict",
 ]
-
-[project.urls]
-"Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"
-"Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools-apm/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -42,7 +40,6 @@ dev = [
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "pip-tools",
     "uv",
     "pre-commit"
 ]
@@ -51,8 +48,8 @@ docs = [
     "mkdocs-material",
     "mkdocs-material-extensions",
     "mkdocs-macros-plugin",
-    "mkdocs-click",
-    "markdown-include"
+    "pymdown-extensions",
+    "mkdocs-click"
 ]
 ipynb = [
     "jupyter",
@@ -60,6 +57,9 @@ ipynb = [
     "jupyterlab_h5web"
 ]
 
+[project.urls]
+"Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"
+"Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools-apm/issues"
 [project.entry-points."pynxtools.reader"]
 apm = "pynxtools_apm.reader:APMReader"
 
@@ -87,6 +87,7 @@ select = [
     "E", # pycodestyle
     "W", # pycodestyle
     "PL", # pylint
+    # "NPY201", # reactivate when using numpy > 2.0
 ]
 ignore = [
     "E501", # Line too long ({width} > {limit} characters)

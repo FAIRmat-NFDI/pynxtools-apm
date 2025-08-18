@@ -20,22 +20,25 @@ This package is a reader plugin for [`pynxtools`](https://github.com/FAIRmat-NFD
 pip install pynxtools[apm]
 ```
 
-for the latest release version from [pypi](https://pypi.org/project/pynxtools-em/).
+for the latest release version from [pypi](https://pypi.org/project/pynxtools-apm/).
 
 If you are interested in the newest version, we recommend to work with a development installation instead.
 
 ## Purpose
 This reader plugin for [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) is used to translate diverse file formats from the scientific community and technology partners
 within the field of atom probe tomography and field-ion microscopy into a standardized representation using the
-[NeXus](https://www.nexusformat.org/) application definition [NXapm](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm.html#nxapm).
+[NeXus](https://www.nexusformat.org/) application definition [NXapm](https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm).
 
 ## Supported file formats
-This plugin supports the majority of the file formats that are currently used for atom probe.
+This plugin supports the majority of the file formats that are currently used for atom probe research.
 A detailed summary is available in the [reference section of the documentation](https://fairmat-nfdi.github.io/pynxtools-apm).
 
 ## Getting started
 [A getting started tutorial](https://github.com/FAIRmat-NFDI/pynxtools-apm/tree/main/examples) is offered that guides you
-on how to use the apm reader for converting your data to NeXus using a Jupyter notebook or command line calls. Note that not every combination of input from a supported file format and other input, such as from an electronic lab notebook, allows filling the required and recommended fields and their attributes of the NXapm application definition. Therefore, you may need to provide an ELN file that contains the missing values in order for the validation step of the APM reader to pass.
+on how to use the apm reader for converting your data to NeXus from a Jupyter notebook or command line calls. Note that not every combination of input from a supported file format and other input, such as from an electronic lab notebook, allows filling all required and recommended fields including their attributes of the NXapm
+application definition. Therefore, you may need to provide an ELN file that contains the missing values in order for the
+validation step of the EM reader to pass.
+
 
 ## Contributing
 We are continously working on improving the collection of parsers and their functionalities.

@@ -1,21 +1,22 @@
-site_name: pynxtools-apm
+site_name: Documentation
 site_description: |
-  The documentation of the pynxtools-apm plugin
-site_author: The NOMAD authors
+  The documentation for the pynxtools-apm plugin.
+site_author: The NOMAD Authors
 repo_url: https://github.com/FAIRmat-NFDI/pynxtools-apm
 edit_uri: ""
 
 nav:
   - Home: index.md
   - Tutorials:
+    - tutorial/installation.md
     - tutorial/standalone.md
     # - tutorial/nexusio.md
     # - tutorial/oasis.md
-  # - How-tos:
+  # - How-To:
   #    - how-tos/howto.md
-  - Learn:
+  - Explanation:
     - explanation/learn.md
-    - explanation/apmapp.md
+    # - explanation/apmapp.md
     - explanation/issues.md
   - Reference:
     - reference/contextualization.md
@@ -53,14 +54,11 @@ theme:
     - navigation.footer
     - content.code.copy
     - content.code.annotate
-    - search.suggest
   custom_dir: docs/theme
   icon:
     repo: fontawesome/brands/github
 
 markdown_extensions:
-  - markdown_include.include:
-      base_path: docs
   - attr_list
   - md_in_html
   - admonition
@@ -84,7 +82,6 @@ markdown_extensions:
 
 extra:
   generator: false
-  # homepage: https://fairmat-nfdi.github.io/pynxtools-apm/
 
 use_directory_urls: false
 

@@ -15,38 +15,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Entry points for APM examples."""
+"""Entry points for atom probe examples."""
 
 try:
-    from nomad.config.models.plugins import (
-        AppEntryPoint,
-        ExampleUploadEntryPoint,
-    )
-    from nomad.config.models.ui import (
-        App,
-        Column,
-        Menu,
-        MenuItemHistogram,
-        MenuItemPeriodicTable,
-        MenuItemTerms,
-        SearchQuantities,
-    )
+    from nomad.config.models.plugins import ExampleUploadEntryPoint
 except ImportError as exc:
     raise ImportError(
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
 apm_example = ExampleUploadEntryPoint(
-    title="Atom Probe Microscopy",
-    category="FAIRmat examples",
+    title="Atom Probe Microscopy (APM)",
+    category="NeXus Experiment Examples",
     description="""
         This example presents the capabilities of the NOMAD platform to store and standardize atom probe data.
         It shows the generation of a NeXus file according to the
-        [NXapm](https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm.html#nxapm)
-        application definition and a successive analysis of an example data set.
-        The example contains a small atom probe dataset from an experiment with a LEAP instrument to get you started
-        and keep the size of your NOMAD installation small. Once started, we recommend changing the respective
-        input file in the NOMAD Oasis ELN to run the example with your own datasets.
+        [`NXapm`](https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html#nxapm)
+        application definition.
+        The example contains a small atom probe dataset to get started and keep the size of your
+        NOMAD installation small. Ones started, we recommend to change the respective input file in the NOMAD Oasis
+        ELN to run the example with your own datasets.
     """,
     plugin_package="pynxtools_apm",
     resources=["nomad/examples/*"],

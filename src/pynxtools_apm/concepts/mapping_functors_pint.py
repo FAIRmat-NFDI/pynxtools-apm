@@ -24,7 +24,8 @@ import flatdict as fd
 import numpy as np
 import pytz
 
-from pynxtools_apm.utils.get_file_checksum import (
+from pynxtools_apm.utils.custom_logging import logger
+from pynxtools_apm.utils.get_checksum import (
     DEFAULT_CHECKSUM_ALGORITHM,
     get_sha256_of_file_content,
 )
@@ -177,8 +178,8 @@ def set_value(template: dict, trg: str, src_val: Any, trg_dtype: str = "") -> di
                 template[f"{trg}"] = src_val.magnitude
                 if is_not_special_unit(src_val):
                     template[f"{trg}/@units"] = f"{src_val.units}"
-                print(
-                    f"WARNING::Assuming writing to HDF5 will auto-convert Python types to numpy type, trg {trg} !"
+                logger.warning(
+                    f"Assuming writing to HDF5 will auto-convert Python types to numpy type, trg {trg} !"
                 )
             else:
                 raise TypeError(
@@ -198,8 +199,8 @@ def set_value(template: dict, trg: str, src_val: Any, trg_dtype: str = "") -> di
         ):
             template[f"{trg}"] = np.asarray(src_val)
             # units may be required, need to be set explicitly elsewhere in the source code!
-            print(
-                f"WARNING::Assuming writing to HDF5 will auto-convert Python types to numpy type, trg: {trg} !"
+            logger.warning(
+                f"Assuming writing to HDF5 will auto-convert Python types to numpy type, trg: {trg} !"
             )
         else:
             raise TypeError(
@@ -233,25 +234,25 @@ def set_value(template: dict, trg: str, src_val: Any, trg_dtype: str = "") -> di
                     template[f"{trg}"] = ", ".join(src_val)
                 else:
                     template[f"{trg}"] = ", ".join([f"{val}" for val in src_val])
-                print(
-                    f"WARNING::Assuming I/O to HDF5 will serializing to concatenated string !"
+                logger.debug(
+                    f"Assuming I/O to HDF5 will serializing to concatenated string !"
                 )
             else:
                 template[f"{trg}"] = map_to_dtype(trg_dtype, np.asarray(src_val))
                 # units may be required, need to be set explicitly elsewhere in the source code!
-                print(
-                    f"WARNING::Assuming I/O to HDF5 will auto-convert to numpy type, trg: {trg} !"
+                logger.debug(
+                    f"Assuming I/O to HDF5 will auto-convert to numpy type, trg: {trg} !"
                 )
         elif isinstance(src_val, (np.ndarray, np.generic)):
             template[f"{trg}"] = map_to_dtype(trg_dtype, np.asarray(src_val))
             # units may be required, need to be set explicitly elsewhere in the source code!
-            print(
-                f"WARNING::Assuming I/O to HDF5 will auto-convert to numpy type, trg: {trg} !"
+            logger.debug(
+                f"Assuming I/O to HDF5 will auto-convert to numpy type, trg: {trg} !"
             )
         elif np.isscalar(src_val):
             template[f"{trg}"] = map_to_dtype(trg_dtype, src_val)
-            print(
-                f"WARNING::Assuming I/O to HDF5 will auto-convert to numpy type, trg: {trg} !"
+            logger.debug(
+                f"Assuming I/O to HDF5 will auto-convert to numpy type, trg: {trg} !"
             )
         else:
             raise TypeError(
@@ -285,6 +286,11 @@ def map_functor(
     trg_dtype_key: str = "",
 ) -> dict:
     """Process concept mapping, datatype and unit conversion for quantities."""
+    # for debugging set configurable breakpoints like such
+    # prfx_trg == "/ENTRY[entry*]/measurement/eventID[event*]/instrument"
+    # either here or on a resolved variadic name in the trg variable
+    # in the set_value function or specific parameterized concept names like
+    # cmd[0] == "optics/operation_mode" (see rsciio_gatan_cfg, GATAN_DYNAMIC_VARIOUS_NX)
     for cmd in cmds:
         case = get_case(cmd)
         if case == "case_one":  # str
@@ -397,7 +403,7 @@ def map_functor(
                 pint_src = ureg.Quantity(src_values, cmd[3])
                 set_value(template, trg, pint_src.to(cmd[1]), trg_dtype_key)
         elif case == "case_six":
-            raise NotImplementedError("Check handling of units!")
+            # logger.debug(">>>> Hitting case_six, check handling of units!")
             if f"{prfx_src}{cmd[2]}" not in mdata or f"{prfx_src}{cmd[3]}" not in mdata:
                 continue
             src_val = mdata[f"{prfx_src}{cmd[2]}"]
@@ -406,14 +412,14 @@ def map_functor(
                 continue
             trg = var_path_to_spcfc_path(f"{prfx_trg}/{cmd[0]}", ids)
             if isinstance(src_val, ureg.Quantity):
-                set_value(template, trg, src_val.units.to(cmd[1]), trg_dtype_key)
+                set_value(template, trg, src_val.to(cmd[1]), trg_dtype_key)
             else:
                 pint_src = ureg.Quantity(src_val, ureg.Unit(src_unit))
                 set_value(template, trg, pint_src.to(cmd[1]), trg_dtype_key)
     return template
 
 
-def timestamp_functor(
+def unix_timestamp_functor(
     cmds: list,
     mdata: fd.FlatDict,
     prfx_src: str,
@@ -437,11 +443,35 @@ def timestamp_functor(
                         raise ValueError(
                             f"{tzone} is not a timezone in pytz.all_timezones!"
                         )
-                    var_path_to_spcfc_path
                     trg = var_path_to_spcfc_path(f"{prfx_trg}/{cmd[0]}", ids)
                     template[f"{trg}"] = datetime.fromtimestamp(
                         int(mdata[f"{prfx_src}{cmd[1]}"]),
                         tz=pytz.timezone(tzone),
+                    ).isoformat()
+    return template
+
+
+def cameca_timestamp_functor(
+    cmds: list,
+    mdata: fd.FlatDict,
+    prfx_src: str,
+    prfx_trg: str,
+    ids: list,
+    template: dict,
+) -> dict:
+    """Process concept mapping and time format conversion."""
+    for cmd in cmds:
+        if isinstance(cmd, tuple):
+            if len(cmd) == 2:
+                if all(isinstance(elem, str) for elem in cmd):
+                    if f"{prfx_src}{cmd[1]}" not in mdata:
+                        continue
+                    if mdata[f"{prfx_src}{cmd[1]}"] == "":
+                        continue
+                    # assuming is local time!
+                    trg = var_path_to_spcfc_path(f"{prfx_trg}/{cmd[0]}", ids)
+                    template[f"{trg}"] = datetime.strptime(
+                        mdata[f"{prfx_src}{cmd[1]}"], "%Y-%m-%d %H:%M:%S"
                     ).isoformat()
     return template
 
@@ -473,7 +503,9 @@ def filehash_functor(
                         template[f"{fragment}file_name"] = mdata[f"{prfx_src}{cmd[1]}"]
                         template[f"{fragment}algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
                 except (FileNotFoundError, IOError):
-                    print(f"File {mdata[f'''{prfx_src}{cmd[1]}''']} not found !")
+                    logger.warning(
+                        f"File {mdata[f'''{prfx_src}{cmd[1]}''']} not found !"
+                    )
     return template
 
 
@@ -532,8 +564,17 @@ def add_specific_metadata_pint(
                 else:
                     raise KeyError(f"Unexpected dtype_key {dtype_key} !")
             elif functor_key == "unix_to_iso8601":
-                timestamp_functor(
+                unix_timestamp_functor(
                     cfg["unix_to_iso8601"], mdata, prefix_src, prefix_trg, ids, template
+                )
+            elif functor_key == "cameca_to_iso8601":
+                cameca_timestamp_functor(
+                    cfg["cameca_to_iso8601"],
+                    mdata,
+                    prefix_src,
+                    prefix_trg,
+                    ids,
+                    template,
                 )
             elif functor_key == DEFAULT_CHECKSUM_ALGORITHM:
                 filehash_functor(

@@ -99,7 +99,7 @@ sample:
   is_simulation: false
 specimen:
   alias: usa_denton_smith_si
-  atom_types: Si, Cr,         Cr, X
+  atom_types: Si, Cr
   description: '<p>normal<br /><strong>bold</strong></p>
 
     <p><em>italics</em></p>'
@@ -111,7 +111,7 @@ specimen:
   is_simulation: false
   preparation_date: '2025-03-22T08:41:00+00:00'
   shank_angle:
-    unit: °
+    unit: degree
     value: 5.0
 user:
 - name: MarkusK
