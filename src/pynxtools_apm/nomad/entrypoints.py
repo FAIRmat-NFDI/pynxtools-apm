@@ -25,7 +25,7 @@ except ImportError as exc:
     ) from exc
 
 apm_example = ExampleUploadEntryPoint(
-    title="Atom Probe Microscopy",
+    title="Atom Probe Microscopy (APM)",
     category="NeXus Experiment Examples",
     description="""
         This example presents the capabilities of the NOMAD platform to store and standardize atom probe data.

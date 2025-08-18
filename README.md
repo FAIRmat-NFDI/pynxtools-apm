@@ -20,7 +20,7 @@ This package is a reader plugin for [`pynxtools`](https://github.com/FAIRmat-NFD
 pip install pynxtools[apm]
 ```
 
-for the latest release version from [pypi](https://pypi.org/project/pynxtools-em/).
+for the latest release version from [pypi](https://pypi.org/project/pynxtools-apm/).
 
 If you are interested in the newest version, we recommend to work with a development installation instead.
 
@@ -35,7 +35,7 @@ A detailed summary is available in the [reference section of the documentation](
 
 ## Getting started
 [A getting started tutorial](https://github.com/FAIRmat-NFDI/pynxtools-apm/tree/main/examples) is offered that guides you
-on how to use the apm reader for converting your data to NeXus using a Jupyter notebook or command line calls. Note that not every combination of input from a supported file format and other input, such as from an electronic lab notebook, allows filling all required and recommended fields including their attributes of the NXapm
+on how to use the apm reader for converting your data to NeXus from a Jupyter notebook or command line calls. Note that not every combination of input from a supported file format and other input, such as from an electronic lab notebook, allows filling all required and recommended fields including their attributes of the NXapm
 application definition. Therefore, you may need to provide an ELN file that contains the missing values in order for the
 validation step of the EM reader to pass.
 
