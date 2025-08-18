@@ -2,17 +2,18 @@
 hide: toc
 ---
 
-# pynxtools-apm documentation
-pynxtools-apm is a free and open-source data software for creating standardized semantic serializations of atom probe tomography and related field-ion microscopy data and metadata for research data management using NeXus. The software aims at making scientific research data FAIR (findable, accessible, interoperable and reusable).
+# Documentation for pynxtools-apm
 
-pynxtools-apm, which is a plugin for pynxtools, provides a tool for reading data from various proprietary and open data formats from technology partners of the
-atom probe community and standardizing it such that it is compliant with the NeXus application definition NXapm.
+pynxtools-apm is a free and open-source data software for creating standardized semantic serializations of atom probe tomography and related field-ion microscopy data and metadata for research data management using [NeXus](https://www.nexusformat.org/), implemented with the goal to make scientific research data FAIR (findable, accessible, interoperable, and reusable).
 
-pynxtools-apm is developed both as a standalone reader and as a tool within NOMAD, which is the open-source research data management platform for Materials Science that is developed by the [FAIRmat consortium of the German National Research Data Infrastructure (German NFDI)](https://www.nfdi.de/consortia-fairmat/?lang=en).
+pynxtools-apm, which is a plugin for [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools), provides a tool for reading data and metadata from various proprietary and open data formats from technology partners of the
+atom probe community and standardizing it such that it is compliant with the NeXus application definition [`NXapm`](https://fairmat-nfdi.github.io/nexus_definitions/classes/applications/NXapm.html).
 
-pynxtools-apm solves the challenge that comes with using heterogeneous and semantically ambiguous serialization formats that are commonly used in atom probe research. In addition, the plugin provides an interface for writing readers for different file formats to be mapped to NeXus.
+pynxtools-apm is developed both as a standalone reader and as a tool within [NOMAD](https://nomad-lab.eu/), which is the open-source research data management platform for materials science we are developing with [FAIRmat](https://www.fairmat-nfdi.eu/fairmat).
 
-pynxtools-apm is useful for scientists from the atom probe community, for technology partners, software developers, and data providers who search for ways to make their data and metadata more completely aligned with the aims of the FAIR principles.
+pynxtools-apm solves the challenge of using heterogeneous and semantically ambiguous serialization formats which is common in atom probe research. In addition, it provides an interface for writing readers for different file formats to be mapped to NeXus.
+
+pynxtools-apm is useful for scientists from the atom probe community, for technology partners, software developers, and data providers who search for ways to make their data and metadata more completely aligned with the aims of the FAIR principles.  Specifically the tool is useful for research groups who wish to organize their research data based on an interoperable standard.
 
 <!-- A single sentence that says what the product is, succinctly and memorably -->
 <!-- A paragraph of one to three short sentences, that describe what the product does. -->
@@ -25,9 +26,10 @@ pynxtools-apm is useful for scientists from the atom probe community, for techno
 ### Tutorial
 <!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type tutorial.-->
 
-- [Convert APM (meta)data to NeXus](tutorial/standalone.md)
-- [How to use a NeXus/HDF5 file](tutorial/nexusio.md)
-<!-- - [Convert data to NeXus using NOMAD Oasis](tutorial/oasis.md) -->
+- [Installation guide](tutorial/installation.md)
+- [Standalone usage](tutorial/standalone.md)
+<!-- - [How to use a NeXus/HDF5 file](tutorial/nexusio.md)
+- [Convert data to NeXus using NOMAD Oasis](tutorial/oasis.md) -->
 
 </div>
 <div markdown="block">
@@ -39,11 +41,11 @@ pynxtools-apm is useful for scientists from the atom probe community, for techno
 </div>
 <div markdown="block">
 
-### Learn
+### Explanation
 <!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type explanation.-->
 
 - [Scope and idea](explanation/learn.md)
-- [NOMAD App](explanation/apmapp.md)
+<!-- - [NOMAD App](explanation/apmapp.md)-->
 - [Known issues](explanation/issues.md)
 
 </div>
@@ -74,5 +76,9 @@ respective file formats of the atom probe tomography and field-ion microscopy co
 </div>
 
 <h2>Project and community</h2>
-[The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – 460197019 (FAIRmat)](https://gepris.dfg.de/gepris/projekt/460197019?language=en).
 
+- [NOMAD code guidelines](https://nomad-lab.eu/prod/v1/staging/docs/reference/code_guidelines.html) 
+
+Any questions or suggestions? [Get in touch!](https://www.fair-di.eu/fairmat/about-fairmat/team-fairmat)
+
+[The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat).](https://gepris.dfg.de/gepris/projekt/460197019?language=en)
