@@ -24,11 +24,11 @@ import flatdict as fd
 import numpy as np
 import yaml
 from ase.data import chemical_symbols
-from ifes_apt_tc_data_modeling.nexus.nx_ion import NxField, NxIon
 from ifes_apt_tc_data_modeling.utils.definitions import (
     MAX_NUMBER_OF_ATOMS_PER_ION,
     MAX_NUMBER_OF_ION_SPECIES,
 )
+from ifes_apt_tc_data_modeling.utils.nx_ion import NxIon
 from ifes_apt_tc_data_modeling.utils.utils import create_nuclide_hash
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
@@ -216,37 +216,37 @@ class NxApmCustomElnCamecaRoot:
                     ion.add_range(
                         rng_def["fMassToChargeLow"], rng_def["fMassToChargeHigh"]
                     )
-                    ion.comment = NxField(rng_def["fRngName"].strip(), "")
+                    ion.comment = rng_def["fRngName"].strip()
                     ion.apply_combinatorics()
                     ion.update_human_readable_name()
-                    if ion.name.values == "" and rng_def["fRngName"].strip() != "":
-                        ion.name.values = rng_def["fRngName"].strip()
+                    if ion.name == "" and rng_def["fRngName"].strip() != "":
+                        ion.name = rng_def["fRngName"].strip()
                     # logger.info(ion.report())
 
                     trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ionID[ion{ion_id}]/"
                     template[f"{trg}nuclide_hash"] = np.asarray(
-                        ion.nuclide_hash.values, np.uint16
+                        ion.nuclide_hash, np.uint16
                     )
-                    template[f"{trg}charge_state"] = np.int8(ion.charge_state.values)
+                    template[f"{trg}charge_state"] = np.int8(ion.charge_state)
                     template[f"{trg}mass_to_charge_range"] = np.asarray(
-                        ion.ranges.values, np.float32
+                        ion.ranges.magnitude, np.float32
                     )
                     template[f"{trg}mass_to_charge_range/@units"] = (
-                        "Da"  # ion.ranges.unit
+                        f"{ion.ranges.units}"
                     )
-                    template[f"{trg}nuclide_list"] = ion.nuclide_list.values
-                    template[f"{trg}name"] = ion.name.values
+                    template[f"{trg}nuclide_list"] = ion.nuclide_list
+                    template[f"{trg}name"] = ion.name
 
                     if ion.charge_state_model["n_cand"] > 0:
                         path = f"{trg}charge_state_analysis/"
                         template[f"{path}config/nuclides"] = np.asarray(
-                            ion.nuclide_hash.values, np.uint16
+                            ion.nuclide_hash, np.uint16
                         )
                         template[f"{path}config/mass_to_charge_range"] = np.asarray(
-                            ion.ranges.values, np.float32
+                            ion.ranges.magnitude, np.float32
                         )
                         template[f"{path}config/mass_to_charge_range/@units"] = (
-                            "Da"  # ion.ranges.unit
+                            f"{ion.ranges.units}"
                         )
                         template[f"{path}config/min_abundance"] = np.float64(
                             ion.charge_state_model["min_abundance"]

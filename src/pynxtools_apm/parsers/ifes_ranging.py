@@ -80,25 +80,23 @@ def add_standardize_molecular_ions(
     )
     for ion in ion_lst:
         path = f"{trg}ionID[ion{ion_id}]/"
-        template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash.values, np.uint16)
-        template[f"{path}charge_state"] = np.int8(ion.charge_state.values)
+        template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash, np.uint16)
+        template[f"{path}charge_state"] = np.int8(ion.charge_state)
         template[f"{path}mass_to_charge_range"] = np.asarray(
-            ion.ranges.values, np.float32
+            ion.ranges.magnitude, np.float32
         )
-        template[f"{path}mass_to_charge_range/@units"] = "Da"  # ion.ranges.unit
-        template[f"{path}nuclide_list"] = ion.nuclide_list.values
-        template[f"{path}name"] = ion.name.values
+        template[f"{path}mass_to_charge_range/@units"] = f"{ion.ranges.units}"
+        template[f"{path}nuclide_list"] = ion.nuclide_list
+        template[f"{path}name"] = ion.name
 
         if ion.charge_state_model["n_cand"] > 0:
             path = f"{trg}ionID[ion{ion_id}]/charge_state_analysis/"
-            template[f"{path}config/nuclides"] = np.asarray(
-                ion.nuclide_hash.values, np.uint16
-            )
+            template[f"{path}config/nuclides"] = np.asarray(ion.nuclide_hash, np.uint16)
             template[f"{path}config/mass_to_charge_range"] = np.asarray(
-                ion.ranges.values, np.float32
+                ion.ranges.magnitude, np.float32
             )
             template[f"{path}config/mass_to_charge_range/@units"] = (
-                "Da"  # ion.ranges.unit
+                f"{ion.ranges.units}"
             )
             template[f"{path}config/min_abundance"] = np.float64(
                 ion.charge_state_model["min_abundance"]
