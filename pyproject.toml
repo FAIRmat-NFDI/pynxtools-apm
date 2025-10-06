@@ -21,12 +21,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "h5py>=3.6.0",
     "pynxtools>=0.11.1",
-    "ifes_apt_tc_data_modeling>=0.3.1",
-    "numpy",
-    "pint",
-    "flatdict",
+    "ifes_apt_tc_data_modeling>=0.3.2",
 ]
 
 [project.optional-dependencies]
