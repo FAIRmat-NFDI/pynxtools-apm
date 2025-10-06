@@ -41,19 +41,19 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = posfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
-        "compress": np.asarray(xyz.values, np.float32),
+        "compress": np.asarray(xyz.magnitude, np.float32),
         "strength": 1,
     }
-    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = posfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32).flatten(),
+        "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
         "strength": 1,
     }
-    template[f"{trg}mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
     return template
 
@@ -66,72 +66,23 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     trg = f"{prefix}reconstruction/"
     xyz = eposfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
-        "compress": np.asarray(xyz.values, np.float32),
+        "compress": np.asarray(xyz.magnitude, np.float32),
         "strength": 1,
     }
-    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = eposfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32).flatten(),
+        "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
         "strength": 1,
     }
-    template[f"{trg}mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
 
-    # there are inconsistencies in the literature as to which units these
-    # quantities have, so we skip exporting the following quantities for now
-    # the following source code has not been tested with the current NXapm version
-    # but should be kept for making additions in the future easier
-    # -->
-    # trg = f"{prefix}voltage_and_bowl_correction/"
-    # raw_tof = eposfile.get_raw_time_of_flight()
-    # template[f"{trg}raw_tof"] = raw_tof.value
-    # template[f"{trg}raw_tof/@units"] = raw_tof.unit
-    # # this somehow calibrated ToF is not available from an EPOS file
-    # template[f"{trg}calibrated_tof"] = raw_tof.value
-    # template[f"{trg}calibrated_tof/@units"] = raw_tof.unit
-    # # is this really a raw ToF, if so, raw wrt to what?
-    # # needs clarification from Cameca/AMETEK how this is internally computed
-    # # especially when scientists write APT files and transcode them
-    # # to EPOS using APSuite
-    # del raw_tof
+    # add exporting of further data from epos
 
-    # trg = f"{prefix}pulser/"
-    # dc_voltage = eposfile.get_standing_voltage()
-    # template[f"{trg}standing_voltage"] = dc_voltage.value
-    # template[f"{trg}standing_voltage/@units"] = dc_voltage.unit
-    # del dc_voltage
-
-    # pu_voltage = eposfile.get_pulse_voltage()
-    # template[f"{trg}pulsed_voltage"] = pu_voltage.value
-    # template[f"{trg}pulsed_voltage/@units"] = pu_voltage.unit
-    # del pu_voltage
-
-    # trg = f"{prefix}ion_impact_positions/"
-    # hit_positions = eposfile.get_hit_positions()
-    # template[f"{trg}hit_positions"] = hit_positions.value
-    # template[f"{trg}hit_positions/@units"] = hit_positions.unit
-    # del hit_positions
-
-    # trg = f"{prefix}hit_multiplicity/"
-    # # little bit more discussion with e.g. F. M. M. at MPIE required
-
-    # # currently npulses is "number of pulses since last event detected"
-    # npulses = eposfile.get_number_of_pulses()
-    # template[f"{trg}hit_multiplicity"] = npulses.value
-    # template[f"{trg}hit_multiplicity/@units"] = npulses.unit
-    # del npulses
-
-    # ions_per_pulse = eposfile.get_ions_per_pulse()
-    # # currently ions_per_pulse is "ions per pulse, 0 after the first ion"
-    # template[f"{trg}pulses_since_last_ion"] = ions_per_pulse.value
-    # template[f"{trg}pulses_since_last_ion/@units"] \
-    # = ions_per_pulse.unit
-    # del ions_per_pulse
-    # -->
     return template
 
 
@@ -143,19 +94,19 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = aptfile.get_named_quantity("Position")
     template[f"{trg}reconstructed_positions"] = {
-        "compress": np.asarray(xyz.values, np.float32),
+        "compress": np.asarray(xyz.magnitude, np.float32),
         "strength": 1,
     }
-    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = aptfile.get_named_quantity("Mass")
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32).flatten(),
+        "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
         "strength": 1,
     }
-    template[f"{trg}mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
     # all less explored optional branches in an APT6 file can also already
     # be accessed via the aptfile.get_named_quantity function
@@ -173,19 +124,19 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = atofile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
-        "compress": np.asarray(xyz.values, np.float32),
+        "compress": np.asarray(xyz.magnitude, np.float32),
         "strength": 1,
     }
-    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = atofile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32).flatten(),
+        "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
         "strength": 1,
     }
-    template[f"{trg}mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
     return template
 
@@ -198,19 +149,19 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = csvfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
-        "compress": np.asarray(xyz.values, np.float32),
+        "compress": np.asarray(xyz.magnitude, np.float32),
         "strength": 1,
     }
-    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = csvfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32).flatten(),
+        "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
         "strength": 1,
     }
-    template[f"{trg}mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
     return template
 
@@ -223,19 +174,19 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}reconstruction/"
     xyz = pycfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
-        "compress": np.asarray(xyz.values, np.float32),
+        "compress": np.asarray(xyz.magnitude, np.float32),
         "strength": 1,
     }
-    template[f"{trg}reconstructed_positions/@units"] = xyz.unit
+    template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
 
     trg = f"{prefix}mass_to_charge_conversion/"
     m_z = pycfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
-        "compress": np.asarray(m_z.values, np.float32).flatten(),
+        "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
         "strength": 1,
     }
-    template[f"{trg}mass_to_charge/@units"] = m_z.unit
+    template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
     return template
 
