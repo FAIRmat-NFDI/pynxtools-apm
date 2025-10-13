@@ -10,6 +10,7 @@ Felfer
 Heiko
 IFES
 Inspico
+Kühbach
 Markus
 Metainfo
 Monajem
@@ -20,8 +21,8 @@ RRAW
 RRNG
 Raabe
 Sandor
-continously
 dataconverter
+diátaxis
 ifes
 iontypes
 orcid
