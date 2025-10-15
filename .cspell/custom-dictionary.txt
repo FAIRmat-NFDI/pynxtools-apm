@@ -22,6 +22,7 @@ RRAW
 RRNG
 Raabe
 Sandor
+Schmitz
 dataconverter
 diátaxis
 ifes
