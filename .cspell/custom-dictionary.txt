@@ -1,5 +1,4 @@
 # Custom Dictionary Words
-
 Brockhauser
 Cameca
 DCONV
@@ -7,6 +6,8 @@ Dierk
 Draxl
 Erlangen
 Felfer
+Forschungsgemeinschaft
+Gault
 Heiko
 IFES
 Inspico
@@ -25,6 +26,7 @@ dataconverter
 diátaxis
 ifes
 iontypes
+nuclides
 orcid
 paraprobe
 pyccapt
