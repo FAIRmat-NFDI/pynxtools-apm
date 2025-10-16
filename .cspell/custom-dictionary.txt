@@ -1,35 +1,37 @@
 # Custom Dictionary Words
-
-# Names
+Brockhauser
 Cameca
+DCONV
+Dierk
+Draxl
 Erlangen
 Felfer
 Forschungsgemeinschaft
+Gault
+Heiko
 IFES
 Inspico
+Kühbach
+Markus
+Metainfo
 Monajem
-NFDI
+Pyccapt
+Pynxtools
 RHIT
 RRAW
 RRNG
+Raabe
+Sandor
 Schmitz
+dataconverter
 diátaxis
 ifes
 iontypes
-metainfo
 nuclides
-
-# software
-APSuite
-IVAS
-Pyccapt
-Pynxtools
-dataconverter
+orcid
 paraprobe
 pyccapt
 pynxtools
 rosettasciio
-
-
-# en-US
 unphysical
+zenodo

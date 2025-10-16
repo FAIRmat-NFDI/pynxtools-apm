@@ -1,6 +1,8 @@
 name: Spell Check
 
-on: [push]
+on:
+  pull_request:
+    branches: [main]
 
 jobs:
   spellcheck:
@@ -10,13 +12,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Install dependencies and dictionary
       run: |
-        npm install -g cspell jq
+        npm install -g cspell jq @cspell/dict-scientific-terms-us
 
     - name: Run cspell
       run: |
-        cspell --config cspell.json "docs/tutorial/*" "docs/how-tos/*" "docs/explanation/*" "docs/reference/*" "docs/*"
+        cspell --config cspell.json "docs/explanation/**/*" "docs/how-tos/**/*" "docs/reference/**/*" "docs/tutorial/**/*"  "docs/*.md" "CITATION.cff" "README.md"
 
     - name: Fail on errors
       run: |

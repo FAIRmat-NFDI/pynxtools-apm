@@ -41,7 +41,7 @@ validation step of the EM reader to pass.
 
 
 ## Contributing
-We are continously working on improving the collection of parsers and their functionalities.
+We are continuously working on improving the collection of parsers and their functionalities.
 If you would like to implement a parser for your data, feel free to get in contact.
 
 ## Development install
