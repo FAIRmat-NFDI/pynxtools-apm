@@ -1,6 +1,8 @@
 # https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm.html#nxapm
 definitions:
-  name: 'Atom Probe ELN Example'
+  name: 'Atom_Probe_ELN_Example'
+  eln:
+    label: 'Atom Probe ELN Example'
   sections:
     ELN_for_Atom_Probe:
       base_sections:
@@ -15,6 +17,7 @@ definitions:
         # Leave the hide key even if you want to pass an empty list like in this example.
         eln:
           hide: ['nxdl', 'reader']
+          label: 'ELN for Atom Probe'
       sub_sections:
         entry:
           section:
