@@ -31,7 +31,7 @@
 # taking the perspective of a specific lab where a specific version of an ELN provided by
 # or running in addition to NOMAD Oasis is used many pieces of information might not change
 # or administrators do not wish to expose this via the end user ELN in an effort to reduce
-# the complexity for end users and make entering of repetitiv information obsolete
+# the complexity for end users and make entering of repetitive information obsolete
 
 # this is the scenario for which deployment_specific mapping shines
 # parsing of deployment specific details in the apm reader is currently implemented

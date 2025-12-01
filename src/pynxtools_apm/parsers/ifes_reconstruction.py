@@ -17,7 +17,7 @@
 #
 """Wrapping multiple parsers for vendor files with reconstructed dataset files."""
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 from ifes_apt_tc_data_modeling.apt.apt6_reader import ReadAptFileFormat
@@ -195,7 +195,7 @@ class IfesReconstructionParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
-        self.meta: Dict[str, Any] = {
+        self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
             "entry_id": entry_id,
@@ -208,7 +208,7 @@ class IfesReconstructionParser:
             raise ValueError(f"{file_path} is not a supported reconstruction file!")
 
     def parse(self, template: dict) -> dict:
-        """Copy data from self into template the appdef instance.
+        """Copy data from self into template the application definition instance.
 
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.

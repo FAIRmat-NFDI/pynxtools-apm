@@ -47,12 +47,12 @@ class NxApmCustomElnCamecaRoot:
         self.entry_id = entry_id if entry_id > 0 else 1
         self.verbose = verbose
         try:
-            with open(self.file_path, "r", encoding="utf-8") as stream:
+            with open(self.file_path, encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
                 if self.verbose:
                     for key, val in self.yml.items():
                         logger.info(f"key: {key}, value: {val}")
-        except (FileNotFoundError, IOError):
+        except (OSError, FileNotFoundError):
             logger.warning(f"File {self.file_path} not found !")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
@@ -330,7 +330,7 @@ class NxApmCustomElnCamecaRoot:
         return template
 
     def parse(self, template: dict) -> dict:
-        """Copy data from self into template the appdef instance."""
+        """Copy data from self into template the application definition instance."""
         self.parse_event_statistics(template)
         self.parse_versions(template)
         self.parse_comments(template)

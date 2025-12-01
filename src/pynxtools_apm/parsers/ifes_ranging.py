@@ -18,7 +18,7 @@
 
 """Wrapping multiple parsers for vendor files with ranging definition files."""
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 from ase.data import chemical_symbols
@@ -41,13 +41,8 @@ from ifes_apt_tc_data_modeling.utils.utils import (
     nuclide_hash_to_nuclide_list,
 )
 
-from pynxtools_apm.utils.io_case_logic import (
-    VALID_FILE_NAME_SUFFIX_RANGE,
-)
-from pynxtools_apm.utils.versioning import (
-    PYNX_APM_NAME,
-    PYNX_APM_VERSION,
-)
+from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RANGE
+from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 WARNING_TOO_MANY_DEFINITIONS = f"More than {MAX_NUMBER_OF_ION_SPECIES} ranging definitions. Check if there are duplicates."
 from pynxtools_apm.utils.custom_logging import logger
@@ -251,7 +246,7 @@ class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
-        self.meta: Dict[str, Any] = {
+        self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
             "entry_id": entry_id,
@@ -303,7 +298,7 @@ class IfesRangingDefinitionsParser:
         return template
 
     def parse(self, template: dict) -> dict:
-        """Copy data from self into template the appdef instance.
+        """Copy data from self into template the application definition instance.
 
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.

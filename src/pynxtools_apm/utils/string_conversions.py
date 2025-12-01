@@ -42,7 +42,7 @@ def string_to_number(arg: str):
 # logger.debug(f"{string_to_number(str_val)}, {type(string_to_number(str_val))}")
 
 
-def rchop(s, suffix):
+def right_chop(s, suffix):
     if suffix and s.endswith(suffix):
         return s[: -len(suffix)]
     return s

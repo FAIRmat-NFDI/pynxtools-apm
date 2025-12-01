@@ -66,12 +66,12 @@ class NxApmNomadOasisElnSchemaParser:
         self.entry_id = entry_id if entry_id > 0 else 1
         self.verbose = verbose
         try:
-            with open(self.file_path, "r", encoding="utf-8") as stream:
+            with open(self.file_path, encoding="utf-8") as stream:
                 self.yml = fd.FlatDict(yaml.safe_load(stream), delimiter="/")
                 if self.verbose:
                     for key, val in self.yml.items():
                         logger.info(f"key: {key}, value: {val}")
-        except (FileNotFoundError, IOError):
+        except (OSError, FileNotFoundError):
             logger.warning(f"File {self.file_path} not found !")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
@@ -171,7 +171,7 @@ class NxApmNomadOasisElnSchemaParser:
                 if all(isinstance(entry, dict) for entry in self.yml[src]):
                     laser_id = 1
                     # custom schema delivers a list of dictionaries...
-                    for ldct in self.yml[src]:
+                    for laser_dict in self.yml[src]:
                         trg_sta = (
                             f"/ENTRY[entry{self.entry_id}]/measurement/eventID[event1]/instrument/"
                             f"pulser/sourceID[source{laser_id}]"
@@ -180,27 +180,26 @@ class NxApmNomadOasisElnSchemaParser:
                             f"/ENTRY[entry{self.entry_id}]/measurement/eventID[event1]/instrument/"
                             f"pulser/sourceID[source{laser_id}]"
                         )
-                        if "name" in ldct:
-                            template[f"{trg_sta}/name"] = ldct["name"]
-                        # qnt = "wavelength"
-                        # if qnt in ldct:
-                        #     if "value" in ldct[qnt] and "unit" in ldct[qnt]:
-                        #         template[f"{trg_sta}/{qnt}"] = ldct[qnt]["value"]
-                        #        template[f"{trg_sta}/{qnt}/@units"] = ldct[qnt]["unit"]
+                        if "name" in laser_dict:
+                            template[f"{trg_sta}/name"] = laser_dict["name"]
                         for qnt in ["power", "pulse_energy", "wavelength"]:
-                            if isinstance(ldct[qnt], dict):
-                                if ("value" in ldct[qnt]) and ("unit" in ldct[qnt]):
-                                    template[f"{trg_dyn}/{qnt}"] = ldct[qnt]["value"]
-                                    template[f"{trg_dyn}/{qnt}/@units"] = ldct[qnt][
-                                        "unit"
+                            if isinstance(laser_dict[qnt], dict):
+                                if ("value" in laser_dict[qnt]) and (
+                                    "unit" in laser_dict[qnt]
+                                ):
+                                    template[f"{trg_dyn}/{qnt}"] = laser_dict[qnt][
+                                        "value"
                                     ]
+                                    template[f"{trg_dyn}/{qnt}/@units"] = laser_dict[
+                                        qnt
+                                    ]["unit"]
                         laser_id += 1
                     return template
         logger.warning("pulse_mode != voltage but no laser details specified!")
         return template
 
     def parse(self, template: dict) -> dict:
-        """Copy data from self into template the appdef instance."""
+        """Copy data from self into template the application definition instance."""
         self.parse_sample_composition(template)
         self.parse_atom_types(template)
         self.parse_user(template)
