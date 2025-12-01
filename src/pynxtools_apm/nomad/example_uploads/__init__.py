@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Entry points for atom probe examples."""
+"""Entry points for APM example uploads."""
 
 try:
     from nomad.config.models.plugins import ExampleUploadEntryPoint
@@ -24,7 +24,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-apm_example = ExampleUploadEntryPoint(
+apm_example_upload_entry_point = ExampleUploadEntryPoint(
     title="Atom Probe Microscopy (APM)",
     category="NeXus Experiment Examples",
     description="""
@@ -37,5 +37,5 @@ apm_example = ExampleUploadEntryPoint(
         ELN to run the example with your own datasets.
     """,
     plugin_package="pynxtools_apm",
-    resources=["nomad/examples/*"],
+    resources=["nomad/example_uploads/example/*"],
 )

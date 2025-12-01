@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Test for NOMAD examples in APM reader plugin."""
+"""Tests for the NOMAD examples."""
 
 import os
 
@@ -25,7 +25,7 @@ try:
     import nomad  # noqa: F401
 except ImportError:
     pytest.skip(
-        "Skipping NOMAD example tests because nomad is not installed",
+        "Skipping NOMAD example tests because nomad-lab is not installed",
         allow_module_level=True,
     )
 
@@ -35,7 +35,7 @@ from pynxtools.testing.nomad_example import (
     parse_nomad_examples,
 )
 
-from pynxtools_apm.nomad.entrypoints import apm_example
+from pynxtools_apm.nomad.example_uploads import apm_example_upload_entry_point
 
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(__file__),
@@ -43,7 +43,8 @@ EXAMPLE_PATH = os.path.join(
     "src",
     "pynxtools_apm",
     "nomad",
-    "examples",
+    "example_uploads",
+    "example",
 )
 
 
@@ -60,9 +61,9 @@ def test_parse_nomad_examples(mainfile):
     ("entrypoint", "example_path"),
     [
         pytest.param(
-            apm_example,
+            apm_example_upload_entry_point,
             EXAMPLE_PATH,
-            id="apm_example",
+            id="apm_example_upload_entry_point",
         ),
     ],
 )

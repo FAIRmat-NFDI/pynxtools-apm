@@ -49,9 +49,9 @@ class APMReader(BaseReader):
 
     def read(
         self,
-        template: dict = None,
-        file_paths: tuple[str] = None,
-        objects: tuple[Any] = None,
+        template: dict | None = None,
+        file_paths: tuple[str] | None = None,
+        objects: tuple[Any] | None = None,
     ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
         logger.info(os.getcwd())
