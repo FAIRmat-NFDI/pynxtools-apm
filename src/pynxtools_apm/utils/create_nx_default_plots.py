@@ -23,8 +23,8 @@ from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.versioning import (
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
-    NX_APM_EXEC_NAME,
-    NX_APM_EXEC_VERSION,
+    PYNX_APM_NAME,
+    PYNX_APM_VERSION,
 )
 
 
@@ -97,8 +97,8 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
             raise ValueError(f"Dimensions {idx} has no length!")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/reconstruction/naive_discretization/"
-    template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-    template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+    template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
+    template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/reconstruction/"
         f"naive_discretization/DATA[data]/"
@@ -178,8 +178,8 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
             raise ValueError(f"Dimensions {idx} has no length!")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/mass_to_charge_distribution/"
-    template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-    template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+    template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
+    template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
 
     template[f"{trg}min_mass_to_charge"] = np.float32(mqmin)
     template[f"{trg}min_mass_to_charge/@units"] = "Da"

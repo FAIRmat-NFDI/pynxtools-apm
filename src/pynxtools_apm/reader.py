@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Generic parser for loading atom probe microscopy data into NXapm."""
+"""Parser suite for mapping various types of atom probe data onto NXapm."""
 
 import os
 from time import perf_counter_ns

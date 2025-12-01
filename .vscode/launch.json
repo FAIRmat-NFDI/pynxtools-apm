@@ -9,7 +9,7 @@
             "type": "python",  //"debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "../../.py3.12.3/bin/dataconverter",
+            "program": "../.py3.13.8/bin/dataconverter",
             "args": [//workflow files str.str, hits.hits, root.root should be created via touch str.str ...
                      //"tests/data/apt/Si.apt",
                      //"tests/data/ato3/R31_11378-v01.ato",
