@@ -22,8 +22,8 @@
                      //"tests/data/default/str.str",
                      //"tests/data/default/Si.apt",
                      //"tests/data/default/hits.hits",
-                     "tests/data/default/apm.oasis.specific.yaml",
-                     //"tests/data/default/output.nxs_eln_data.yaml",
+                     //"tests/data/default/apm.oasis.specific.yaml",
+                     "tests/data/default/output.nxs_eln_data.yaml",
                      //"tests/data/env/ErMnO.env",
                      //"tests/data/epos/R45_04472-v03.epos",
                      //"tests/data/fig/Superalloy_MassSpec_ranged.fig.txt",
@@ -49,8 +49,8 @@
                      //"--output=tests/prod/cameca_rhit/output.nxs"]
                      //"--output=tests/prod/cameca_root/output.nxs"]
                      //"--output=tests/prod/csv/output.nxs"]
-                     "--output=tests/prod/default/output.nxs"]
-                     //"--output=tests/prod/eln/output.nxs"]
+                     //"--output=tests/prod/default/output.nxs"]
+                     "--output=tests/prod/eln/output.nxs"]
                      //"--output=tests/prod/env/output.nxs"]
                      //"--output=tests/prod/epos/output.nxs"]
                      //"--output=tests/prod/fig/output.nxs"]

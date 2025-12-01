@@ -23,7 +23,7 @@ from typing import Any, Tuple
 
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-
+from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
 from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
 from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
 from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
@@ -80,6 +80,10 @@ class APMReader(BaseReader):
             logger.debug("Parse (meta)data coming from an ELN exemplified for NOMAD")
             nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
             nx_apm_eln.parse(template)
+
+        logger.debug("Parse NeXus appdef-specific content...")
+        nxs = NxApmAppDef(entry_id)
+        nxs.parse(template)
 
         if 1 <= len(case.apsuite) <= 2:
             logger.debug("Parse (meta)data coming from a customized ELN...")
