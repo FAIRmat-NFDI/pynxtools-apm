@@ -45,8 +45,8 @@ from pynxtools_apm.utils.io_case_logic import (
     VALID_FILE_NAME_SUFFIX_RANGE,
 )
 from pynxtools_apm.utils.versioning import (
-    NX_APM_EXEC_NAME,
-    NX_APM_EXEC_VERSION,
+    PYNX_APM_NAME,
+    PYNX_APM_VERSION,
 )
 
 WARNING_TOO_MANY_DEFINITIONS = f"More than {MAX_NUMBER_OF_ION_SPECIES} ranging definitions. Check if there are duplicates."
@@ -320,8 +320,8 @@ class IfesRangingDefinitionsParser:
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
+        template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
 
         add_unknown_iontype(template, self.meta["entry_id"])
 

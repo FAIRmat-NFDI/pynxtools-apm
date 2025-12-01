@@ -43,8 +43,8 @@ from pynxtools_apm.utils.load_ranging import add_unknown_iontype
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
 from pynxtools_apm.utils.versioning import (
-    NX_APM_EXEC_NAME,
-    NX_APM_EXEC_VERSION,
+    PYNX_APM_NAME,
+    PYNX_APM_VERSION,
 )
 
 # parameter affecting reconstructed positions and size
@@ -273,8 +273,8 @@ class ApmCreateExampleData:
         raise NotImplementedError()
         assert len(self.nrm_composition) > 0, "Composition is not defined!"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/"
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
+        template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
         template[f"{trg}programID[program1]/program"] = "synthetic"
@@ -310,8 +310,8 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # logger.debug("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
-        template[f"{trg}programID[program1]/program"] = NX_APM_EXEC_NAME
-        template[f"{trg}programID[program1]/program/@version"] = NX_APM_EXEC_VERSION
+        template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
+        template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
         msg = """
