@@ -16,6 +16,10 @@
 # limitations under the License.
 #
 
+import yaml
+import logging
+from pycountry import countries
+
 
 def snake_case_to_camel_case(snake_case: str) -> str:
     camel_case = ""
@@ -28,22 +32,47 @@ def snake_case_to_camel_case(snake_case: str) -> str:
 # print(snake_case_to_camel_case("usa_idaho_boise01"))
 
 
+def export_to_yaml(fpath: str, lookup_dict: dict):
+    """Write content of lookup_dict to yaml file."""
+    with open(fpath, "w") as fp:
+        yaml.dump(lookup_dict, fp, default_flow_style=False, width=float("inf"))
+
+
+def is_valid_alpha3(code: str) -> bool:
+    try:
+        return countries.get(alpha_3=code.upper()) is not None
+    except KeyError:
+        return False
+
+
 APT_MIME_TYPES = [
-    ".csv",
+    # common
     ".pos",
     ".epos",
     ".apt",
     ".ato",  # Rouen, GPM
-    ".ops",
+    ".csv",
+    # ranging definitions
     ".env",  # Rouen, GPM
     ".rrng",
     ".rng",
     ".fig.txt",
-    ".raw",  # Stuttgart M-TAP
-    ".h5",  # Erlangen OXCART, pyccapt
-    "range_.h5",  # Erlangen OXCART, pyccapt
-    ".nxs",
+    # mixed mode and more exotic stuff
+    ".h5",  # Erlangen OXCART raw, ranging, and reconstruction, pyccapt
     ".hdf",
-    ".hdf5.xml",  # Imago legacy
+    ".hdf5",  # Cameca HDF5 from Materials Data Facility
+    ".xml",  # Imago legacy
+    ".nxs",  # NeXus/HDF5
+    ".raw",  # Stuttgart M-TAP
+    ".ops",
 ]
-CAMECA_ROOT_MIME_TYPES = [".str", ".rraw", ".rhit", ".root", ".hits"]
+CAMECA_ROOT_MIME_TYPES = [".str", ".rraw", ".rhit", ".hits", ".root"]
+
+
+DEFAULT_LOGGER_NAME = "convert_legacy_data"
+logger = logging.getLogger(DEFAULT_LOGGER_NAME)
+ffmt = "%(levelname)s %(asctime)s %(message)s"
+tfmt = "%Y-%m-%dT%H:%M:%S.%z"  # .%f%z"
+formatter = logging.Formatter(ffmt, tfmt)
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)

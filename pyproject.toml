@@ -55,7 +55,8 @@ ipynb = [
 batch = [
     "odfpy",
     "openpyxl",
-    "bibtexparser"
+    "bibtexparser",
+    "pycountry"
 ]
 
 [project.urls]
