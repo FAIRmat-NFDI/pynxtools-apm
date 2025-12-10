@@ -52,6 +52,11 @@ ipynb = [
     "jupyterlab",
     "jupyterlab_h5web"
 ]
+batch = [
+    "odfpy",
+    "openpyxl",
+    "bibtexparser"
+]
 
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"
