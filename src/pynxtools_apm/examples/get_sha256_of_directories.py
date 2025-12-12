@@ -35,6 +35,18 @@ from pynxtools_apm.utils.versioning import __version__
 SEPARATOR = "____"
 HASHING = True
 
+from collections.abc import Mapping
+
+
+def to_int(value: str | int | bytes | Mapping[str, str]) -> int:
+    if isinstance(value, int):
+        return value
+    if isinstance(value, bytes):
+        return int(value.decode())
+    if isinstance(value, str):
+        return int(value)
+    raise TypeError(f"Cannot convert {value!r} to int")
+
 
 def analyze_file(fpath: str, results: str, issues: str, hashing: bool = HASHING) -> int:
     """Get metadata about file and compute its SHA256 hash."""
@@ -42,7 +54,7 @@ def analyze_file(fpath: str, results: str, issues: str, hashing: bool = HASHING)
     if os.path.isfile(fpath):
         try:
             stat = os.stat(fpath)
-            byte_size += stat.st_size
+            byte_size += int(stat.st_size)
             # print(f"{fpath}\t\t{stat.st_mtime_ns}\t\t{stat.st_mtime_ns}\t\t{stat.st_size}")  # int64
             # fhsh = blake3.blake3(max_threads=blake3.blake3.AUTO).update_mmap(fpath).hexdigest()
             results += f"{fpath};{stat.st_size};{stat.st_mtime}"
@@ -75,8 +87,9 @@ def analyze_tar_file(
                         # https://github.com/python/cpython/pull/102128
                         # https://github.com/python/cpython/issues/102120
                         tfp = tar.extractfile(member.name)
-                        results += f"{fpath}:{member.name};{member.get_info()['size']};{member.get_info()['mtime']}"
-                        byte_size += member.get_info()["size"]
+                        info = member.get_info()
+                        results += f"{fpath}:{member.name};{to_int(info['size'])};{to_int(info['mtime'])}"
+                        byte_size += to_int(info["size"])
                         if hashing:
                             th = hashlib.sha256()
                             while True:
@@ -101,8 +114,8 @@ def analyze_zip_file(
         try:
             with zipfile.ZipFile(fpath, "r") as zip_file_hdl:
                 for member in zip_file_hdl.infolist():
-                    results += f"{fpath}:{member.filename};{member.file_size};{datetime.datetime(*member.date_time).timestamp()}"
-                    byte_size += member.file_size
+                    results += f"{fpath}:{member.filename};{member.file_size};{datetime(*member.date_time).timestamp()}"
+                    byte_size += int(member.file_size)
                     if hashing:
                         zh = hashlib.sha256()
                         with zip_file_hdl.open(member, "r") as zfp:
@@ -126,11 +139,10 @@ def analyze_rar_file(
     byte_size = 0
     if fpath.lower().endswith((".rar")):
         try:
-            byte_size = 0
             with rarfile.RarFile(fpath, "r") as rar_file_hdl:
                 for member in rar_file_hdl.infolist():
-                    results += f"{fpath_sffx}:{member.filename};{member.file_size};{datetime.datetime(*member.date_time).timestamp()}"
-                    byte_size += member.file_size
+                    results += f"{fpath}:{member.filename};{member.file_size};{datetime(*member.date_time).timestamp()}"
+                    byte_size += int(member.file_size)
                     if hashing:
                         rh = hashlib.sha256()
                         with rar_file_hdl.open(member, "r") as rfp:
@@ -155,7 +167,7 @@ def analyze_sevenzip_file(
     if fpath.lower().endswith((".7z")):
         try:
             with py7zr.SevenZipFile(fpath, "r") as seven_file_hdl:
-                mdata = {}
+                mdata: dict[str, dict[str, str | int]] = {}
                 for obj in seven_file_hdl.list():
                     if obj.uncompressed > 0:  # do not bookkeep directories in that 7z
                         key = obj.filename
@@ -176,11 +188,11 @@ def analyze_sevenzip_file(
                             issues += f"{fpath}{SEPARATOR}KeyError {key} not found\n"
                     for key in mdata:
                         results += f"{fpath}:{key};{mdata[key]['size']};{mdata[key]['mtime']};{mdata[key]['sha256']}\n"
-                        byte_size += mdata[key]["size"]
+                        byte_size += int(mdata[key]["size"])
                 else:
                     for key in mdata:
                         results += f"{fpath}:{key};{mdata[key]['size']};{mdata[key]['mtime']}\n"
-                        byte_size += mdata[key]["size"]
+                        byte_size += int(mdata[key]["size"])
         except Exception as exception:
             issues += f"{fpath}{SEPARATOR}{exception}\n"
     return byte_size

@@ -56,7 +56,9 @@ batch = [
     "odfpy",
     "openpyxl",
     "bibtexparser",
-    "pycountry"
+    "pycountry",
+    "rarfile",
+    "py7zr",
 ]
 
 [project.urls]
