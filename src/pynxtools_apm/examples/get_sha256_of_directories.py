@@ -48,47 +48,54 @@ def to_int(value: str | int | bytes | Mapping[str, str]) -> int:
     raise TypeError(f"Cannot convert {value!r} to int")
 
 
-def analyze_file(fpath: str, results: str, issues: str, hashing: bool = HASHING) -> int:
-    """Get metadata about file and compute its SHA256 hash."""
+def analyze_zip_file(
+    fpath: str,
+    results: list[str],
+    issues: list[str],
+    right_stripped: str = "",
+    hashing: bool = HASHING,
+):
+    """Get metadata about zipfile and recursively compute SHA256 hash for each of its files."""
     byte_size = 0
-    if os.path.isfile(fpath):
+    if fpath.lower().endswith((".zip", ".eln")):  # .eln, e.g., RO-Crate
         try:
-            stat = os.stat(fpath)
-            byte_size += int(stat.st_size)
-            # print(f"{fpath}\t\t{stat.st_mtime_ns}\t\t{stat.st_mtime_ns}\t\t{stat.st_size}")  # int64
-            # fhsh = blake3.blake3(max_threads=blake3.blake3.AUTO).update_mmap(fpath).hexdigest()
-            results += f"{fpath};{stat.st_size};{stat.st_mtime}"
-            if hashing:
-                fh = hashlib.sha256()
-                with open(fpath, "rb") as ffp:
-                    while True:
-                        chunk = ffp.read(fh.block_size)
-                        if not chunk:
-                            break
-                        fh.update(chunk)
-                results += f";{fh.hexdigest()}"
-            results += "\n"
+            fpath_stripped = fpath.replace(right_stripped, "")
+            with zipfile.ZipFile(fpath, "r") as zip_file_hdl:
+                for member in zip_file_hdl.infolist():
+                    line = f"{fpath_stripped}:{member.filename};{member.file_size};{datetime(*member.date_time).timestamp()}"
+                    byte_size += int(member.file_size)
+                    if hashing:
+                        zh = hashlib.sha256()
+                        with zip_file_hdl.open(member, "r") as zfp:
+                            while True:
+                                chunk = zfp.read(zh.block_size)
+                                if not chunk:
+                                    break
+                                zh.update(chunk)
+                            line += f";{zh.hexdigest()}"
+                    results.append(line)
         except Exception as exception:
-            issues += f"{fpath}{SEPARATOR}{exception}\n"
-    return byte_size
+            issues.append(f"{fpath_stripped}{SEPARATOR}{exception}")
 
 
 def analyze_tar_file(
-    fpath: str, results: str, issues: str, hashing: bool = HASHING
-) -> int:
+    fpath: str,
+    results: list[str],
+    issues: list[str],
+    right_stripped: str = "",
+    hashing: bool = HASHING,
+):
     """Get metadata about tarfile and recursively compute SHA256 hash for each of its files."""
     byte_size = 0
     if fpath.lower().endswith((".tar", ".tar.gz", ".tar.bz2", ".tar.xz")):
         try:
+            fpath_stripped = fpath.replace(right_stripped, "")
             with tarfile.open(fpath, "r:*") as tar:
                 for member in tar:
                     if member.isreg():
-                        # thsh = blake3.blake3(tar.extractfile(member.name).read(), max_threads=blake3.blake3.AUTO).hexdigest()
-                        # https://github.com/python/cpython/pull/102128
-                        # https://github.com/python/cpython/issues/102120
                         tfp = tar.extractfile(member.name)
                         info = member.get_info()
-                        results += f"{fpath}:{member.name};{to_int(info['size'])};{to_int(info['mtime'])}"
+                        line = f"{fpath_stripped}:{member.name};{to_int(info['size'])};{to_int(info['mtime'])}"
                         byte_size += to_int(info["size"])
                         if hashing:
                             th = hashlib.sha256()
@@ -98,74 +105,83 @@ def analyze_tar_file(
                                     tfp.close()
                                     break
                                 th.update(chunk)
-                            results += f";{th.hexdigest()}"
-                        results += "\n"
+                            line += f";{th.hexdigest()}"
+                        results.append(line)
         except Exception as exception:
-            issues += f"{fpath}{SEPARATOR}{exception}\n"
-    return byte_size
+            issues += f"{fpath_stripped}{SEPARATOR}{exception}\n"
 
 
-def analyze_zip_file(
-    fpath: str, results: str, issues: str, hashing: bool = HASHING
-) -> int:
-    """Get metadata about zipfile and recursively compute SHA256 hash for each of its files."""
+def analyze_file(
+    fpath: str,
+    results: list[str],
+    issues: list[str],
+    right_stripped: str = "",
+    hashing: bool = HASHING,
+):
+    """Get metadata about file and compute its SHA256 hash."""
     byte_size = 0
-    if fpath.lower().endswith((".zip", ".eln")):  # .eln, e.g., RO-Crate
+    if os.path.isfile(fpath):
+        fpath_stripped = fpath.replace(right_stripped, "")
         try:
-            with zipfile.ZipFile(fpath, "r") as zip_file_hdl:
-                for member in zip_file_hdl.infolist():
-                    results += f"{fpath}:{member.filename};{member.file_size};{datetime(*member.date_time).timestamp()}"
-                    byte_size += int(member.file_size)
-                    if hashing:
-                        zh = hashlib.sha256()
-                        with zip_file_hdl.open(member, "r") as zfp:
-                            # zhsh = blake3.blake3(zfp.read(), max_threads=blake3.blake3.AUTO).hexdigest()
-                            while True:
-                                chunk = zfp.read(zh.block_size)
-                                if not chunk:
-                                    break
-                                zh.update(chunk)
-                            results += f";{zh.hexdigest()}"
-                    results += "\n"
+            stat = os.stat(fpath)
+            byte_size += int(stat.st_size)
+            line = f"{fpath_stripped};{stat.st_size};{stat.st_mtime}"
+            if hashing:
+                fh = hashlib.sha256()
+                with open(fpath, "rb") as ffp:
+                    while True:
+                        chunk = ffp.read(fh.block_size)
+                        if not chunk:
+                            break
+                        fh.update(chunk)
+                line += f";{fh.hexdigest()}"
+            results.append(line)
         except Exception as exception:
-            issues += f"{fpath}{SEPARATOR}{exception}\n"
-    return byte_size
+            issues.append(f"{fpath_stripped}{SEPARATOR}{exception}")
 
 
 def analyze_rar_file(
-    fpath: str, results: str, issues: str, hashing: bool = HASHING
-) -> int:
+    fpath: str,
+    results: list[str],
+    issues: list[str],
+    right_stripped: str = "",
+    hashing: bool = HASHING,
+):
     """Get metadata about rarfile and recursively compute SHA256 hash for each of its files."""
     byte_size = 0
     if fpath.lower().endswith((".rar")):
         try:
+            fpath_stripped = fpath.replace(right_stripped, "")
             with rarfile.RarFile(fpath, "r") as rar_file_hdl:
                 for member in rar_file_hdl.infolist():
-                    results += f"{fpath}:{member.filename};{member.file_size};{datetime(*member.date_time).timestamp()}"
+                    line = f"{fpath_stripped}:{member.filename};{member.file_size};{datetime(*member.date_time).timestamp()}"
                     byte_size += int(member.file_size)
                     if hashing:
                         rh = hashlib.sha256()
                         with rar_file_hdl.open(member, "r") as rfp:
-                            # rhsh = blake3.blake3(fp.read(), max_threads=blake3.blake3.AUTO).hexdigest()
                             while True:
                                 chunk = rfp.read(rh.block_size)
                                 if not chunk:
                                     break
                                 rh.update(chunk)
-                            results += f";{rh.hexdigest()}"
-                    results += "\n"
+                            line += f";{rh.hexdigest()}"
+                    results.append(line)
         except Exception as exception:
-            issues += f"{fpath}{SEPARATOR}{exception}\n"
-    return byte_size
+            issues.append(f"{fpath_stripped}{SEPARATOR}{exception}")
 
 
 def analyze_sevenzip_file(
-    fpath: str, results: str, issues: str, hashing: bool = HASHING
-) -> int:
+    fpath: str,
+    results: list[str],
+    issues: list[str],
+    right_stripped: str = "",
+    hashing: bool = HASHING,
+):
     """Get metadata about 7z file and recursively compute SHA256 hash for each of its files."""
     byte_size = 0
     if fpath.lower().endswith((".7z")):
         try:
+            fpath_stripped = fpath.replace(right_stripped, "")
             with py7zr.SevenZipFile(fpath, "r") as seven_file_hdl:
                 mdata: dict[str, dict[str, str | int]] = {}
                 for obj in seven_file_hdl.list():
@@ -185,51 +201,19 @@ def analyze_sevenzip_file(
                             # bio.getbuffer().nbytes is equivalent to obj.uncompressed
                             mdata[key]["sha256"] = sh.hexdigest()
                         else:
-                            issues += f"{fpath}{SEPARATOR}KeyError {key} not found\n"
+                            issues.append(
+                                f"{fpath_stripped}{SEPARATOR}KeyError {key} not found"
+                            )
                     for key in mdata:
-                        results += f"{fpath}:{key};{mdata[key]['size']};{mdata[key]['mtime']};{mdata[key]['sha256']}\n"
+                        results.append(
+                            f"{fpath_stripped}:{key};{mdata[key]['size']};{mdata[key]['mtime']};{mdata[key]['sha256']}"
+                        )
                         byte_size += int(mdata[key]["size"])
                 else:
                     for key in mdata:
-                        results += f"{fpath}:{key};{mdata[key]['size']};{mdata[key]['mtime']}\n"
+                        results.append(
+                            f"{fpath_stripped}:{key};{mdata[key]['size']};{mdata[key]['mtime']}"
+                        )
                         byte_size += int(mdata[key]["size"])
         except Exception as exception:
-            issues += f"{fpath}{SEPARATOR}{exception}\n"
-    return byte_size
-
-
-config: dict[str, str] = {
-    "python_version": f"{sys.version}",
-    "working_directory": f"{os.getcwd()}",
-    "pynxtools_apm version": f"{__version__}",
-    "rarfile version": f"{rarfile.__version__}",
-    "sevenzip version": f"{py7zr.__version__}",
-    # "blake3-py version": f"{blake3.__version__}",
-    # "blake3-py max_threads": f"{blake3.blake3.AUTO}",
-    "directory": sys.argv[1],
-}
-
-# tic = datetime.datetime.now().timestamp()
-# "file_path:archive_path;byte_size;unix_mtime;sha256sum\n"
-# with open(f"{drive_name}.stdout.csv", "w", encoding="utf-8", errors="surrogateescape") as stdout_to_csv_hdl:
-#     stdout_to_csv_hdl.write(stdout)
-
-cnt = 0
-byte_size_processed = 0
-# skip_first_part_completed = False
-# skip_fpath = ""  # path inclusive past which to process, before which all paths on the recursive dir traversal are skipped
-for root, dirs, files in os.walk(config["directory"]):
-    for file in files:
-        fpath = f"{root}/{file}".replace(os.sep * 2, os.sep)
-        # fname = os.path.basename(fpath)
-        suffix = fpath.replace(config["directory"], "")
-        cnt += 1
-        if byte_size_processed >= (
-            1 * 1024 * 1024 * 1024
-        ):  # incrementally report results # cnt % 5 == 0:
-            print(cnt)  # I/O
-            byte_size_processed = 0
-# toc = datetime.datetime.now().timestamp()
-# with open(f"{drive_name}.stdout.csv", "a", encoding="utf-8", errors="surrogateescape") as stdout_to_csv_hdl:
-#     stdout_to_csv_hdl.write(stdout)
-print(f"Hashing performed with {cnt} paths")
+            issues.append(f"{fpath_stripped}{SEPARATOR}{exception}")
