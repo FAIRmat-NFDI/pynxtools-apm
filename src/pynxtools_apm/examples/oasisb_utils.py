@@ -16,8 +16,9 @@
 # limitations under the License.
 #
 
-import yaml
 import logging
+
+import yaml
 from pycountry import countries
 
 
@@ -61,10 +62,12 @@ APT_MIME_TYPES = [
     ".h5",  # Erlangen OXCART raw, ranging, and reconstruction, pyccapt
     ".hdf",
     ".hdf5",  # Cameca HDF5 from Materials Data Facility
-    ".xml",  # Imago legacy
+    # ".xml",  # Imago legacy
+    ".analysis",
+    ".analysisset",
     ".nxs",  # NeXus/HDF5
     ".raw",  # Stuttgart M-TAP
-    ".ops",
+    ".ops",  # legacy 3DAP, PoSAP
 ]
 CAMECA_ROOT_MIME_TYPES = [".str", ".rraw", ".rhit", ".hits", ".root"]
 
