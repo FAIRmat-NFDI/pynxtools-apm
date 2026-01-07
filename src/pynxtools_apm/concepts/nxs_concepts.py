@@ -17,6 +17,8 @@
 #
 """Implement NeXus-specific groups and fields to document software and versions used."""
 
+from pynxtools._version import __version__
+
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
@@ -26,6 +28,11 @@ APM_PYNX_TO_NEXUS = {
     "use": [
         ("programID[program1]/program", PYNX_APM_NAME),
         ("programID[program1]/program/@version", PYNX_APM_VERSION),
+        ("programID[program2]/program", "pynxtools/dataconverter"),
+        (
+            "programID[program2]/program/@version",
+            f"{__version__}" if __version__ is not None else "UNKNOWN COMMIT",
+        ),
     ],
 }
 

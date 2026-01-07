@@ -23,6 +23,7 @@ from typing import Any, Tuple
 
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
+
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
 from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
 from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
