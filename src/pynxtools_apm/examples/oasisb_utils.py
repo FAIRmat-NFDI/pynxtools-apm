@@ -105,7 +105,7 @@ def generate_file_to_hash(hash_values_in_csv_file_path: str) -> dict[str, str]:
     for line in df_hash.itertuples(index=True):
         for mime_type_list in [APT_MIME_TYPES, CAMECA_ROOT_MIME_TYPES]:
             if line.path.lower().endswith(tuple(mime_type_list)):  # type: ignore
-                file_to_hash[line.path] = line.sha256
+                file_to_hash[line.path] = line.sha256  # type: ignore
     return file_to_hash
 
 
