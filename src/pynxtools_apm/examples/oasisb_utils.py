@@ -18,6 +18,7 @@
 
 import logging
 
+import pandas as pd
 import yaml
 from pycountry import countries
 
@@ -37,6 +38,13 @@ def export_to_yaml(fpath: str, lookup_dict: dict):
     """Write content of lookup_dict to yaml file."""
     with open(fpath, "w") as fp:
         yaml.dump(lookup_dict, fp, default_flow_style=False, width=float("inf"))
+
+
+def export_to_text(fpath: str, the_set: set[str]):
+    """Write sorted list of all entries of the_set."""
+    with open(fpath, "w") as fp:
+        for item in sorted(the_set):
+            fp.write(f"{item}\n")
 
 
 def is_valid_alpha3(code: str) -> bool:
@@ -78,6 +86,28 @@ CAMECA_ROOT_MIME_TYPES = [
     ".hits",  # newer, APSuite results and parameter of hit finding and analysis steps up to reconstruction and ranging
     ".root",  # parameterization of reconstruction and ranging
 ]
+
+CSV_HEADER_FOR_HASH_FILE = "file_path:archive_path;byte_size;unix_mtime;sha256sum"
+
+
+def generate_file_to_hash(hash_values_in_csv_file_path: str) -> dict[str, str]:
+    """Create a dictionary for looking up a hash value to an entry in a cell in a project configuration file."""
+    with open(hash_values_in_csv_file_path, "r") as fp:
+        start = next(
+            idx for idx, line in enumerate(fp) if CSV_HEADER_FOR_HASH_FILE in line
+        )
+
+    df_hash = pd.read_csv(hash_values_in_csv_file_path, sep=";", skiprows=start)
+    df_hash.columns = ["path", "size", "mtime", "sha256"]
+
+    # build dictionary of hashes to replace original file names with short and clean unique ones
+    file_to_hash: dict[str, str] = {}
+    for line in df_hash.itertuples(index=True):
+        for mime_type_list in [APT_MIME_TYPES, CAMECA_ROOT_MIME_TYPES]:
+            if isinstance(line, str):
+                if line.path.lower().endswith(tuple(mime_type_list)):
+                    file_to_hash[line.path] = line.sha256
+    return file_to_hash
 
 
 DEFAULT_LOGGER_NAME = "convert_legacy_data"
