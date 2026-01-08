@@ -26,11 +26,11 @@ from pynxtools_apm.examples.oasisb_bibliography import get_bibliographical_metad
 def generate_eln_data_yaml(
     project_name: str,
     row_idx: int,
-    file_path: str,
+    file_path_prefix: str,
     bibliography: dict,
     write_yaml_file: bool = True,
 ) -> str:
-    eln_file_path = f"{file_path}/{project_name}.{row_idx}.eln_data.yaml"
+    eln_file_path = f"{file_path_prefix}/{project_name}.{row_idx}.eln_data.yaml"
     eln_data: dict = {}
 
     # eln_data["entry"] = {}
