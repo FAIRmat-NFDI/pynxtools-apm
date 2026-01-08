@@ -71,6 +71,9 @@ apm = "pynxtools_apm.reader:APMReader"
 apm_example = "pynxtools_apm.nomad.entrypoints:apm_example"
 # apm_app = "pynxtools_apm.nomad.entrypoints:apm_app"
 
+[tool.setuptools.package-data]
+pynxtools = ["_version.py"]
+
 [tool.setuptools.packages.find]
 where = [
     "src",
@@ -80,7 +83,7 @@ exclude = ["dev/*"]
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
-write_to = "src/pynxtools_apm/utils/_version.py"
+write_to = "src/pynxtools_apm/_version.py"
 git_describe_command = ["git", "describe", "--dirty", "--long", "--tags", "--match", "*[0-9]*", "--abbrev=8"]
 
 [tool.ruff]

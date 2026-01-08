@@ -18,10 +18,8 @@
 
 """Compute checksums of each file in a directory recurse common compressed files."""
 
-# python3 rdm_management_complete.py 'test' '.'
 import hashlib
 import os
-import sys
 import tarfile
 import zipfile
 from datetime import datetime
@@ -30,7 +28,6 @@ import py7zr
 import rarfile
 
 # import blake3
-from pynxtools_apm.utils.versioning import __version__
 
 SEPARATOR = "____"
 HASHING = True

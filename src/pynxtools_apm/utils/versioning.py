@@ -18,7 +18,7 @@
 """Utility tool constants and versioning."""
 
 # from pynxtools_apm.utils.get_gitrepo_commit import get_repo_last_commit
-from pynxtools_apm.utils._version import version as __version__
+from pynxtools_apm._version import version as pynx_apm_version
 
 NX_APM_ADEF_NAME = "NXapm"
 PYNX_APM_NAME = "pynxtools-apm/reader.py"
@@ -30,8 +30,8 @@ def get_apm_exec_version() -> str:
     # tag = get_repo_last_commit()
     # if tag is not None:
     #     return f"https://github.com/FAIRmat-NFDI/pynxtools-em/commit/{tag}"
-    if __version__ is not None:
-        return f"{__version__}"
+    if pynx_apm_version is not None:
+        return f"{pynx_apm_version}"
     else:
         return "UNKNOWN COMMIT"
 

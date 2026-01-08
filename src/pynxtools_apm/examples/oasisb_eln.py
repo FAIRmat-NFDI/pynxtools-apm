@@ -37,13 +37,21 @@ def generate_eln_data_yaml(
 
     eln_data["citation"] = []
     data, article = get_bibliographical_metadata(bibliography, project_name)
-    for entry in [data, article]:
+    for entry, note in [
+        (data, "Reference to the original dataset publication"),
+        (
+            article,
+            "Reference to an article that the authors associated with the dataset publication",
+        ),
+    ]:
         if entry in bibliography and entry != "":
             if "author" and "doi" in bibliography[entry]:
                 cite_dict = {}
-                cite_dict["authors"] = (
-                    f"https://doi.org/{bibliography[entry]['author']}"
-                )
+                cite_dict["authors"] = f"{bibliography[entry]['author']}"
+                cite_dict["description"] = note
+                cite_dict["doi"] = f"{bibliography[entry]['doi']}"
+                cite_dict["url"] = f"https://doi.org/{bibliography[entry]['doi']}"
+
                 eln_data["citation"].append(cite_dict)
 
     # eln_data["sample"] = {}

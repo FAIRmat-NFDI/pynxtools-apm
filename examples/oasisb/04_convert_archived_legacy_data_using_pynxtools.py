@@ -18,22 +18,19 @@
 
 """Script to batch-convert to NeXus/HDF5 using pynxtools-apm."""
 
-# python3 ger_berlin_koch_batch_process.py 'microscope_dir' '.' 'humans_and_companies.ods' 'nion_data_metadata.ods'
+# python3 pynxtools-apm/examples/oasisb/04_convert_archived_legacy_data_using_pynxtools.py ... /harvest_examples/data ... /scidat_nomad_apt aus_sydney_bilal
 import gc
 import logging
 import os
 import sys
-from contextlib import contextmanager
 from datetime import datetime
 
 import bibtexparser
-import numpy as np
 import pandas as pd
-import pytz
-import yaml
-from pynxtools._version import __version__ as pynx_core_version
+from pynxtools._version import version as pynx_core_version
 from pynxtools.dataconverter.convert import convert
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
+from pynxtools_apm._version import version as pynx_apm_version
 
 from pynxtools_apm.examples.get_sha256_of_directories import SEPARATOR
 from pynxtools_apm.examples.oasisb_eln import generate_eln_data_yaml
@@ -42,7 +39,6 @@ from pynxtools_apm.examples.oasisb_utils import (
     CAMECA_ROOT_MIME_TYPES,
     generate_file_to_hash,
 )
-from pynxtools_apm.utils.versioning import __version__ as pynx_apm_version
 
 config: dict[str, str | int] = {
     "python_version": f"{sys.version}",
@@ -142,16 +138,19 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
         value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
         if value == "":
             continue
-        else:
-            has_input_files = True
-            break
+        has_input_files = True
+        break
     if not has_input_files:
         continue
+    del col_idx
 
     # only non-proprietary files will be processed by pynxtools-apm for all
     # other input, content will be appended by the respective proprietary
     # parser to the NeXus/HDF5 that was generated with pynxtools-apm
     for col_idx in range(3, 6):
+        value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
+        if value == "":
+            continue
         file_path = (
             f"{input_file_path_prefix}{os.sep}"
             f"{project_name}.{row_idx}.{col_idx}."
@@ -159,6 +158,7 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
             f"{value.rsplit('.', 1)[-1].lower()}"  # type: ignore
         )
         pynx_apm_input_files.append(file_path)
+    del col_idx
 
     # dont forget to pass also the entry-specific eln_data.yaml file
     pynx_apm_input_files.append(eln_file_path)
