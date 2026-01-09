@@ -1,22 +1,24 @@
+#
+# Copyright The NOMAD Authors.
+#
+# This file is part of NOMAD. See https://nomad-lab.eu for further info.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+"""Utilities for overwriting h5py chunking heuristic to consider domain-specific access pattern."""
+
 import numpy as np
-
-
-def get_max_size_along_first_or_last_dimension(
-    shape: tuple[int], byte_per_dtype_instance: int, max_byte_per_chunk: int, dim: int
-):
-    if len(shape) > 0 and all(dim_extent > 0 for dim_extent in shape):
-        prod = 1
-        if dim == 0:
-            for idx in range(1, len(shape)):
-                prod *= shape[idx]
-        elif dim == -1:
-            for idx in range(0, len(shape) - 1):
-                prod *= shape[idx]
-        else:
-            return 0
-        # TODO, testing
-        return max_byte_per_chunk / (prod * byte_per_dtype_instance)
-    return 0
 
 
 def chunk_axes_with_different_priority(
@@ -28,37 +30,36 @@ def chunk_axes_with_different_priority(
 
     Parameter:
     * data, a numpy array
-    * priority, a tuple[int] of axis dimension indices, sorted in ascending
-    order of how conservative axis should be splitted or not.
-    values in priority need to be range(0, len(shape)) but order may
-    differ.
+    * priority, all dimension scale axes indices, arranged
+    in increasing priority how conservative axes should be splitted into chunks.
+    the later the index in priority, the more likely this axis will be splitted
+    into fewer chunks, if any
 
-    Examples, a stack of 100,000 x 1024 x 1024 2D images 4B int, chunking
-    should keep dim 1 and 2 as is, and chunk only on dim 0, if we
-    know that users which to read images completely than slicing in
-    other (orthogonal directions),
+    Examples substantiating this heuristic:
+    * Electron microscopy, a stack of 100,000 x 1024 x 1024 2D images, 4B int itemsize:
+    Chunking should keep dim 1 and especially dim 2 (especially for C-style storage, i.e.,
+    when dim 2 changes fastest, as contiguous as possible, and chunk mainly on dim 0,
+    Reason is often users wish to read entire images completely than slicing thin
+    pixel slabs in other (orthogonal directions)
+    * Reconstructed ion positions in atom probe 1,000,000 x 3, 4B itemsize,
+    users wish to read entire position triplets in contiguous blocks of triplets
+    rather than reading fast a single column. Therefore, dim 0 should be chunked
+    with higher priority while trying to keep dim 1 intact.
 
-    Examples, reconstruction in atom probe 1,000,000 x 3 8B floats,
-    users are usually more in need to getting position triplets
-    for contiguous blocks of triplets rather than reading fast a
-    single column, hence dim 0 should be chunked with higher
-    priority than dim 1
-
-    h5py guess_chunk e.g., https://github.com/h5py/h5py/blob/
+    By contrast, h5py via guess_chunk function e.g., https://github.com/h5py/h5py/blob/
     706755340058c8e8000ed769d4f5ad3571e4dfce/h5py/_hl/filters.py#L361
-    splits alternatingly across all dims therefore shrinking
-    ndarrays to roughly proportionally shrunk chunk_shape which in cases
+    splits alternatingly across all dims. In effect, arrays get chunked more regularly
     like above mention can easily cause that even a single 1024 x 1024
     image will be distributed across dozens of chunk_shape, mind that
-    guess_chunk is a heuristic that should apply to general cases,
+    guess_chunk is a heuristic ought to apply to general cases,
     it must not be understood as the solution to go with if the
-    usage pattern of an array is well-known and specific more frequently
-    used read-out patterns requested. Currently, guess_chunk offers
+    usage pattern of an array is well-known and more specific
+    and known read-out are used frequently. Currently, guess_chunk offers
     a compromise for slicing about equally all three orthogonal
-    directions
+    directions.
 
-    Returns
-    * tuple[int], explicit chunk sizes to use for create_dataset(chunk_shape=)
+    Returns value for the chunks parameter of h5py create_dataset
+    * tuple[int, ...], explicit chunk size
     * True, replying on h5py guess_chunk auto-chunking via chunk_shape=True."""
     if not isinstance(data, np.ndarray):  # only np.ndarray supported
         return True
