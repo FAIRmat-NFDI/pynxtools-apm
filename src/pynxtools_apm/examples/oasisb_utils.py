@@ -56,7 +56,7 @@ def is_valid_alpha3(code: str) -> bool:
 
 APT_MIME_TYPES = [
     # common file formats for acquisition, reconstruction, and ranging
-    ".apt",  # Cameca/APSuite APT file format currently most used
+    ".apt",  # Cameca/AP Suite APT file format currently most used
     ".pos",  # Cameca/IVAS position and mass-to-charge minimal result of reconstruction and mass-to-charge calibration
     ".epos",  # Cameca/IVAS extended POS file, additional data classically designed to assist open-source software development of data analysis algorithms
     ".ato",  # Rouen, GPM
@@ -83,7 +83,7 @@ CAMECA_ROOT_MIME_TYPES = [
     ".str",  # raw files, acquisition, unprocessed hits
     ".rraw",  # raw files, acquisition, unprocessed hits
     ".rhit",  # classical, IVAS results and parameter of hit finding and analysis steps up to reconstruction and ranging
-    ".hits",  # newer, APSuite results and parameter of hit finding and analysis steps up to reconstruction and ranging
+    ".hits",  # newer, AP Suite results and parameter of hit finding and analysis steps up to reconstruction and ranging
     ".root",  # parameterization of reconstruction and ranging
 ]
 

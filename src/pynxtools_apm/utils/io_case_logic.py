@@ -164,7 +164,7 @@ class ApmUseCaseSelector:
             f"Oasis local config: {self.cfg}\n"
         )
         if len(self.apsuite) > 0:
-            logger.info(f"IVAS/APSuite: {self.apsuite}\n")
+            logger.info(f"IVAS/AP Suite: {self.apsuite}\n")
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""

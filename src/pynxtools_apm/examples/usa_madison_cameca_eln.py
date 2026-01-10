@@ -33,9 +33,9 @@ from ifes_apt_tc_data_modeling.utils.utils import create_nuclide_hash
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.cameca_cfg import APM_CAMECA_TO_NEXUS
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
-from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 
 
 class NxApmCustomElnCamecaRoot:
@@ -43,7 +43,7 @@ class NxApmCustomElnCamecaRoot:
 
     def __init__(self, file_path: str = "", entry_id: int = 1, verbose: bool = False):
         """Construct class"""
-        logger.debug(f"Extracting data from IVAS/APSuite file: {file_path}")
+        logger.debug(f"Extracting data from IVAS/AP Suite file: {file_path}")
         if pathlib.Path(file_path).name.endswith(".cameca"):
             self.file_path = file_path
         self.entry_id = entry_id if entry_id > 0 else 1

@@ -3,7 +3,7 @@
 Please note that the proprietary file formats RRAW, STR, ROOT, RHIT, and HITS from AMETEK/Cameca are currently not processable
 with software other than provided by Cameca. We have investigated the situation and were able to confirm though that a substantial number
 of metadata have been documented by Cameca. In addition, we have done a successful proof-of-concept to explore a route of reading several
-pieces of information contained in all of these binary file formats using Python.
+pieces of information contained in all of these binary file formats using Python including raw data.
 
 The main motivation for this was to explore a route that could enable automated mapping and normalizing of some of the metadata into NeXus via a simpler - programmatic approach - than
 having users to enter the information via e.g. electronic lab notebooks or supplementary files. The main motivation to access the binary file structure directly in contrast to using
@@ -14,5 +14,6 @@ which have their own dependencies and thus adding ROOT would make the testing an
 AMETEK/Cameca has inspected the situation and works on an implementation of features in AP Suite that will eventually allow users to
 export some of these metadata via the AMETEK/Cameca APT file format that is open-source. Alternatively, also AMETEK/Cameca's custom
 plugin interface is a possible avenue how metadata could be exported in the future from AMETEK/Cameca to third-party software.
-When these features will be available, we are happy to work on an update of pynxtools-apm and the underlying ifes_apt_tc_data_modeling library
-to support the community.
+When these features will be available, we are happy to work on an update of pynxtools-apm and the underlying ifes_apt_tc_data_modeling library to support the community.
+
+For these reasons, the Python code that was developed in this file format parsing project will be kept closed as it was discussed with AMETEK/Cameca representatives. 
