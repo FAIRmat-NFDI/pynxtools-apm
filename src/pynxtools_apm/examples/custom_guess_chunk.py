@@ -19,12 +19,12 @@
 """Utilities for overwriting h5py chunking heuristic to consider domain-specific access pattern."""
 
 import numpy as np
+from pynxtools.dataconverter.chunk_cache import CHUNK_CONFIG_DEFAULT
 
 
-def chunk_axes_with_different_priority(
+def prioritized_axes_heuristic(
     data: np.ndarray,
     priority: tuple[int, ...],
-    byte_per_item: int,
 ) -> tuple[int, ...] | bool:
     """Define an explicit tuple[int] how to chunk data with shape
 
@@ -71,8 +71,8 @@ def chunk_axes_with_different_priority(
     if len(shape) == 0:
         raise ValueError("chunk_shape not allowed for scalar datasets.")
     chunk_shape: list[float] = list(float(extent) for extent in shape)
-    max_byte_per_chunk: int = 4 * 1024 * 1024  # TODO, 4 MiB
-    # byte_per_item: int = data.itemsize
+    max_byte_per_chunk: int = CHUNK_CONFIG_DEFAULT["byte_size"]
+    byte_per_item: int = data.itemsize
 
     dim = 0
     idx = 0
@@ -100,11 +100,11 @@ def chunk_axes_with_different_priority(
     return True
 
 
-# retval = chunk_axes_with_different_priority((100000, 2048, 2048), (0, 1, 2), 8)
+# retval = prioritized_axes_heuristic((100000, 2048, 2048), (0, 1, 2), 8)
 # print(retval)
-# retval = chunk_axes_with_different_priority((1000000, 3), (0, 1), 4)
+# retval = prioritized_axes_heuristic((1000000, 3), (0, 1), 4)
 # print(retval)
-# retval = chunk_axes_with_different_priority((60, 60, 180), (2, 1, 0), 4)
+# retval = prioritized_axes_heuristic((60, 60, 180), (2, 1, 0), 4)
 # print(retval)
-# retval = chunk_axes_with_different_priority((1, 1, 1), (0, 1, 2), 4)
+# retval = prioritized_axes_heuristic((1, 1, 1), (0, 1, 2), 4)
 # print(retval)

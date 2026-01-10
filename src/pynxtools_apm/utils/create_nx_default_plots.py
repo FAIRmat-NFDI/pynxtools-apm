@@ -19,6 +19,7 @@
 
 import numpy as np
 
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.versioning import (
     MASS_SPECTRUM_DEFAULT_BINNING,
@@ -26,6 +27,7 @@ from pynxtools_apm.utils.versioning import (
     PYNX_APM_NAME,
     PYNX_APM_VERSION,
 )
+from pynxtools_apm.examples.custom_guess_chunk import prioritized_axes_heuristic
 
 
 def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
@@ -135,13 +137,17 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     # might be necessary, for now we implement the transpose in the appdef
     template[f"{trg}intensity"] = {
         "compress": np.asarray(hist3d[0], np.uint32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(np.asarray(hist3d[0], np.uint32), (0,)),
     }
     col = 0
     for dim in dims:
         template[f"{trg}AXISNAME[axis_{dim}]"] = {
             "compress": np.asarray(hist3d[1][col][1::], np.float32),
-            "strength": 1,
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(hist3d[1][col][1::], np.float32), (0,)
+            ),
         }
         template[f"{trg}AXISNAME[axis_{dim}]/@units"] = "nm"
         template[f"{trg}AXISNAME[axis_{dim}]/@long_name"] = f"{dim} (nm)"
@@ -198,12 +204,16 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}@AXISNAME_indices[@axis_mass_to_charge_indices]"] = np.uint32(0)
     template[f"{trg}DATA[intensity]"] = {
         "compress": np.asarray(hist1d[0], np.uint32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(np.asarray(hist1d[0], np.uint32), (0,)),
     }
     template[f"{trg}DATA[intensity]/@long_name"] = "Intensity (1)"  # Counts (1)"
     template[f"{trg}AXISNAME[axis_mass_to_charge]"] = {
         "compress": np.asarray(hist1d[1][1::], np.float32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(hist1d[1][1::], np.float32), (0,)
+        ),
     }
     del hist1d
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "Da"

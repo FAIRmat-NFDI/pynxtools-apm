@@ -38,6 +38,8 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.load_ranging import add_unknown_iontype
+from pynxtools_apm.examples.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 
 # do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
@@ -632,14 +634,20 @@ class ApmCreateExampleData:
             trg = f"{prefix}reconstruction/"
             template[f"{trg}reconstructed_positions"] = {
                 "compress": np.asarray(self.xyz, np.float32),
-                "strength": 1,
+                "strength": DEFAULT_COMPRESSION_LEVEL,
+                "chunks": prioritized_axes_heuristic(
+                    np.asarray(self.xyz, np.float32), (0, 1)
+                ),
             }
             template[f"{trg}reconstructed_positions/@units"] = "nm"
 
             trg = f"{prefix}mass_to_charge_conversion/"
             template[f"{trg}mass_to_charge"] = {
                 "compress": np.asarray(self.m_z, np.float32),
-                "strength": 1,
+                "strength": DEFAULT_COMPRESSION_LEVEL,
+                "chunks": prioritized_axes_heuristic(
+                    np.asarray(self.m_z, np.float32), (0,)
+                ),
             }
             template[f"{trg}mass_to_charge/@units"] = "Da"
 

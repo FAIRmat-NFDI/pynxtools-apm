@@ -22,6 +22,8 @@ from typing import Any, Dict
 
 import numpy as np
 from ase.data import chemical_symbols
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm.examples.custom_guess_chunk import prioritized_axes_heuristic
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
@@ -132,30 +134,54 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["nuclide_hash"], np.uint16
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
+                        (0,),
+                    ),
                 }
                 template[f"{path}charge_state"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["charge_state"], np.int8
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["charge_state"], np.int8),
+                        (0,),
+                    ),
                 }
                 template[f"{path}mass"] = {
                     "compress": np.asarray(ion.charge_state_model["mass"], np.float64),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["mass"], np.float64), (0,)
+                    ),
                 }
                 template[f"{path}mass/@units"] = "Da"
                 template[f"{path}natural_abundance_product"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["natural_abundance_product"], np.float64
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(
+                            ion.charge_state_model["natural_abundance_product"],
+                            np.float64,
+                        ),
+                        (0,),
+                    ),
                 }
                 template[f"{path}shortest_half_life"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["shortest_half_life"], np.float64
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(
+                            ion.charge_state_model["shortest_half_life"], np.float64
+                        ),
+                        (0,),
+                    ),
                 }
                 template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1

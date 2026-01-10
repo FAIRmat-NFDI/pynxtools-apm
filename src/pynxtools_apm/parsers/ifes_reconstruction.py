@@ -20,6 +20,7 @@
 from typing import Any, Dict
 
 import numpy as np
+from pynxtools_apm.examples.custom_guess_chunk import prioritized_axes_heuristic
 from ifes_apt_tc_data_modeling.apt.apt6_reader import ReadAptFileFormat
 from ifes_apt_tc_data_modeling.ato.ato_reader import ReadAtoFileFormat
 from ifes_apt_tc_data_modeling.csv.csv_reader import ReadCsvFileFormat
@@ -31,6 +32,7 @@ from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
 
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 
 
 def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> dict:
@@ -42,7 +44,10 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
     xyz = posfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
         "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(xyz.magnitude, np.float32), (0, 1)
+        ),
     }
     template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
@@ -51,7 +56,10 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
     m_z = posfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
         "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(m_z.magnitude, np.float32).flatten(), (0,)
+        ),
     }
     template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
@@ -67,7 +75,10 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     xyz = eposfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
         "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(xyz.magnitude, np.float32), (0, 1)
+        ),
     }
     template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
@@ -76,7 +87,10 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     m_z = eposfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
         "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(m_z.magnitude, np.float32), (0,)
+        ),
     }
     template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
@@ -95,7 +109,10 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     xyz = aptfile.get_named_quantity("Position")
     template[f"{trg}reconstructed_positions"] = {
         "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(xyz.magnitude, np.float32), (0, 1)
+        ),
     }
     template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
@@ -104,7 +121,10 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     m_z = aptfile.get_named_quantity("Mass")
     template[f"{trg}mass_to_charge"] = {
         "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(m_z.magnitude, np.float32), (0,)
+        ),
     }
     template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
@@ -125,7 +145,10 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     xyz = atofile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
         "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(xyz.magnitude, np.float32), (0, 1)
+        ),
     }
     template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
@@ -134,7 +157,10 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     m_z = atofile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
         "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(m_z.magnitude, np.float32).flatten(), (0,)
+        ),
     }
     template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
@@ -150,7 +176,10 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
     xyz = csvfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
         "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(xyz.magnitude, np.float32), (0, 1)
+        ),
     }
     template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
@@ -159,7 +188,10 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
     m_z = csvfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
         "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(m_z.magnitude, np.float32).flatten(), (0,)
+        ),
     }
     template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
@@ -175,7 +207,10 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     xyz = pycfile.get_reconstructed_positions()
     template[f"{trg}reconstructed_positions"] = {
         "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(xyz.magnitude, np.float32), (0, 1)
+        ),
     }
     template[f"{trg}reconstructed_positions/@units"] = f"{xyz.units}"
     del xyz
@@ -184,7 +219,10 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     m_z = pycfile.get_mass_to_charge_state_ratio()
     template[f"{trg}mass_to_charge"] = {
         "compress": np.asarray(m_z.magnitude, np.float32).flatten(),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(m_z.magnitude, np.float32).flatten(), (0,)
+        ),
     }
     template[f"{trg}mass_to_charge/@units"] = f"{m_z.units}"
     del m_z
