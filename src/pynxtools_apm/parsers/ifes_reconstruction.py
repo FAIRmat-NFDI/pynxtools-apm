@@ -20,7 +20,7 @@
 from typing import Any, Dict
 
 import numpy as np
-from pynxtools_apm.examples.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from ifes_apt_tc_data_modeling.apt.apt6_reader import ReadAptFileFormat
 from ifes_apt_tc_data_modeling.ato.ato_reader import ReadAtoFileFormat
 from ifes_apt_tc_data_modeling.csv.csv_reader import ReadCsvFileFormat

@@ -37,7 +37,3 @@ def get_apm_exec_version() -> str:
 
 
 PYNX_APM_VERSION = get_apm_exec_version()
-
-# numerics
-MASS_SPECTRUM_DEFAULT_BINNING = 0.01  # u
-NAIVE_GRID_DEFAULT_VOXEL_SIZE = 1.0  # nm

@@ -38,7 +38,7 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.load_ranging import add_unknown_iontype
-from pynxtools_apm.examples.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 
 # do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent

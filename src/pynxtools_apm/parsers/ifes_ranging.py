@@ -23,7 +23,7 @@ from typing import Any, Dict
 import numpy as np
 from ase.data import chemical_symbols
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
-from pynxtools_apm.examples.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
