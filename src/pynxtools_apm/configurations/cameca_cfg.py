@@ -17,11 +17,11 @@
 #
 """Dict mapping custom schema instances from custom yaml file on concepts in NXapm."""
 
-from typing import Any, Dict
+from typing import Any
 
 from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 
-APM_CAMECA_TO_NEXUS: Dict[str, Any] = {
+APM_CAMECA_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "",
     "use": [

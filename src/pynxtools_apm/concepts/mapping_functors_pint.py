@@ -18,7 +18,7 @@
 """Utilities for working with NeXus concepts encoded as Python dicts in the concepts dir."""
 
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 import flatdict as fd
 import numpy as np
@@ -34,7 +34,7 @@ from pynxtools_apm.utils.pint_custom_unit_registry import is_not_special_unit, u
 from pynxtools_apm.utils.string_conversions import rchop
 
 # best practice is use np.ndarray or np.generic as magnitude within that ureg.Quantity!
-MAP_TO_DTYPES: Dict[str, type] = {
+MAP_TO_DTYPES: dict[str, type] = {
     "u1": np.uint8,
     "i1": np.int8,
     "u2": np.uint16,
@@ -190,7 +190,7 @@ def set_value(template: dict, trg: str, src_val: Any, trg_dtype: str = "") -> di
                 template[f"{trg}"] = ", ".join(src_val)
             else:
                 raise TypeError(
-                    f"Not List[str] {type(src_val)} found for not trg_dtype case !"
+                    f"Not list[str] {type(src_val)} found for not trg_dtype case !"
                 )
         elif (
             isinstance(src_val, (np.ndarray, np.generic))

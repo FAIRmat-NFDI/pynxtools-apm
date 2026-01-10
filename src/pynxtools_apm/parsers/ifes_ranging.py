@@ -18,12 +18,10 @@
 
 """Wrapping multiple parsers for vendor files with ranging definition files."""
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 from ase.data import chemical_symbols
-from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
-from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
@@ -43,6 +41,8 @@ from ifes_apt_tc_data_modeling.utils.utils import (
     nuclide_hash_to_nuclide_list,
 )
 
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 from pynxtools_apm.utils.io_case_logic import (
     VALID_FILE_NAME_SUFFIX_RANGE,
 )
@@ -277,7 +277,7 @@ class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
-        self.meta: Dict[str, Any] = {
+        self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
             "entry_id": entry_id,

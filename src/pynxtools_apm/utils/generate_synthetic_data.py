@@ -22,7 +22,6 @@
 
 import datetime
 import hashlib
-from typing import List
 
 import ase
 import numpy as np
@@ -36,10 +35,10 @@ from ifes_apt_tc_data_modeling.utils.utils import (
     nuclide_hash_to_nuclide_list,
 )
 
-from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.load_ranging import add_unknown_iontype
 from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm.utils.load_ranging import add_unknown_iontype
 
 # do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
@@ -79,8 +78,8 @@ class ApmCreateExampleData:
         self.entry_id = 1
         # reconstructed dataset and mass-to-charge state ratio values
         # like what is traditionally available via the POS file format
-        self.xyz: List[float] = []
-        self.m_z: List[float] = []
+        self.xyz: list[float] = []
+        self.m_z: list[float] = []
 
         # synthesizing realistic datasets for atom probe tomography
         # would require a physical model of the field evaporation process,

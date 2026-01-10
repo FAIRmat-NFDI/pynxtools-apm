@@ -17,10 +17,9 @@
 #
 """Wrapping multiple parsers for vendor files with reconstructed dataset files."""
 
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
-from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from ifes_apt_tc_data_modeling.apt.apt6_reader import ReadAptFileFormat
 from ifes_apt_tc_data_modeling.ato.ato_reader import ReadAtoFileFormat
 from ifes_apt_tc_data_modeling.csv.csv_reader import ReadCsvFileFormat
@@ -30,9 +29,10 @@ from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptCalibrationFileFormat,
 )
 
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
 
 
 def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> dict:
@@ -233,7 +233,7 @@ class IfesReconstructionParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
-        self.meta: Dict[str, Any] = {
+        self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
             "entry_id": entry_id,

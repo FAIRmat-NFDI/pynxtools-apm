@@ -17,16 +17,21 @@
 #
 """Utility class to analyze which vendor/community files are passed to apm reader."""
 
-from typing import Dict, List, Tuple
-
 from pynxtools_apm.concepts.mapping_functors_pint import var_path_to_spcfc_path
 from pynxtools_apm.utils.get_checksum import (
     DEFAULT_CHECKSUM_ALGORITHM,
     get_sha256_of_file_content,
 )
 
-VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
-VALID_FILE_NAME_SUFFIX_RANGE = [
+VALID_FILE_NAME_SUFFIX_RECON: list[str] = [
+    ".apt",
+    ".pos",
+    ".epos",
+    ".ato",
+    ".csv",
+    ".h5",
+]
+VALID_FILE_NAME_SUFFIX_RANGE: list[str] = [
     ".rng",
     ".rrng",
     ".env",
@@ -34,8 +39,15 @@ VALID_FILE_NAME_SUFFIX_RANGE = [
     "range_.h5",
     ".analysis",
 ]
-VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
-VALID_FILE_NAME_SUFFIX_CAMECA = [".cameca", ".str", ".rraw", ".rhit", ".hits", ".root"]
+VALID_FILE_NAME_SUFFIX_CONFIG: list[str] = [".yaml", ".yml"]
+VALID_FILE_NAME_SUFFIX_CAMECA: list[str] = [
+    ".cameca",
+    ".str",
+    ".rraw",
+    ".rhit",
+    ".hits",
+    ".root",
+]
 from pynxtools_apm.utils.custom_logging import logger
 
 
@@ -46,18 +58,18 @@ class ApmUseCaseSelector:
     too much input. The UseCaseSelector decide what to do in each case.
     """
 
-    def __init__(self, file_paths: Tuple[str] = None):
+    def __init__(self, file_paths: tuple[str, ...]):
         """Initialize the class.
 
         dataset injects numerical data and metadata from an analysis.
         eln injects additional metadata and eventually numerical data.
         """
-        self.case: Dict[str, list] = {}
-        self.eln: List[str] = []
-        self.cfg: List[str] = []
-        self.apsuite: List[str] = []
-        self.reconstruction: List[str] = []
-        self.ranging: List[str] = []
+        self.case: dict[str, list] = {}
+        self.eln: list[str] = []
+        self.cfg: list[str] = []
+        self.apsuite: list[str] = []
+        self.reconstruction: list[str] = []
+        self.ranging: list[str] = []
         self.is_valid = False
         self.supported_file_name_suffixes = (
             VALID_FILE_NAME_SUFFIX_RECON
@@ -72,7 +84,7 @@ class ApmUseCaseSelector:
         self.sort_files_by_file_name_suffix(file_paths)
         self.check_validity_of_file_combinations()
 
-    def sort_files_by_file_name_suffix(self, file_paths: Tuple[str] = None):
+    def sort_files_by_file_name_suffix(self, file_paths: tuple[str, ...]):
         """Sort all input-files based on their name suffix to prepare validity check."""
         for suffix in self.supported_file_name_suffixes:
             self.case[suffix] = []
@@ -122,13 +134,13 @@ class ApmUseCaseSelector:
 
         # if 1 <= other_input <= 2:  # and (recon_input == 1) and (range_input == 1)
         self.is_valid = True
-        self.reconstruction: List[str] = []
-        self.ranging: List[str] = []
+        self.reconstruction: list[str] = []
+        self.ranging: list[str] = []
         for suffix in VALID_FILE_NAME_SUFFIX_RECON:
             self.reconstruction += self.case[suffix]
         for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
             self.ranging += self.case[suffix]
-        yml: List[str] = []
+        yml: list[str] = []
         for suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
             yml += self.case[suffix]
         for entry in yml:

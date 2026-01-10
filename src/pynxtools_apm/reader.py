@@ -19,7 +19,7 @@
 
 import os
 from time import perf_counter_ns
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
@@ -50,8 +50,8 @@ class APMReader(BaseReader):
     def read(
         self,
         template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        file_paths: tuple[str, ...] = None,
+        objects: tuple[Any, ...] = None,
     ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
         logger.info(os.getcwd())

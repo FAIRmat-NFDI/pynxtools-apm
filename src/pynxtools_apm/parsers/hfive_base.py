@@ -19,8 +19,6 @@
 
 # taken from pynxtools-em, eventually should be made a part of pynxtools like hfive_utils
 
-from typing import Dict, List
-
 import h5py
 import numpy as np
 import yaml
@@ -95,18 +93,18 @@ class HdfFiveBaseParser:
         if file_path:
             self.file_path = file_path
         self.prfx: str = ""
-        self.tmp: Dict = {}
+        self.tmp: dict = {}
         self.source: str = ""
         # collection of instance path
-        self.groups: Dict = {}
-        self.datasets: Dict = {}
-        self.attributes: Dict = {}
-        self.instances: Dict = {}
+        self.groups: dict = {}
+        self.datasets: dict = {}
+        self.attributes: dict = {}
+        self.instances: dict = {}
         # collection of template
-        self.template_groups: List = []
-        self.template_datasets: List = []
-        self.template_attributes: List = []
-        self.templates: Dict = {}
+        self.template_groups: list = []
+        self.template_datasets: list = []
+        self.template_attributes: list = []
+        self.templates: dict = {}
         self.h5r = None
         self.is_hdf = True  # TODO::check if HDF5 file using magic cookie
         self.hashing = hashing
@@ -397,7 +395,7 @@ class HdfFiveBaseParser:
                         h5path, dict(self.h5r[h5path].attrs)
                     )
 
-    def store_hashes(self, blacklist_by_key: List, blacklist_by_suffix: List, **kwargs):
+    def store_hashes(self, blacklist_by_key: list, blacklist_by_suffix: list, **kwargs):
         """Generate yaml file with sorted list of HDF5 grp, dst, and attrs
 
         including their datatype and SHA256 checksum computed from the each nodes data.
@@ -405,7 +403,7 @@ class HdfFiveBaseParser:
         when differences in timestamps are expected but should not trigger
         the test to fail. The blacklist allows to exclude those HDF5 paths
         that should not be included in the yaml file."""
-        hashes: Dict[str, str] = {}
+        hashes: dict[str, str] = {}
         for key, ifo in self.groups.items():
             if key not in blacklist_by_key and not key.endswith(blacklist_by_suffix):
                 hashes[key] = "grp"
