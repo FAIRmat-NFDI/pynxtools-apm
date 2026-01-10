@@ -22,6 +22,10 @@ from typing import Any
 
 import numpy as np
 from ase.data import chemical_symbols
+from ifes_apt_tc_data_modeling.analysisset.analysisset_reader import (
+    ReadAnalysissetFileFormat,
+)
+from ifes_apt_tc_data_modeling.cameca.cameca_reader import ReadCamecaHfiveFileFormat
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
@@ -273,6 +277,34 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     return template
 
 
+def extract_data_from_cameca_hfive_file(
+    file_path: str, template: dict, entry_id
+) -> dict:
+    """Add those required information which a Cameca HDF5 file has."""
+    logger.debug(f"Extracting data from Cameca HDF5 file: {file_path}")
+    rangefile = ReadCamecaHfiveFileFormat(file_path)
+    if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
+
+    add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
+    return template
+
+
+def extract_data_from_analysisset_file(
+    file_path: str, template: dict, entry_id
+) -> dict:
+    """Add those required information which an analysisset file has."""
+    logger.debug(f"Extracting data from analysisset XML file: {file_path}")
+    rangefile = ReadAnalysissetFileFormat(file_path)
+    if len(rangefile.analysisset["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
+
+    add_standardize_molecular_ions(
+        rangefile.analysisset["molecular_ions"], template, entry_id
+    )
+    return template
+
+
 class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
@@ -374,6 +406,14 @@ class IfesRangingDefinitionsParser:
                 )
             elif self.meta["file_format"] == ".rrng":
                 extract_data_from_rrng_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
+            elif self.meta["file_format"] == ".hdf5":
+                extract_data_from_cameca_hfive_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
+            elif self.meta["file_format"] == ".analysisset":
+                extract_data_from_analysisset_file(
                     self.meta["file_path"], template, self.meta["entry_id"]
                 )
             else:

@@ -7,5 +7,5 @@ that maps results from a recent work of [machine-learning-based ranging of mass 
 | --------------- | --------------  |
 | Reconstructed positions (x, y, z) | :heavy_check_mark: |
 | Mass-to-charge-state-ratio values (m/q) | :heavy_check_mark: |
-| Ranging defintions | :heavy_check_mark: |
+| Ranging definitions | :heavy_check_mark: |
 
