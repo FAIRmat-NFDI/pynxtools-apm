@@ -30,16 +30,23 @@ VALID_FILE_NAME_SUFFIX_RECON: list[str] = [
     ".ato",
     ".csv",
     ".h5",
+    ".hdf5",
+    ".ops",
+    ".raw",
+    "_trimmed.txt",
+    "_xyz.txt",
 ]
 VALID_FILE_NAME_SUFFIX_RANGE: list[str] = [
-    ".rng",
     ".rrng",
+    ".rng",
     ".env",
     ".fig.txt",
     "range_.h5",
     ".analysis",
+    ".hdf5",
+    ".analysisset",
 ]
-VALID_FILE_NAME_SUFFIX_CONFIG: list[str] = [".yaml", ".yml"]
+VALID_FILE_NAME_SUFFIX_CONFIG: list[str] = [".yaml", ".yml", "db.yaml"]
 VALID_FILE_NAME_SUFFIX_CAMECA: list[str] = [
     ".cameca",
     ".str",
@@ -109,8 +116,8 @@ class ApmUseCaseSelector:
 
     def check_validity_of_file_combinations(self):
         """Check if this combination of types of files is supported."""
-        recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT, ATO, CSV
-        range_input = 0  # ranging definition file, e.g. RNG, RRNG, ENV, FIG.TXT
+        recon_input = 0  # reconstruction relevant file e.g., POS, ePOS, APT, ATO, CSV
+        range_input = 0  # ranging definition file, e.g., RNG, RRNG, ENV, FIG.TXT
         other_input = 0  # generic ELN, Oasis-specific configurations
         apsui_input = 0  # manual yaml files composed from IVAS/AP Suite
         for suffix, value in self.case.items():
@@ -172,7 +179,6 @@ class ApmUseCaseSelector:
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
                 template[f"{prfx}/file_name"] = f"{fpath}"
-                template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
             prfx = var_path_to_spcfc_path(
@@ -182,7 +188,6 @@ class ApmUseCaseSelector:
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
                 template[f"{prfx}/file_name"] = f"{fpath}"
-                template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         # FAU/Erlangen's pyccapt control and calibration file have not functional
         # distinction which makes it non-trivial to decide if a given HDF5 qualifies

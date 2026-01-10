@@ -56,9 +56,9 @@ def is_valid_alpha3(code: str) -> bool:
 
 APT_MIME_TYPES = [
     # common file formats for acquisition, reconstruction, and ranging
+    ".apt",  # Cameca/APSuite APT file format currently most used
     ".pos",  # Cameca/IVAS position and mass-to-charge minimal result of reconstruction and mass-to-charge calibration
     ".epos",  # Cameca/IVAS extended POS file, additional data classically designed to assist open-source software development of data analysis algorithms
-    ".apt",  # Cameca/APSuite APT file format currently most used
     ".ato",  # Rouen, GPM
     ".csv",  # sometimes used serialization of reconstructions
     # ranging definitions
