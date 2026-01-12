@@ -51,7 +51,7 @@ class NxApmNomadOasisConfigParser:
                 )
         else:
             logger.warning(
-                f"Parser {self.__class__.__name__} needs oasis.specific.yaml file !"
+                f"Parser {self.__class__.__name__} needs oasis.specific.yaml file"
             )
 
     def check_if_supported(self):
@@ -64,7 +64,7 @@ class NxApmNomadOasisConfigParser:
                         logger.info(f"key: {key}, val: {val}")
                 self.supported = True
         except (FileNotFoundError, IOError):
-            logger.warning(f"{self.file_path} either FileNotFound or IOError !")
+            logger.warning(f"{self.file_path} either FileNotFound or IOError")
             return
 
     def parse(self, template: dict) -> dict:

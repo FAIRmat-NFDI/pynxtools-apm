@@ -19,14 +19,14 @@
 
 import numpy as np
 
-from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 from pynxtools_apm.utils.default_config import (
+    DEFAULT_COMPRESSION_LEVEL,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
 )
-from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 
 def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
@@ -89,13 +89,12 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         bins=(aabb["xedge"], aabb["yedge"], aabb["zedge"]),
     )
     del xyz
-    if isinstance(hist3d[0], np.ndarray) is False:
-        raise ValueError("Hist3d computation from the reconstruction failed!")
-    if len(np.shape(hist3d[0])) != 3:
-        raise ValueError("Hist3d computation from the reconstruction failed!")
+    if isinstance(hist3d[0], np.ndarray) is False or len(np.shape(hist3d[0])) != 3:
+        logger.warning("Hist3d computation from the reconstruction failed")
+        return template
     for idx in [0, 1, 2]:
         if np.shape(hist3d[0])[idx] == 0:
-            raise ValueError(f"Dimensions {idx} has no length!")
+            raise ValueError(f"Dimensions {idx} has no length")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/reconstruction/naive_discretization/"
     template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
@@ -174,13 +173,12 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
         np.linspace(mqmin, mqmax, num=nmqchrg, endpoint=True),
     )
     del m_z
-    if isinstance(hist1d[0], np.ndarray) is False:
-        raise ValueError("Hist1d computation from the mass spectrum failed!")
-    if len(np.shape(hist1d[0])) != 1:
-        raise ValueError("Hist1d computation from the mass spectrum failed!")
+    if isinstance(hist1d[0], np.ndarray) is False or len(np.shape(hist1d[0])) != 1:
+        logger.warning("Hist1d computation from the mass spectrum failed")
+        return template
     for idx in np.arange(0, 1):
         if np.shape(hist1d[0])[idx] == 0:
-            raise ValueError(f"Dimensions {idx} has no length!")
+            raise ValueError(f"Dimensions {idx} has no length")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/mass_to_charge_distribution/"
     template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME

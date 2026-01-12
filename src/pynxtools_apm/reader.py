@@ -67,7 +67,7 @@ class APMReader(BaseReader):
         case = ApmUseCaseSelector(file_paths)
         if not case.is_valid:
             logger.warning(
-                "Such a combination of input-file(s, if any) is not supported !"
+                "Such a combination of input-file(s, if any) is not supported"
             )
             return {}
         case.report_workflow(template, entry_id)

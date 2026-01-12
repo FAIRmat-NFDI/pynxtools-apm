@@ -72,7 +72,7 @@ class NxApmNomadOasisElnSchemaParser:
                     for key, val in self.yml.items():
                         logger.info(f"key: {key}, value: {val}")
         except (FileNotFoundError, IOError):
-            logger.warning(f"File {self.file_path} not found !")
+            logger.warning(f"File {self.file_path} not found")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
 
@@ -196,7 +196,7 @@ class NxApmNomadOasisElnSchemaParser:
                                     ]
                         laser_id += 1
                     return template
-        logger.warning("pulse_mode != voltage but no laser details specified!")
+        logger.warning("pulse_mode != voltage but no laser details specified")
         return template
 
     def parse(self, template: dict) -> dict:

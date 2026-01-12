@@ -153,6 +153,17 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     template[f"{trg}/@units"] = f"{hit_positions.units}"
     del hit_positions
 
+    trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/hit_multiplicity"
+    hit_multiplicity = epos_file.get_ions_per_pulse()
+    template[f"{trg}"] = {
+        "compress": np.asarray(hit_multiplicity.magnitude, np.uint32),
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(hit_multiplicity.magnitude, np.uint32), (0,)
+        ),
+    }
+    del hit_multiplicity
+
     # add multiplicity data from epos
     return template
 
@@ -646,6 +657,7 @@ class IfesReconstructionParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
+        self.supported = False
         self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
@@ -655,8 +667,9 @@ class IfesReconstructionParser:
             if file_path.lower().endswith(suffix):
                 self.meta["file_format"] = suffix
                 break
-        if self.meta["file_format"] is None:
-            raise ValueError(f"{file_path} is not a supported reconstruction file!")
+        if self.meta["file_format"] is not None:
+            self.supported = True
+        logger.warning(f"{file_path} is not a supported reconstruction file")
 
     def parse(self, template: dict) -> dict:
         """Copy data from self into template the appdef instance.
@@ -664,6 +677,8 @@ class IfesReconstructionParser:
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.
         """
+        if not self.supported:
+            return template
         prfx = f"/ENTRY[entry{self.meta['entry_id']}]"
         if self.meta["file_path"] != "" and self.meta["file_format"] is not None:
             if self.meta["file_format"] == ".apt":

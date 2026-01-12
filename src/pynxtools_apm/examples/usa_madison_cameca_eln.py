@@ -55,7 +55,7 @@ class NxApmCustomElnCamecaRoot:
                     for key, val in self.yml.items():
                         logger.info(f"key: {key}, value: {val}")
         except (FileNotFoundError, IOError):
-            logger.warning(f"File {self.file_path} not found !")
+            logger.warning(f"File {self.file_path} not found")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
 
@@ -202,7 +202,7 @@ class NxApmCustomElnCamecaRoot:
                             if len(element_multiplicity) != 2:
                                 raise ValueError(
                                     f"Line {line}, element multiplicity is not "
-                                    f"correctly formatted {len(element_multiplicity)}!"
+                                    f"correctly formatted {len(element_multiplicity)}"
                                 )
                             if (
                                 element_multiplicity[0] in chemical_symbols[1::]

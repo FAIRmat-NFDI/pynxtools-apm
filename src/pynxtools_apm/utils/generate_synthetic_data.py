@@ -253,7 +253,7 @@ class ApmCreateExampleData:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
         assert self.xyz != [], (
-            "self.xyz must not be an empty dataset, create a geometry first!"
+            "self.xyz must not be an empty dataset, create a geometry first"
         )
         # logger.debug(f"Accept/reject sampling m/q values for {np.shape(self.xyz)[0])} ions")
 
@@ -267,12 +267,12 @@ class ApmCreateExampleData:
             # logger.debug(self.nrm_composition[idx])
             # logger.debug(np.sum(mask) / np.shape(self.xyz)[0])
         # logger.debug(np.shape(self.m_z))
-        # assert np.sum(self.m_z == np.nan) == 0, "Not all m/q values defined!"
+        # assert np.sum(self.m_z == np.nan) == 0, "Not all m/q values defined"
 
     def composition_to_ranging_definitions(self, template: dict) -> dict:
         """Create ranging definitions based on composition."""
         raise NotImplementedError()
-        assert len(self.nrm_composition) > 0, "Composition is not defined!"
+        assert len(self.nrm_composition) > 0, "Composition is not defined"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/"
         template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
         template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
@@ -377,12 +377,12 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # logger.debug("Parsing specimen...")
         trg = f"/ENTRY[entry{self.entry_id}]/specimen/"
-        assert len(self.nrm_composition) > 0, "Composition list is empty!"
+        assert len(self.nrm_composition) > 0, "Composition list is empty"
         unique_elements = set()
         for tpl in self.nrm_composition:
             symbol_lst = tpl[0]
             for symbol in symbol_lst:
-                assert isinstance(symbol, str), "symbol is not a string!"
+                assert isinstance(symbol, str), "symbol is not a string"
                 if (symbol in chemical_symbols) & (symbol != "X"):
                     unique_elements.add(str(symbol))
         logger.debug(f"Unique elements are: {list(unique_elements)}")

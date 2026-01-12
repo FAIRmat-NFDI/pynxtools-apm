@@ -309,6 +309,7 @@ class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
+        self.supported = False
         self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
@@ -318,10 +319,9 @@ class IfesRangingDefinitionsParser:
             if file_path.lower().endswith(suffix):
                 self.meta["file_format"] = suffix
                 break
-        if self.meta["file_format"] is None:
-            raise ValueError(
-                f"{file_path} is not a supported ranging definitions file!"
-            )
+        if self.meta["file_format"] is not None:
+            self.supported = True
+        logger.warning(f"{file_path} is not a supported ranging definitions file")
 
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
@@ -367,6 +367,8 @@ class IfesRangingDefinitionsParser:
         with the application definition.
         """
         # resolve the next two program references more informatively
+        if not self.supported:
+            return template
         trg = (
             f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
             f"ranging/peak_identification/"
