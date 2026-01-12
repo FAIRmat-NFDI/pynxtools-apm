@@ -17,6 +17,7 @@
 #
 """Implement NeXus-specific groups and fields to document software and versions used."""
 
+from ifes_apt_tc_data_modeling._version import version as ifes_lib_version
 from pynxtools._version import version as pynx_core_version
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
@@ -28,12 +29,17 @@ APM_PYNX_TO_NEXUS = {
     "use": [
         ("programID[program1]/program", PYNX_APM_NAME),
         ("programID[program1]/program/@version", PYNX_APM_VERSION),
-        ("programID[program2]/program", "pynxtools/dataconverter"),
+        ("programID[program2]/program", "pynxtools"),
         (
             "programID[program2]/program/@version",
             f"{pynx_core_version}"
             if pynx_core_version is not None
             else "UNKNOWN COMMIT",
+        ),
+        ("programID[program3]/program", "ifes_apt_tc_data_modeling"),
+        (
+            "programID[program3]/program/@version",
+            f"{ifes_lib_version}" if ifes_lib_version is not None else "UNKNOWN COMMIT",
         ),
     ],
 }
