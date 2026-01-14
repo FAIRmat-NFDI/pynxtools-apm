@@ -40,13 +40,10 @@ from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 from pynxtools_apm.utils.load_ranging import add_unknown_iontype
 
-# do not use ase directly any longer for NIST isotopes, instead this syntatic equivalent
+# do not use ase directly any longer for NIST isotopes, instead this syntactic equivalent
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
-from pynxtools_apm.utils.versioning import (
-    PYNX_APM_NAME,
-    PYNX_APM_VERSION,
-)
+from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 # parameter affecting reconstructed positions and size
 CRYSTAL_ORIENTATION = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -70,7 +67,7 @@ class ApmCreateExampleData:
     def __init__(self, synthesis_id):
         """Construct class."""
         raise NotImplementedError()
-        # assure deterministic behaviour of the PRNG
+        # assure PRNG yields a deterministic sequence
         np.random.seed(seed=synthesis_id)
 
         self.n_entries = 1
@@ -448,9 +445,7 @@ class ApmCreateExampleData:
                 1,
             )[0]
         )
-        template[f"{trg}serial_number"] = str(
-            hashlib.sha256("IVAS".encode("utf-8")).hexdigest()
-        )
+        template[f"{trg}serial_number"] = str(hashlib.sha256(b"IVAS").hexdigest())
         # template[f"{trg}capabilities"] = ""
         return template
 

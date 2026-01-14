@@ -2,7 +2,8 @@ cff-version: 1.2.0
 title: 'pynxtools-apm: A pynxtools reader plugin for atom probe tomography and related field-ion microscopy (APM) data'
 version: 0.4.2
 message:
-  If you use this software, please cite it using the metadata from this file.
+  If you use this software, please cite it using the
+  metadata from this file.
 type: software
 authors:
   - given-names: Markus
@@ -30,12 +31,12 @@ doi: 10.5281/zenodo.14263076
 repository-code: https://github.com/FAIRmat-NFDI/pynxtools-apm
 url: https://zenodo.org/records/14263076
 keywords:
+  - NeXus
+  - pynxtools
+  - NOMAD
   - Atom probe tomography
   - Field ion microscopy
   - Microscopy
-  - NOMAD
-  - pynxtools
-  - NeXus
 abstract:
   pynxtools-apm is a reader plugin for pynxtools (https://github.com/FAIRmat-NFDI/pynxtools)
   written in Python. pynxtools-apm is a tool for reading and translating data from various proprietary
@@ -48,7 +49,7 @@ abstract:
 
   The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat)
   (https://gepris.dfg.de/gepris/projekt/460197019?language=en).
-license: Apache-2.0
+license: Apache Software License 2.0
 funding:
   - name: Deutsche Forschungsgemeinschaft
     award-number: 460197019

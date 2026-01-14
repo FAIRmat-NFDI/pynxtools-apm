@@ -120,7 +120,7 @@ def parse_human_readable_composition_information(eln_input):
 def parse_composition_table(composition_list):
     """Check if all the entries in the composition list yield a valid composition table."""
     composition_table = {}
-    # check that there are no contradictions or inconsistenc
+    # check that there are no contradictions or inconsistence
     for entry in composition_list:
         instruction, element, composition, stdev, normalization = (
             parse_human_readable_composition_information(entry)

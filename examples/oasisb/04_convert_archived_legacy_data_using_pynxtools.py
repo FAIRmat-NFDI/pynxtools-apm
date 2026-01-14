@@ -57,9 +57,9 @@ config: dict[str, str | int] = {
 
 DEFAULT_LOGGER_NAME = "scidat_nomad_apt_process"
 logger = logging.getLogger(DEFAULT_LOGGER_NAME)
-ffmt = "%(levelname)s %(asctime)s %(message)s"
-tfmt = "%Y-%m-%dT%H:%M:%S.%z"  # .%f%z"
-formatter = logging.Formatter(ffmt, tfmt)
+line_formatting = "%(levelname)s %(asctime)s %(message)s"
+time_formatting = "%Y-%m-%dT%H:%M:%S.%z"  # .%f%z"
+formatter = logging.Formatter(line_formatting, time_formatting)
 
 
 def switch_root_logfile(filename, log_level=logging.DEBUG):
@@ -122,7 +122,7 @@ output_file_path_prefix = f"{config['target_directory']}{os.sep}nexus_hfive"
 
 for row_idx in range(spread_sheet_of_project.shape[0]):
     eln_file_path = generate_eln_data_yaml(
-        project_name, row_idx, output_file_path_prefix, bib
+        project_name, row_idx, output_file_path_prefix, bib  # type: ignore
     )
     if eln_file_path == "":
         continue
@@ -154,7 +154,7 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
         file_path = (
             f"{input_file_path_prefix}{os.sep}"
             f"{project_name}.{row_idx}.{col_idx}."
-            f"{file_to_hash[value]}."
+            f"{file_to_hash[value]}."  # type: ignore
             f"{value.rsplit('.', 1)[-1].lower()}"  # type: ignore
         )
         pynx_apm_input_files.append(file_path)

@@ -28,6 +28,7 @@ pynxtools-apm is useful for scientists from the atom probe community, for techno
 
 - [Installation guide](tutorial/installation.md)
 - [Standalone usage](tutorial/standalone.md)
+- [Development guide](tutorial/contributing.md)
 <!-- - [How to use a NeXus/HDF5 file](tutorial/nexusio.md)
 - [Convert data to NeXus using NOMAD Oasis](tutorial/oasis.md) -->
 
@@ -41,7 +42,7 @@ pynxtools-apm is useful for scientists from the atom probe community, for techno
 </div>
 <div markdown="block">
 
-### Explanation
+### Learn
 <!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type explanation.-->
 
 - [Scope and idea](explanation/learn.md)
@@ -79,10 +80,16 @@ respective file formats of the atom probe tomography and field-ion microscopy co
 </div>
 </div>
 
+<h2> Contact </h2>
+
+For questions or suggestions:
+
+- Open an issue on the [`pynxtools-apm` GitHub](https://github.com/FAIRmat-NFDI/pynxtools-apm/issues)
+- Join our [Discord channel](https://discord.gg/Gyzx3ukUw8)
+- Get in contact with our [lead developers](contact.md).
+
 <h2>Project and community</h2>
 
-- [NOMAD code guidelines](https://nomad-lab.eu/prod/v1/staging/docs/reference/code_guidelines.html) 
-
-Any questions or suggestions? [Get in touch!](https://www.fair-di.eu/fairmat/about-fairmat/team-fairmat)
+- [NOMAD code guidelines](https://nomad-lab.eu/prod/v1/staging/docs/reference/code_guidelines.html)
 
 [The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat).](https://gepris.dfg.de/gepris/projekt/460197019?language=en)

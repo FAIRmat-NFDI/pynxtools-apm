@@ -31,7 +31,6 @@ from ifes_apt_tc_data_modeling.pyccapt.pyccapt_reader import (
     ReadPyccaptCalibrationFileFormat,
 )
 from ifes_apt_tc_data_modeling.stuttgart.apyt_reader import (
-    ReadStuttgartApytMetadataFileFormat,
     ReadStuttgartApytReconstructionFileFormat,
     ReadStuttgartApytSpectrumAlignFileFormat,
 )
@@ -201,7 +200,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         template[f"{trg}/@units"] = f"{m_z.units}"
     del m_z
     # all less explored optional branches in an APT6 file can also already
-    # be accessed via the aptfile.get_named_quantity function
+    # be accessed via the apt_file.get_named_quantity function
     # but it needs to be checked if this returns reasonable values
     # and specifically what these values logically mean, interaction with
     # Cameca as well as the community is vital here
@@ -672,7 +671,7 @@ class IfesReconstructionParser:
         logger.warning(f"{file_path} is not a supported reconstruction file")
 
     def parse(self, template: dict) -> dict:
-        """Copy data from self into template the appdef instance.
+        """Copy data from self into template the application definition instance.
 
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.

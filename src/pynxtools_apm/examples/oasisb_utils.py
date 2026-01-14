@@ -92,7 +92,7 @@ CSV_HEADER_FOR_HASH_FILE = "file_path:archive_path;byte_size;unix_mtime;sha256su
 
 def generate_file_to_hash(hash_values_in_csv_file_path: str) -> dict[str, str]:
     """Create a dictionary for looking up a hash value to an entry in a cell in a project configuration file."""
-    with open(hash_values_in_csv_file_path, "r") as fp:
+    with open(hash_values_in_csv_file_path) as fp:
         start = next(
             idx for idx, line in enumerate(fp) if CSV_HEADER_FOR_HASH_FILE in line
         )
@@ -111,8 +111,8 @@ def generate_file_to_hash(hash_values_in_csv_file_path: str) -> dict[str, str]:
 
 DEFAULT_LOGGER_NAME = "convert_legacy_data"
 logger = logging.getLogger(DEFAULT_LOGGER_NAME)
-ffmt = "%(levelname)s %(asctime)s %(message)s"
-tfmt = "%Y-%m-%dT%H:%M:%S.%z"  # .%f%z"
-formatter = logging.Formatter(ffmt, tfmt)
+line_formatting = "%(levelname)s %(asctime)s %(message)s"
+time_formatting = "%Y-%m-%dT%H:%M:%S.%z"  # .%f%z"
+formatter = logging.Formatter(line_formatting, time_formatting)
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

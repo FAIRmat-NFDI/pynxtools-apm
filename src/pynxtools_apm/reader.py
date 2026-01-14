@@ -30,7 +30,6 @@ from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
 from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
 from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
-from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
 from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
@@ -82,7 +81,7 @@ class APMReader(BaseReader):
             nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
             nx_apm_eln.parse(template)
 
-        logger.debug("Parse NeXus appdef-specific content...")
+        logger.debug("Parse NeXus application definition-specific content...")
         nxs = NxApmAppDef(entry_id)
         nxs.parse(template)
 

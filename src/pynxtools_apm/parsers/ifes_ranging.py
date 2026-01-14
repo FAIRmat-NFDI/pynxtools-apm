@@ -47,13 +47,8 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 
 from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
-from pynxtools_apm.utils.io_case_logic import (
-    VALID_FILE_NAME_SUFFIX_RANGE,
-)
-from pynxtools_apm.utils.versioning import (
-    PYNX_APM_NAME,
-    PYNX_APM_VERSION,
-)
+from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RANGE
+from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 WARNING_TOO_MANY_DEFINITIONS = f"More than {MAX_NUMBER_OF_ION_SPECIES} ranging definitions. Check if there are duplicates."
 from pynxtools_apm.utils.custom_logging import logger
@@ -361,7 +356,7 @@ class IfesRangingDefinitionsParser:
         return template
 
     def parse(self, template: dict) -> dict:
-        """Copy data from self into template the appdef instance.
+        """Copy data from self into template the application definition instance.
 
         Paths in template are prefixed by prefix and have to be compliant
         with the application definition.

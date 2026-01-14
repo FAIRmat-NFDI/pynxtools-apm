@@ -15,24 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility tool constants and versioning."""
+"""Tests for the NOMAD app."""
 
-from pynxtools_apm._version import version as pynx_apm_version
+import pytest
 
-NX_APM_ADEF_NAME = "NXapm"
-PYNX_APM_NAME = "pynxtools-apm/reader.py"
-
-
-def get_apm_exec_version() -> str:
-    # TODO:deprecate, remove when versions are properly resolved with the next NOMAD release
-    # then also remove the function call altogether
-    # tag = get_repo_last_commit()
-    # if tag is not None:
-    #     return f"https://github.com/FAIRmat-NFDI/pynxtools-em/commit/{tag}"
-    if pynx_apm_version is not None:
-        return f"{pynx_apm_version}"
-    else:
-        return "UNKNOWN COMMIT"
+try:
+    import nomad  # noqa: F401
+except ImportError:
+    pytest.skip(
+        "Skipping NOMAD app tests because nomad-lab is not installed",
+        allow_module_level=True,
+    )
 
 
-PYNX_APM_VERSION = get_apm_exec_version()
+def test_importing_app():
+    # this will raise an exception if pydantic model validation fails for the app
+    from pynxtools_apm.nomad.apps import apm_app_entry_point  # noqa: PLC0415
+
+    assert apm_app_entry_point.app.label == "APM"

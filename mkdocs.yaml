@@ -1,4 +1,4 @@
-site_name: Documentation
+site_name: Documentation for pynxtools-apm
 site_description: |
   The documentation for the pynxtools-apm plugin.
 site_author: The NOMAD Authors
@@ -10,11 +10,12 @@ nav:
   - Tutorials:
     - tutorial/installation.md
     - tutorial/standalone.md
+    - tutorial/contributing.md
     # - tutorial/nexusio.md
     # - tutorial/oasis.md
   # - How-To:
   #    - how-tos/howto.md
-  - Explanation:
+  - Learn:
     - explanation/learn.md
     # - explanation/apmapp.md
     - explanation/issues.md
@@ -41,8 +42,6 @@ nav:
 
 plugins:
   - search
-  - macros:
-      module_name: src/pynxtools_apm/mkdocs
 
 theme:
   name: material
@@ -58,6 +57,7 @@ theme:
     - navigation.footer
     - content.code.copy
     - content.code.annotate
+    - search.suggest
   custom_dir: docs/theme
   icon:
     repo: fontawesome/brands/github
@@ -78,6 +78,8 @@ markdown_extensions:
   - pymdownx.emoji
   - mkdocs-click
   - pymdownx.extra
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

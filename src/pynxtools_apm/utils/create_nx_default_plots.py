@@ -112,7 +112,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         ".",
     ]
     # there is an issue lately with H5Web in how it reads default_slice
-    # both options, the abovementioned and this one should work but with
+    # both options, the above-mentioned and this one should work but with
     # jupyterlab_h5web 12.4.0 and hgrove 2.3.0
     # template[f"{trg}@default_slice"] = []
     # for dim in ["x", "y", "z"]:
@@ -132,7 +132,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     template[f"{trg}@axes"] = axes
 
     # mind that histogram does not follow Cartesian conventions so a transpose
-    # might be necessary, for now we implement the transpose in the appdef
+    # might be necessary, for now we implement the transpose in the application definition
     template[f"{trg}intensity"] = {
         "compress": np.asarray(hist3d[0], np.uint32),
         "strength": DEFAULT_COMPRESSION_LEVEL,
@@ -163,14 +163,26 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
 
     logger.debug(f"\tEnter mass spectrum computation, np.shape(m_z) {np.shape(m_z)}")
     # the next three in u
-    mqmin = 0.0
-    mqincr = MASS_SPECTRUM_DEFAULT_BINNING.magnitude
-    mqmax = np.ceil(np.max(m_z[:]))
-    nmqchrg = int(np.ceil((mqmax - mqmin) / mqincr)) + 1
+    mass_to_charge_min = 0.0
+    mass_to_charge_increment = MASS_SPECTRUM_DEFAULT_BINNING.magnitude
+    mass_to_charge_max = np.ceil(np.max(m_z[:]))
+    number_mass_to_charge_bins = (
+        int(
+            np.ceil(
+                (mass_to_charge_max - mass_to_charge_min) / mass_to_charge_increment
+            )
+        )
+        + 1
+    )
 
     hist1d = np.histogram(
         m_z[:],
-        np.linspace(mqmin, mqmax, num=nmqchrg, endpoint=True),
+        np.linspace(
+            mass_to_charge_min,
+            mass_to_charge_max,
+            num=number_mass_to_charge_bins,
+            endpoint=True,
+        ),
     )
     del m_z
     if isinstance(hist1d[0], np.ndarray) is False or len(np.shape(hist1d[0])) != 1:
@@ -184,11 +196,11 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
     template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
 
-    template[f"{trg}min_mass_to_charge"] = np.float32(mqmin)
+    template[f"{trg}min_mass_to_charge"] = np.float32(mass_to_charge_min)
     template[f"{trg}min_mass_to_charge/@units"] = "Da"
-    template[f"{trg}max_mass_to_charge"] = np.float32(mqmax)
+    template[f"{trg}max_mass_to_charge"] = np.float32(mass_to_charge_max)
     template[f"{trg}max_mass_to_charge/@units"] = "Da"
-    template[f"{trg}n_mass_to_charge"] = np.uint32(nmqchrg)
+    template[f"{trg}n_mass_to_charge"] = np.uint32(number_mass_to_charge_bins)
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/"
         f"mass_to_charge_distribution/mass_spectrum/"
@@ -224,7 +236,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
 
 
 def apm_default_plot_generator(template: dict, entry_id: int) -> dict:
-    """Copy data from self into template the appdef instance."""
+    """Copy data from self into template the application definition instance."""
     logger.debug("Create default plots on-the-fly...")
     # default plot is histogram of mass-to-charge-state-ratio values (aka mass spectrum)
     # naively discretized 3D reconstruction as a fallback

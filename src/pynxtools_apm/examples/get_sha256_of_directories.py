@@ -146,7 +146,7 @@ def analyze_rar_file(
 ):
     """Get metadata about rarfile and recursively compute SHA256 hash for each of its files."""
     byte_size = 0
-    if fpath.lower().endswith((".rar")):
+    if fpath.lower().endswith(".rar"):
         try:
             fpath_stripped = fpath.replace(right_stripped, "")
             with rarfile.RarFile(fpath, "r") as rar_file_hdl:
@@ -176,13 +176,13 @@ def analyze_sevenzip_file(
 ):
     """Get metadata about 7z file and recursively compute SHA256 hash for each of its files."""
     byte_size = 0
-    if fpath.lower().endswith((".7z")):
+    if fpath.lower().endswith(".7z"):
         try:
             fpath_stripped = fpath.replace(right_stripped, "")
             with py7zr.SevenZipFile(fpath, "r") as seven_file_hdl:
                 mdata: dict[str, dict[str, str | int]] = {}
                 for obj in seven_file_hdl.list():
-                    if obj.uncompressed > 0:  # do not bookkeep directories in that 7z
+                    if obj.uncompressed > 0:  # no bookkeeping of directories in that 7z
                         key = obj.filename
                         if key not in mdata:
                             mdata[key] = {}
