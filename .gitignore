@@ -206,4 +206,5 @@ tests/run_tests.sh
 .virtual_documents
 tests/data
 tests/prod
+src/pynxtools_apm/_version.py
 examples/oasisb/old
