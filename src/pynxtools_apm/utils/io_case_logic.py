@@ -17,9 +17,7 @@
 #
 """Utility class to analyze which vendor/community files are passed to apm reader."""
 
-from typing import Dict, List, Tuple
-
-from pynxtools_apm.concepts.mapping_functors_pint import var_path_to_spcfc_path
+from pynxtools_apm.concepts.mapping_functors_pint import var_path_to_specific_path
 from pynxtools_apm.utils.get_checksum import (
     DEFAULT_CHECKSUM_ALGORITHM,
     get_sha256_of_file_content,
@@ -46,18 +44,18 @@ class ApmUseCaseSelector:
     too much input. The UseCaseSelector decide what to do in each case.
     """
 
-    def __init__(self, file_paths: Tuple[str] = None):
+    def __init__(self, file_paths: tuple[str] = None):
         """Initialize the class.
 
         dataset injects numerical data and metadata from an analysis.
         eln injects additional metadata and eventually numerical data.
         """
-        self.case: Dict[str, list] = {}
-        self.eln: List[str] = []
-        self.cfg: List[str] = []
-        self.apsuite: List[str] = []
-        self.reconstruction: List[str] = []
-        self.ranging: List[str] = []
+        self.case: dict[str, list] = {}
+        self.eln: list[str] = []
+        self.cfg: list[str] = []
+        self.apsuite: list[str] = []
+        self.reconstruction: list[str] = []
+        self.ranging: list[str] = []
         self.is_valid = False
         self.supported_file_name_suffixes = (
             VALID_FILE_NAME_SUFFIX_RECON
@@ -72,7 +70,7 @@ class ApmUseCaseSelector:
         self.sort_files_by_file_name_suffix(file_paths)
         self.check_validity_of_file_combinations()
 
-    def sort_files_by_file_name_suffix(self, file_paths: Tuple[str] = None):
+    def sort_files_by_file_name_suffix(self, file_paths: tuple[str] = None):
         """Sort all input-files based on their name suffix to prepare validity check."""
         for suffix in self.supported_file_name_suffixes:
             self.case[suffix] = []
@@ -100,7 +98,7 @@ class ApmUseCaseSelector:
         recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT, ATO, CSV
         range_input = 0  # ranging definition file, e.g. RNG, RRNG, ENV, FIG.TXT
         other_input = 0  # generic ELN, Oasis-specific configurations
-        apsui_input = 0  # manual yaml files composed from IVAS/AP Suite
+        apsuite_input = 0  # manual yaml files composed from IVAS/AP Suite
         for suffix, value in self.case.items():
             if suffix not in [".h5", "range_.h5"]:
                 if suffix in VALID_FILE_NAME_SUFFIX_RECON:
@@ -110,7 +108,7 @@ class ApmUseCaseSelector:
                 elif suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
                     other_input += len(value)
                 elif suffix in VALID_FILE_NAME_SUFFIX_CAMECA:
-                    apsui_input += len(value)
+                    apsuite_input += len(value)
                 else:
                     continue
             else:
@@ -122,13 +120,13 @@ class ApmUseCaseSelector:
 
         # if 1 <= other_input <= 2:  # and (recon_input == 1) and (range_input == 1)
         self.is_valid = True
-        self.reconstruction: List[str] = []
-        self.ranging: List[str] = []
+        self.reconstruction: list[str] = []
+        self.ranging: list[str] = []
         for suffix in VALID_FILE_NAME_SUFFIX_RECON:
             self.reconstruction += self.case[suffix]
         for suffix in VALID_FILE_NAME_SUFFIX_RANGE:
             self.ranging += self.case[suffix]
-        yml: List[str] = []
+        yml: list[str] = []
         for suffix in VALID_FILE_NAME_SUFFIX_CONFIG:
             yml += self.case[suffix]
         for entry in yml:
@@ -153,7 +151,7 @@ class ApmUseCaseSelector:
         # populate automatically input-files used
         # rely on assumption made in check_validity_of_file_combination
         for fpath in self.reconstruction:
-            prfx = var_path_to_spcfc_path(
+            prfx = var_path_to_specific_path(
                 "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction/results",
                 identifier,
             )
@@ -163,7 +161,7 @@ class ApmUseCaseSelector:
                 template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
-            prfx = var_path_to_spcfc_path(
+            prfx = var_path_to_specific_path(
                 "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging/source",
                 identifier,
             )

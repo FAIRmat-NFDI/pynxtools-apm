@@ -17,7 +17,6 @@
 #
 """Utility tool constants and versioning."""
 
-# from pynxtools_apm.utils.get_gitrepo_commit import get_repo_last_commit
 from pynxtools_apm.utils._version import version as __version__
 
 NX_APM_ADEF_NAME = "NXapm"

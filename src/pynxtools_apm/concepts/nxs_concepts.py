@@ -31,7 +31,7 @@ APM_PYNX_TO_NEXUS = {
 
 
 class NxApmAppDef:
-    """Add NeXus NXapm appdef specific contextualization."""
+    """Add NeXus NXapm application definition specific contextualization."""
 
     def __init__(self, entry_id: int = 1):
         self.entry_id = entry_id

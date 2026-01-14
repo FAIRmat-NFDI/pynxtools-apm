@@ -26,7 +26,6 @@ from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_p
 from pynxtools_apm.configurations.oasis_eln_config_cfg import (
     OASISCFG_APM_CITATION_TO_NEXUS,
     OASISCFG_APM_CSYS_TO_NEXUS,
-    OASISCFG_APM_TO_NEXUS,
 )
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.get_checksum import get_sha256_of_file_content
@@ -57,13 +56,13 @@ class NxApmNomadOasisConfigParser:
     def check_if_supported(self):
         self.supported = False
         try:
-            with open(self.file_path, "r", encoding="utf-8") as stream:
+            with open(self.file_path, encoding="utf-8") as stream:
                 self.flat_metadata = fd.FlatDict(yaml.safe_load(stream), "/")
                 if self.verbose:
                     for key, val in self.flat_metadata.items():
                         logger.info(f"key: {key}, val: {val}")
                 self.supported = True
-        except (FileNotFoundError, IOError):
+        except (OSError, FileNotFoundError):
             logger.warning(f"{self.file_path} either FileNotFound or IOError !")
             return
 
@@ -85,19 +84,19 @@ class NxApmNomadOasisConfigParser:
         if src in self.flat_metadata:
             if isinstance(self.flat_metadata[src], list):
                 if all(isinstance(entry, dict) for entry in self.flat_metadata[src]):
-                    csys_id = 1
+                    coordinate_system_id = 1
                     # custom schema delivers a list of dictionaries...
-                    for csys_dict in self.flat_metadata[src]:
-                        if len(csys_dict) == 0:
+                    for coordinate_system_dict in self.flat_metadata[src]:
+                        if len(coordinate_system_dict) == 0:
                             continue
-                        identifier = [self.entry_id, csys_id]
+                        identifier = [self.entry_id, coordinate_system_id]
                         add_specific_metadata_pint(
                             OASISCFG_APM_CSYS_TO_NEXUS,
-                            csys_dict,
+                            coordinate_system_dict,
                             identifier,
                             template,
                         )
-                        csys_id += 1
+                        coordinate_system_id += 1
         return template
 
     def parse_example(self, template: dict) -> dict:

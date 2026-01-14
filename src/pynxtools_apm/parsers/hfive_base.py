@@ -19,22 +19,13 @@
 
 # taken from pynxtools-em, eventually should be made a part of pynxtools like hfive_utils
 
-from typing import Dict, List
-
 import h5py
 import numpy as np
 import yaml
 
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.get_checksum import get_sha256_of_bytes_object
-from pynxtools_apm.utils.hfive_concepts import (
-    IS_ATTRIBUTE,
-    IS_COMPOUND_DATASET,
-    IS_FIELD_IN_COMPOUND_DATASET,
-    IS_GROUP,
-    IS_REGULAR_DATASET,
-    Concept,
-)
+from pynxtools_apm.utils.hfive_concepts import Concept
 
 # the base parser implements the processing of standardized orientation maps via
 # the pyxem software package from the electron microscopy community
@@ -52,7 +43,7 @@ from pynxtools_apm.utils.hfive_concepts import (
 # towards more interoperability between the different tools in the community
 
 # object timestamps are low-level features of HDF5 that if activated
-# would still render HDF5 files binarily different even though each
+# would still render HDF5 files whose binary content differs even though each
 # entry and payload in the content tree is the same binary content
 # however, these internal library administrative timestamps have been
 # are in newer versions of hdf5 deactivated by default see here:
@@ -62,6 +53,26 @@ from pynxtools_apm.utils.hfive_concepts import (
 # to the best of my knowledge hence comparing two versions of HDF5 files
 # with h5diff is useful but if done in unit testing typically generate
 # two long text outputs via stdout that are maybe more difficult to
+
+
+def only_finite_payload(obj, payload) -> str:
+    """Analyze if dat contains malformed values (NaN, Inf, etc.)"""
+    if obj[...].dtype.kind in "iufc":
+        if isinstance(payload, np.ndarray) and payload.size > 1:
+            if np.all(np.isfinite(payload)):
+                return "all_finite"
+            else:
+                return "not_all_finite"
+        else:
+            if payload.size == 1:
+                if np.all(np.isfinite(payload)):
+                    return "all_finite"
+                else:
+                    return "not_all_finite"
+            else:
+                return "issue_with_scalars"
+    return "non_iufc"
+
 
 NXAPM_VOLATILE_NAMED_HDF_PATHS = (
     "/@HDF5_Version",
@@ -74,7 +85,7 @@ NXAPM_VOLATILE_NAMED_HDF_PATHS = (
     # "entry1/profiling/template_filling_elapsed_time/@units"
 )
 NXAPM_VOLATILE_SUFFIX_HDF_PATHS = (
-    "@axes",  # as these are stored as by default as byte objects vlen string array
+    "@axes",  # as these are stored as by default as byte objects variable length string array
     "file_name",  # if these include the full path the absolute path may differ between
     # test and production data
 )
@@ -82,7 +93,11 @@ NXAPM_VOLATILE_SUFFIX_HDF_PATHS = (
 
 class HdfFiveBaseParser:
     def __init__(
-        self, file_path: str = "", hashing: bool = True, verbose: bool = False
+        self,
+        file_path: str = "",
+        hashing: bool = True,
+        malformed: bool = False,
+        verbose: bool = False,
     ):
         # tech_partner the company which designed this format
         # schema_name the specific name of the family of schemas supported by this reader
@@ -95,35 +110,40 @@ class HdfFiveBaseParser:
         if file_path:
             self.file_path = file_path
         self.prfx: str = ""
-        self.tmp: Dict = {}
+        self.tmp: dict = {}
         self.source: str = ""
         # collection of instance path
-        self.groups: Dict = {}
-        self.datasets: Dict = {}
-        self.attributes: Dict = {}
-        self.instances: Dict = {}
+        self.groups: dict = {}
+        self.datasets: dict = {}
+        self.attributes: dict = {}
+        self.instances: dict = {}
         # collection of template
-        self.template_groups: List = []
-        self.template_datasets: List = []
-        self.template_attributes: List = []
-        self.templates: Dict = {}
+        self.template_groups: list = []
+        self.template_datasets: list = []
+        self.template_attributes: list = []
+        self.templates: dict = {}
         self.h5r = None
         self.is_hdf = True  # TODO::check if HDF5 file using magic cookie
         self.hashing = hashing
+        self.malformed = malformed
         self.verbose = verbose
 
-    def init_cache(self, ckey: str) -> str:
+    def init_cache(self, cache_key: str) -> str:
         """Init a new cache for normalized EBSD data if not existent."""
         # purpose of the cache is to hold normalized information
-        if ckey not in self.tmp:
-            self.tmp[ckey] = {}  # reset to {} upon incomplete collection of the cache
-            return ckey
+        if cache_key not in self.tmp:
+            self.tmp[
+                cache_key
+            ] = {}  # reset to {} upon incomplete collection of the cache
+            return cache_key
         else:
-            raise ValueError(f"Existent named cache {ckey} must not be overwritten !")
+            raise ValueError(
+                f"Existent named cache {cache_key} must not be overwritten !"
+            )
 
-    def clear_cache(self, ckey: str):
-        if ckey in self.tmp:
-            self.tmp.pop(ckey)
+    def clear_cache(self, cache_key: str):
+        if cache_key in self.tmp:
+            self.tmp.pop(cache_key)
 
     def open(self):
         if self.h5r is None:
@@ -138,6 +158,8 @@ class HdfFiveBaseParser:
         # only h5py datasets have dtype attribute, so we can search on this
         if isinstance(h5obj, h5py.Dataset):
             if node_name not in self.datasets:
+                if self.verbose:
+                    print(node_name)
                 if hasattr(h5obj, "dtype"):
                     if hasattr(h5obj.dtype, "fields") and hasattr(h5obj.dtype, "names"):
                         if h5obj.dtype.names is not None:
@@ -148,6 +170,9 @@ class HdfFiveBaseParser:
                                 h5obj[0],
                                 f"{h5obj.dtype}__{get_sha256_of_bytes_object(h5obj[()])}"
                                 if self.hashing
+                                else "",
+                                f"{only_finite_payload(h5obj, h5obj[()])}"
+                                if self.malformed
                                 else "",
                             )
                             self.instances[node_name] = Concept(
@@ -169,6 +194,9 @@ class HdfFiveBaseParser:
                                         h5obj.fields(name)[0],
                                         f"{h5obj.fields(name)[()].dtype}__{get_sha256_of_bytes_object(h5obj.fields(name)[()])}"
                                         if self.hashing
+                                        else "",
+                                        f"{only_finite_payload(h5obj, h5obj.fields(name)[()])}"
+                                        if self.malformed
                                         else "",
                                     )
                                     self.instances[f"{node_name}/{name}"] = Concept(
@@ -195,6 +223,9 @@ class HdfFiveBaseParser:
                                     f"{h5obj.ndim}__{h5obj.shape}__{h5obj.dtype.name}__{get_sha256_of_bytes_object(h5obj[()])}"
                                     if self.hashing
                                     else "",
+                                    f"{only_finite_payload(h5obj, h5obj[()])}"
+                                    if self.malformed
+                                    else "",
                                 )
                                 self.instances[node_name] = Concept(
                                     node_name,
@@ -215,6 +246,9 @@ class HdfFiveBaseParser:
                                         f"{h5obj.ndim}__{h5obj.shape}__{h5obj.dtype.name}__{get_sha256_of_bytes_object(h5obj[()])}"
                                         if self.hashing
                                         else "",
+                                        f"{only_finite_payload(h5obj, h5obj[()])}"
+                                        if self.malformed
+                                        else "",
                                     )
                                     self.instances[node_name] = Concept(
                                         node_name,
@@ -233,6 +267,9 @@ class HdfFiveBaseParser:
                                         h5obj[()],
                                         f"{h5obj.ndim}__{h5obj.shape}__{h5obj.dtype.name}__{get_sha256_of_bytes_object(h5obj[()])}"
                                         if self.hashing
+                                        else "",
+                                        f"{only_finite_payload(h5obj, h5obj[()])}"
+                                        if self.malformed
                                         else "",
                                     )
                                     self.instances[node_name] = Concept(
@@ -253,6 +290,9 @@ class HdfFiveBaseParser:
                                     f"{h5obj.ndim}__{h5obj.shape}__{h5obj.dtype.name}__{get_sha256_of_bytes_object(h5obj[()])}"
                                     if self.hashing
                                     else "",
+                                    f"{only_finite_payload(h5obj, h5obj[()])}"
+                                    if self.malformed
+                                    else "",
                                 )
                                 self.instances[node_name] = Concept(
                                     node_name,
@@ -272,6 +312,9 @@ class HdfFiveBaseParser:
                                     f"{h5obj.ndim}__{h5obj.shape}__{h5obj.dtype.name}__{get_sha256_of_bytes_object(h5obj[()])}"
                                     if self.hashing
                                     else "",
+                                    f"{only_finite_payload(h5obj, h5obj[()])}"
+                                    if self.malformed
+                                    else "",
                                 )
                                 self.instances[node_name] = Concept(
                                     node_name,
@@ -290,6 +333,9 @@ class HdfFiveBaseParser:
                                     None,
                                     f"{h5obj.ndim}__{h5obj.shape}__{h5obj.dtype.name}__{get_sha256_of_bytes_object(h5obj[()])}"
                                     if self.hashing
+                                    else "",
+                                    f"{only_finite_payload(h5obj, h5obj[()])}"
+                                    if self.malformed
                                     else "",
                                 )
                                 self.instances[node_name] = Concept(
@@ -397,7 +443,7 @@ class HdfFiveBaseParser:
                         h5path, dict(self.h5r[h5path].attrs)
                     )
 
-    def store_hashes(self, blacklist_by_key: List, blacklist_by_suffix: List, **kwargs):
+    def store_hashes(self, blacklist_by_key: list, blacklist_by_suffix: list, **kwargs):
         """Generate yaml file with sorted list of HDF5 grp, dst, and attrs
 
         including their datatype and SHA256 checksum computed from the each nodes data.
@@ -405,13 +451,13 @@ class HdfFiveBaseParser:
         when differences in timestamps are expected but should not trigger
         the test to fail. The blacklist allows to exclude those HDF5 paths
         that should not be included in the yaml file."""
-        hashes: Dict[str, str] = {}
+        hashes: dict[str, str] = {}
         for key, ifo in self.groups.items():
             if key not in blacklist_by_key and not key.endswith(blacklist_by_suffix):
                 hashes[key] = "grp"
         for key, ifo in self.datasets.items():
             if key not in blacklist_by_key and not key.endswith(blacklist_by_suffix):
-                hashes[key] = f"dst__{ifo[-1]}"
+                hashes[key] = f"dst__{ifo[-2]}"
         for key, ifo in self.attributes.items():
             if key not in blacklist_by_key and not key.endswith(blacklist_by_suffix):
                 hashes[key] = f"att__{ifo[-1]}"
@@ -423,6 +469,22 @@ class HdfFiveBaseParser:
             "w",
         ) as fp:
             yaml.dump(hashes, fp, default_flow_style=False, sort_keys=True)
+
+    def store_malformed(self, **kwargs):
+        """Generate yaml file with sorted list of HDF5 dst
+
+        reporting if their payload is all finite or not."""
+        key_value: dict[str, str] = {}
+        for key, ifo in self.datasets.items():
+            key_value[key] = f"{ifo[-1]}"
+        with open(
+            kwargs.get(
+                "file_path",
+                f"""{self.file_path}.malformed{kwargs.get("suffix", "")}.yaml""",
+            ),
+            "w",
+        ) as fp:
+            yaml.dump(key_value, fp, default_flow_style=False, sort_keys=True)
 
     def report_groups(self):
         logger.info(f"{self.file_path} contains the following groups:")
@@ -491,9 +553,9 @@ class HdfFiveBaseParser:
     def get_attribute_value(self, h5path):
         if self.h5r is not None:
             if h5path in self.attributes:
-                trg, attrnm = h5path.split("@")
+                trg, attribute_name = h5path.split("@")
                 # with (self.file_path, "r") as h5r:
-                obj = self.h5r[trg].attrs[attrnm]
+                obj = self.h5r[trg].attrs[attribute_name]
                 if isinstance(obj, np.bytes_):
                     return obj[0].decode("utf8")
                 else:
@@ -528,88 +590,3 @@ class HdfFiveBaseParser:
             return self.get_attribute_value(h5path)
         # no need to check groups as they have no value
         return None
-
-
-# Like TIFF, HDF5 is a container file format
-# Therefore, inspecting the mime type alone is insufficient to infer the schema
-# with which the content in the HDF5 file is formatted
-# Therefore, at least some of the content and how that content is
-# formatted is inspected to make an informed decision which specific hfive
-# parser can be expected to deal at all with the content of the HDF5 file
-
-# For the example of EBSD there was once a suggestion made by the academic community
-# to report EBSD results via HDF5, specifically via H5EBSD (Jackson et al.).
-# Different tech partners and community projects though have implemented these
-# ideas differently. In effect, there are now multiple HDF5 files circulating
-# in the EBSD community where the same conceptual information is stored
-# differently i.e. under different names
-
-# This function shows an example how this dilemna can be
-# solved for six examples that all are HDF5 variants used for "storing EBSD data"
-# oxford - H5OINA format of Oxford Instrument
-# edax - OIMself.input_file_path Analysis based reporting of EDAX/AMETEK
-# apex - APEX based reporting of EDAX/AMETEK (can be considered the newer EDAX reporting)
-# bruker - Bruker Esprit based reporting which replaces Bruker's bcf format that
-#     is notoriously difficult to parse as it uses a commercial library SFS from AidAim
-# emsort - HDF5-based reporting of parameter used by Marc de Graeff's EMsoft
-#     dynamic electron diffraction simulation software
-# hebsd - a variant of Jackson's proposal of the original H5EBSD the example here
-#    explores from content of the community as used by e.g. T. B. Britton's group
-# https://stackoverflow.com/questions/31146036/how-do-i-traverse-a-hdf5-file-using-h5py
-
-# rules is a dictionary of pairs: first, a templatized path, second, an identifier
-# what is a templatized path? take this example from an v4 H5OINA file with SEM/ESBD data
-# 1/Data Processing/Analyses/IPF1, IS_GROUP
-# 1/Data Processing/Analyses/IPF2, IS_GROUP
-# both pathes are conceptually instances of the same concept
-# */Data Processing/Analyses/IPF*
-# where the stars in this templatized path serve as placeholders
-# masking different instance ids
-# Contextualization:
-# HDF5 is a container (file) format lik TIFF.
-# Therefore, neither the mime type nor the file name suffix can substantiate
-# which not just format but version an instance comes formatted with.
-# Therefore, the specific content and formatting of an instance
-# e.g. do we talk about an HDF5 file whose content matches the rules
-# of an e.g. Oxford Instrument v4 H5OINA file?
-# the versioning is key to understand and read
-# tech partners can make changes to I/O routines in their software
-# this can result in that data end up formatted differently across file
-# instances written over time
-# therefore, it is necessary to ensure (before interpreting the file) that
-# it matches a certain set of expectations (versioned format) so that the
-# information content aka the knowledge, the pieces of information, in that file
-# can be logically interpreted correctly
-# The existence of a libraries and only best practices but not generally accepted
-# rules how content in container files should be formatted enables for a
-# potentially large number of possibilities how the same piece of information
-# is encoded
-# Consider the following simple example from electron microscopy with two quantities:
-# hv (high_voltage) and wd (working_distance)
-# these are two numbers each with a unit category or actual unit instance
-# (voltage) and (length) respectively
-# in hdf5 one could store the same information very differently technically
-# as a dataset instance named "hv" with a scalar number and an attribute
-# instance with a scalar string for the unit
-# (this is assumed somewhat the best practice)
-# however neither this is required nor assured
-# in practice one could do much more e.g.
-# as a group named hv_voltage with an attribute value
-# as a compound dataset with two values packed as a struct with pairs of value and string
-# first the value for hv followed by its unit, thereafter the value of wd followed by its unit
-# also nobody is required to name an HDF5 instance using English because nodes in HDF5
-# end up as links and these can have UTF8 encoding, so in principle even group and dataset names
-# can use terms from other languages than English, one can use also special characters
-# there can be typos or synonyms used like hv and high_voltage or voltage
-# the key point is all these representations are allowed when we use HDF5 files
-# but for each of these combinations a different code has to be implemented to extract
-# and verify these pieces of information when one would like to use these pieces
-# for further processing, this observation holds for every serialization of information
-# into a file and thus one cannot escape the necessity that one needs to define
-# a clear set of rules based on which one can decide if some instance is interpretable or
-# not, in general we therefore see that there is much more work need that just to acknowledge
-# that it is clear that one cannot infer the potential relevance of a file for an analysis
-# based on its file format ending (mime type, magic cookie) etc
-# although interesting this is exactly what the magic cookie
-# (the initial few bytes to the beginning of the byte stream of a file)
-# were originally conceptualized for

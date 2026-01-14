@@ -19,10 +19,11 @@
 
 import os
 from time import perf_counter_ns
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
+
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
 from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
 from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
@@ -48,9 +49,9 @@ class APMReader(BaseReader):
 
     def read(
         self,
-        template: dict = None,
-        file_paths: Tuple[str] = None,
-        objects: Tuple[Any] = None,
+        template: dict | None = None,
+        file_paths: tuple[str] | None = None,
+        objects: tuple[Any] | None = None,
     ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
         logger.info(os.getcwd())
@@ -81,7 +82,7 @@ class APMReader(BaseReader):
             nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
             nx_apm_eln.parse(template)
 
-        logger.debug("Parse NeXus appdef-specific content...")
+        logger.debug("Parse NeXus application definition-specific content...")
         nxs = NxApmAppDef(entry_id)
         nxs.parse(template)
 

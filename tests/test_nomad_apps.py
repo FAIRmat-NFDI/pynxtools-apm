@@ -15,20 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""
-MKdocs macros for the documentation
-"""
+"""Tests for the NOMAD app."""
+
+import pytest
+
+try:
+    import nomad  # noqa: F401
+except ImportError:
+    pytest.skip(
+        "Skipping NOMAD app tests because nomad-lab is not installed",
+        allow_module_level=True,
+    )
 
 
-def define_env(env):
-    """
-    This is the hook for defining variables, macros and filters
+def test_importing_app():
+    # this will raise an exception if pydantic model validation fails for the app
+    from pynxtools_apm.nomad.apps import apm_app_entry_point  # noqa: PLC0415
 
-    - variables: the dictionary that contains the environment variables
-    - macro: a decorator function, to declare a macro.
-    - filter: a function with one of more arguments,
-        used to perform a transformation
-    """
-
-    # add to the dictionary of variables available to markdown pages:
-    env.variables["version"] = "2023.10"  # Figure out from setuptools-scm eventually
+    assert apm_app_entry_point.app.label == "APM"

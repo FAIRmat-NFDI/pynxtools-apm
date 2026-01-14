@@ -17,11 +17,11 @@
 #
 """Dict mapping custom schema instances from eln_data.yaml file on concepts in NXapm."""
 
-from typing import Any, Dict
+from typing import Any
 
 from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 
-APM_ENTRY_TO_NEXUS: Dict[str, Any] = {
+APM_ENTRY_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]",
     "prefix_src": "entry/",
     "map_to_str": [
@@ -34,7 +34,7 @@ APM_ENTRY_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_SAMPLE_TO_NEXUS: Dict[str, Any] = {
+APM_SAMPLE_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",
     "map_to_bool": ["is_simulation"],
@@ -80,7 +80,7 @@ APM_SAMPLE_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
+APM_SPECIMEN_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "specimen/",
     "map_to_str": ["alias", "preparation_date", "description"],
@@ -101,7 +101,7 @@ APM_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_INSTRUMENT_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
+APM_INSTRUMENT_SPECIMEN_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/specimen",
     "prefix_src": "instrument/",
     "map_to_f8": [
@@ -116,14 +116,14 @@ APM_INSTRUMENT_SPECIMEN_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_MEASUREMENT_TO_NEXUS: Dict[str, Any] = {
+APM_MEASUREMENT_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/measurement",
     "prefix_src": "",
     "map_to_str": ["status"],
 }
 
 
-APM_INSTRUMENT_STATIC_TO_NEXUS: Dict[str, Any] = {
+APM_INSTRUMENT_STATIC_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/measurement/instrument",
     "prefix_src": "instrument/",
     "map_to_bool": [("reflectron/applied", "reflectron_applied")],
@@ -138,7 +138,7 @@ APM_INSTRUMENT_STATIC_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
+APM_INSTRUMENT_DYNAMIC_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/measurement/eventID[event*]/instrument",
     "prefix_src": "instrument/",
     "use": [
@@ -175,7 +175,7 @@ APM_INSTRUMENT_DYNAMIC_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_RANGE_TO_NEXUS: Dict[str, Any] = {
+APM_RANGE_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]/ranging",
     "prefix_src": "ranging/",
     "map_to_str": [
@@ -185,7 +185,7 @@ APM_RANGE_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_RECON_TO_NEXUS: Dict[str, Any] = {
+APM_RECON_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]/reconstruction",
     "prefix_src": "reconstruction/",
     "map_to_str": [
@@ -202,7 +202,7 @@ APM_RECON_TO_NEXUS: Dict[str, Any] = {
 }
 
 
-APM_WORKFLOW_TO_NEXUS: Dict[str, Any] = {
+APM_WORKFLOW_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/atom_probeID[atom_probe]",
     "prefix_src": "workflow/",
     "sha256": [
@@ -216,7 +216,7 @@ APM_WORKFLOW_TO_NEXUS: Dict[str, Any] = {
 # NOMAD Oasis custom schema implementation delivers them as a list of dictionaries instead
 # of a directly flattenable list of key, value pairs
 
-APM_USER_TO_NEXUS: Dict[str, Any] = {
+APM_USER_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/userID[user*]",
     "prefix_src": "",
     "map": [
