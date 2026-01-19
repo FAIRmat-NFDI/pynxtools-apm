@@ -76,6 +76,7 @@ dety
 diátaxis
 endianness
 epos
+erate
 flatdict
 flattenable
 fleap
@@ -99,6 +100,7 @@ issubdtype
 itemsize
 iufc
 kfactor
+laserpower
 latticeconstant
 libatomprobe
 mainfile
