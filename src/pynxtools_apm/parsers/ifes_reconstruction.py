@@ -236,6 +236,19 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     except NameError:
         pass
 
+    trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/pulse_frequency"
+    pulse_frequency = apt_file.get_named_quantity("freq")
+    if pulse_frequency is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(pulse_frequency.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(pulse_frequency.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{pulse_frequency.units}"
+    del pulse_frequency
+
     trg = f"{prefix}/measurement/eventID[event1]/instrument/reflectron/voltage"
     reflectron_voltage = apt_file.get_named_quantity("Vref")
     if reflectron_voltage is not None:
