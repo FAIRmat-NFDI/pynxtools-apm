@@ -74,7 +74,7 @@ apm = "pynxtools_apm.reader:APMReader"
 apm_example_upload_entry_point = "pynxtools_apm.nomad.example_uploads:apm_example_upload_entry_point"
 
 [tool.setuptools.package-data]
-pynxtools = ["_version.py"]
+pynxtools_apm = ["_version.py"]
 
 [tool.uv]
 extra-index-url = [
