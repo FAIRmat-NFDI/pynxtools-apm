@@ -20,6 +20,7 @@
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 from ifes_apt_tc_data_modeling.apt.apt6_reader import ReadAptFileFormat
 from ifes_apt_tc_data_modeling.ato.ato_reader import ReadAtoFileFormat
 from ifes_apt_tc_data_modeling.cameca.cameca_reader import ReadCamecaHfiveFileFormat
@@ -268,6 +269,77 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             }
             template[f"{trg}/@units"] = f"{detx.units}"
     del detx, dety
+
+    trg = f"{prefix}/measurement/detection_rate"
+    erate = apt_file.get_named_quantity("erate")
+    if erate is not None:
+        template[f"{trg}title"] = "Detection rate"
+        template[f"{trg}@signal"] = "detection_rate"
+        template[f"{trg}@axes"] = "axis_id"  # ? evaporation ID ?
+        template[f"{trg}@AXISNAME_indices[@axis_id_indices]"] = np.uint32(0)
+        template[f"{trg}DATA[detection_rate]"] = {
+            "compress": np.asarray(erate.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(erate.magnitude, np.float32),
+                (0,),
+            ),
+        }
+        template[f"{trg}DATA[detection_rate]/@units"] = f"{erate.units}"  # %/100
+        template[f"{trg}DATA[detection_rate]/@long_name"] = (
+            f"Detection rate ({erate.units})"  # %/100
+        )
+        ids: npt.NDArray[np.uint32] = np.arange(np.shape(erate.magnitude)[0], np.uint32)
+        template[f"{trg}AXISNAME[axis_id]"] = {
+            "compress": ids,
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(ids, (0,)),
+        }
+        template[f"{trg}AXISNAME[axis_id]/@long_name"] = "Id"  # TODO
+        del ids
+    del erate
+
+    trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/sourceID[source1]/power"
+    laser_power = apt_file.get_named_quantity("laserpower")
+    if laser_power is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(laser_power.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(laser_power.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{laser_power.units}"
+    del laser_power
+
+    trg = f"{prefix}/measurement/eventID[event1]/instrument/stage/temperature_sensor"
+    temperature = apt_file.get_named_quantity("Temp")
+    if temperature is not None:
+        template[f"{trg}/value"] = {
+            "compress": np.asarray(temperature.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(temperature.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/value/@units"] = f"{temperature.units}"
+        template[f"{trg}/measurement"] = "temperature"
+    del temperature
+
+    trg = f"{prefix}/measurement/eventID[event1]/instrument/analysis_chamber/pressure_sensor"
+    pressure = apt_file.get_named_quantity("Pres")
+    if pressure is not None:
+        template[f"{trg}/value"] = {
+            "compress": np.asarray(pressure.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(pressure.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/value/@units"] = f"{pressure.units}"
+        template[f"{trg}/measurement"] = "pressure"
+    del pressure
+
     return template
 
 
@@ -492,7 +564,7 @@ def extract_data_from_ops_file(file_path: str, prefix: str, template: dict) -> d
     for name in ["standing_voltage", "pulse_voltage"]:
         voltage += ops_file.voltages[name].magnitude
 
-    template[f"{trg}title"] = f"Voltage curve"
+    template[f"{trg}title"] = "Voltage curve"
     template[f"{trg}@signal"] = "voltage"
     template[f"{trg}@axes"] = "axis_evaporation_id"
     template[f"{trg}@AXISNAME_indices[@axis_evaporation_id_indices]"] = np.uint32(0)
@@ -525,7 +597,7 @@ def extract_data_from_ops_file(file_path: str, prefix: str, template: dict) -> d
         ),
     }
     template[f"{trg}AXISNAME[axis_evaporation_id]/@long_name"] = (
-        f"Next hit group offset"  # TODO
+        "Next hit group offset"  # TODO
     )
 
     return template
@@ -623,7 +695,7 @@ def extract_data_from_stuttgart_apyt_mass_spectrum_file(
     }
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = f"{m_z[0].units}"
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] = (
-        f"Mass-to-charge-state-ratio (Da)"  # Da !!
+        "Mass-to-charge-state-ratio (Da)"  # Da !!
     )
     logger.debug(
         f"Plot mass spectrum ({np.around(m_z[0].magnitude[1] - m_z[0].magnitude[0], decimals=3) if number_of_bins > 1 else ''} {m_z[0].units} binning)"
