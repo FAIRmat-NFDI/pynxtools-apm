@@ -302,7 +302,10 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         template[f"{trg}DATA[detection_rate]/@long_name"] = (
             f"Detection rate ({erate.units})"  # %/100
         )
-        ids: npt.NDArray[np.uint32] = np.arange(np.shape(erate.magnitude)[0], np.uint32)
+        number_of_ids = np.shape(erate.magnitude)[0]
+        ids: npt.NDArray[np.uint32] = np.linspace(
+            0, number_of_ids - 1, num=number_of_ids, dtype=np.uint32
+        )
         template[f"{trg}AXISNAME[axis_id]"] = {
             "compress": ids,
             "strength": DEFAULT_COMPRESSION_LEVEL,
