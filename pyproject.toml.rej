@@ -1,0 +1,10 @@
+diff a/pyproject.toml b/pyproject.toml	(rejected hunks)
+@@ -44,7 +44,7 @@ docs = [
+     "pymdown-extensions",
+     "mkdocs-click"
+ ]
+-nomad = ["nomad-lab[parsing, infrastructure]>=1.3.17"]
++nomad = ["nomad-lab[infrastructure]>=1.3.17"]
+ 
+ [project.urls]
+ "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"

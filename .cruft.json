@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/FAIRmat-NFDI/pynxtools-plugin-template.git",
-  "commit": "b1c3fb1e00403ad4718816cdfce613552da7a2dc",
+  "commit": "e25c229b1f9f58c4f06275ae08208d387ec1db56",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -24,7 +24,7 @@
         "*.html"
       ],
       "_template": "https://github.com/FAIRmat-NFDI/pynxtools-plugin-template.git",
-      "_commit": "b1c3fb1e00403ad4718816cdfce613552da7a2dc"
+      "_commit": "e25c229b1f9f58c4f06275ae08208d387ec1db56"
     }
   },
   "directory": null
