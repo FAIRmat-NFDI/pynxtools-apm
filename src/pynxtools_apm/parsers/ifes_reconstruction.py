@@ -52,26 +52,32 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
     xyz = pos_file.get_reconstructed_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(xyz.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{xyz.units}"
+    if xyz is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(xyz.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(xyz.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"pos_file.get_reconstructed_positions() returned None")
     del xyz
 
     trg = f"{prefix}/atom_probeID[atom_probe]/mass_to_charge_conversion/mass_to_charge"
     m_z = pos_file.get_mass_to_charge_state_ratio()
-    template[f"{trg}"] = {
-        "compress": np.asarray(m_z.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(m_z.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{m_z.units}"
+    if m_z is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(m_z.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(m_z.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{m_z.units}"
+    else:
+        logger.warning(f"pos_file.get_mass_to_charge_state_ratio() returned None")
     del m_z
     return template
 
@@ -83,85 +89,106 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
     xyz = epos_file.get_reconstructed_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(xyz.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{xyz.units}"
+    if xyz is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(xyz.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(xyz.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"epos_file.get_reconstructed_positions() returned None")
     del xyz
 
     trg = f"{prefix}/atom_probeID[atom_probe]/mass_to_charge_conversion/mass_to_charge"
     m_z = epos_file.get_mass_to_charge_state_ratio()
-    template[f"{trg}"] = {
-        "compress": np.asarray(m_z.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(m_z.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{m_z.units}"
+    if m_z is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(m_z.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(m_z.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{m_z.units}"
+    else:
+        logger.warning(f"epos_file.get_mass_to_charge_state_ratio() returned None")
     del m_z
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/standing_voltage"
     standing_voltage = epos_file.get_standing_voltage()
-    template[f"{trg}"] = {
-        "compress": np.asarray(standing_voltage.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(standing_voltage.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{standing_voltage.units}"
+    if standing_voltage is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(standing_voltage.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(standing_voltage.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{standing_voltage.units}"
+    else:
+        logger.warning(f"epos_file.get_standing_voltage() returned None")
     del standing_voltage
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/pulse_voltage"
     pulse_voltage = epos_file.get_pulse_voltage()
-    template[f"{trg}"] = {
-        "compress": np.asarray(pulse_voltage.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(pulse_voltage.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{pulse_voltage.units}"
+    if pulse_voltage is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(pulse_voltage.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(pulse_voltage.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{pulse_voltage.units}"
+    else:
+        logger.warning(f"epos_file.get_pulse_voltage() returned None")
     del pulse_voltage
 
     trg = f"{prefix}/atom_probeID[atom_probe]/voltage_and_bowl/raw_tof"
     raw_time_of_flight = epos_file.get_raw_time_of_flight()
-    template[f"{trg}"] = {
-        "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{raw_time_of_flight.units}"
+    if raw_time_of_flight is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{raw_time_of_flight.units}"
+    else:
+        logger.warning(f"epos_file.get_raw_time_of_flight() returned None")
     del raw_time_of_flight
 
     trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/hit_positions"
     hit_positions = epos_file.get_hit_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(hit_positions.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(hit_positions.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{hit_positions.units}"
+    if hit_positions is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(hit_positions.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(hit_positions.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{hit_positions.units}"
+    else:
+        logger.warning(f"epos_file.get_hit_positions() returned None")
     del hit_positions
 
     trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/hit_multiplicity"
     hit_multiplicity = epos_file.get_ions_per_pulse()
-    template[f"{trg}"] = {
-        "compress": np.asarray(hit_multiplicity.magnitude, np.uint32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(hit_multiplicity.magnitude, np.uint32), (0,)
-        ),
-    }
+    if hit_multiplicity is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(hit_multiplicity.magnitude, np.uint32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(hit_multiplicity.magnitude, np.uint32), (0,)
+            ),
+        }
+    else:
+        logger.warning(f"epos_file.get_ions_per_pulse() returned None")
     del hit_multiplicity
 
     # add multiplicity data from epos
@@ -186,6 +213,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(Position) returned None")
     del xyz
 
     trg = f"{prefix}/atom_probeID[atom_probe]/mass_to_charge_conversion/mass_to_charge"
@@ -199,6 +228,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/@units"] = f"{m_z.units}"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(Mass) returned None")
     del m_z
     # all less explored optional branches in an APT6 file can also already
     # be accessed via the apt_file.get_named_quantity function
@@ -216,6 +247,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/@units"] = f"{standing_voltage.units}"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(Voltage) returned None")
     del standing_voltage
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/pulse_voltage"
@@ -231,6 +264,10 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             }
             template[f"{trg}/@units"] = f"{voltage.units}"
             break
+        else:
+            logger.warning(
+                f"apt_file.get_named_quantity({name_in_a_version}) returned None"
+            )
     try:
         del voltage
     except NameError:
@@ -247,6 +284,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/@units"] = f"{pulse_frequency.units}"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(freq) returned None")
     del pulse_frequency
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/reflectron/voltage"
@@ -260,6 +299,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/@units"] = f"{reflectron_voltage.units}"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(Vref) returned None")
     del reflectron_voltage
 
     trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/hit_positions"
@@ -281,6 +322,10 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
                 ),
             }
             template[f"{trg}/@units"] = f"{detx.units}"
+        else:
+            logger.warning(f"apt_file.get_named_quantity(XDet, YDet) shape mismatch")
+    else:
+        logger.warning(f"apt_file.get_named_quantity(XDet, YDet) returned None")
     del detx, dety
 
     trg = f"{prefix}/measurement/detection_rate"
@@ -313,6 +358,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         }
         template[f"{trg}AXISNAME[axis_id]/@long_name"] = "Id"  # TODO
         del ids
+    else:
+        logger.warning(f"apt_file.get_named_quantity(erate) returned None")
     del erate
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/sourceID[source1]/power"
@@ -326,6 +373,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/@units"] = f"{laser_power.units}"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(laserpower) returned None")
     del laser_power
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/stage/temperature_sensor"
@@ -340,6 +389,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         }
         template[f"{trg}/value/@units"] = f"{temperature.units}"
         template[f"{trg}/measurement"] = "temperature"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(Temp) returned None")
     del temperature
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/analysis_chamber/pressure_sensor"
@@ -354,6 +405,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         }
         template[f"{trg}/value/@units"] = f"{pressure.units}"
         template[f"{trg}/measurement"] = "pressure"
+    else:
+        logger.warning(f"apt_file.get_named_quantity(Pres) returned None")
     del pressure
 
     return template
@@ -366,27 +419,34 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
     xyz = ato_file.get_reconstructed_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(xyz.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{xyz.units}"
+    if xyz is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(xyz.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(xyz.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"ato_file.get_reconstructed_positions() returned None")
     del xyz
 
     trg = f"{prefix}/atom_probeID[atom_probe]/mass_to_charge_conversion/mass_to_charge"
     m_z = ato_file.get_mass_to_charge_state_ratio()
-    template[f"{trg}"] = {
-        "compress": np.asarray(m_z.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(m_z.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{m_z.units}"
+    if m_z is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(m_z.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(m_z.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{m_z.units}"
+    else:
+        logger.warning(f"ato_file.get_mass_to_charge_state_ratio() returned None")
     del m_z
+
     return template
 
 
@@ -397,27 +457,34 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
     xyz = csv_file.get_reconstructed_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(xyz.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{xyz.units}"
+    if xyz is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(xyz.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(xyz.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"csv_file.get_reconstructed_positions() returned None")
     del xyz
 
     trg = f"{prefix}/atom_probeID[atom_probe]/mass_to_charge_conversion/mass_to_charge"
     m_z = csv_file.get_mass_to_charge_state_ratio()
-    template[f"{trg}"] = {
-        "compress": np.asarray(m_z.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(m_z.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{m_z.units}"
+    if m_z is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(m_z.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(m_z.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{m_z.units}"
+    else:
+        logger.warning(f"csv_file.get_mass_to_charge_state_ratio() returned None")
     del m_z
+
     return template
 
 
@@ -428,86 +495,107 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
     xyz = pyc_file.get_reconstructed_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(xyz.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{xyz.units}"
+    if xyz is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(xyz.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(xyz.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"pyc_file.get_reconstructed_positions() returned None")
     del xyz
 
     trg = f"{prefix}/atom_probeID[atom_probe]/mass_to_charge_conversion/mass_to_charge"
     m_z = pyc_file.get_mass_to_charge_state_ratio()
-    template[f"{trg}"] = {
-        "compress": np.asarray(m_z.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(m_z.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{m_z.units}"
+    if m_z is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(m_z.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(m_z.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{m_z.units}"
+    else:
+        logger.warning(f"pyc_file.get_mass_to_charge_state_ratio() returned None")
     del m_z
 
     trg = f"{prefix}/atom_probeID[atom_probe]/voltage_and_bowl/raw_tof"
     raw_time_of_flight = pyc_file.get_raw_time_of_flight()
-    template[f"{trg}"] = {
-        "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{raw_time_of_flight.units}"
+    if raw_time_of_flight is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{raw_time_of_flight.units}"
+    else:
+        logger.warning(f"pyc_file.get_raw_time_of_flight() returned None")
     del raw_time_of_flight
 
     trg = f"{prefix}/atom_probeID[atom_probe]/voltage_and_bowl/calibrated_tof"
     calibrated_time_of_flight = pyc_file.get_calibrated_time_of_flight()
-    template[f"{trg}"] = {
-        "compress": np.asarray(calibrated_time_of_flight.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(calibrated_time_of_flight.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{calibrated_time_of_flight.units}"
+    if calibrated_time_of_flight is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(calibrated_time_of_flight.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(calibrated_time_of_flight.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{calibrated_time_of_flight.units}"
+    else:
+        logger.warning(f"pyc_file.get_calibrated_time_of_flight() returned None")
     del calibrated_time_of_flight
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/standing_voltage"
     standing_voltage = pyc_file.get_standing_voltage()
-    template[f"{trg}"] = {
-        "compress": np.asarray(standing_voltage.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(standing_voltage.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{standing_voltage.units}"
+    if standing_voltage is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(standing_voltage.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(standing_voltage.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{standing_voltage.units}"
+    else:
+        logger.warning(f"pyc_file.get_standing_voltage() returned None")
     del standing_voltage
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/pulse_voltage"
     pulse_voltage = pyc_file.get_pulse_voltage()
-    template[f"{trg}"] = {
-        "compress": np.asarray(pulse_voltage.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(pulse_voltage.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{pulse_voltage.units}"
+    if pulse_voltage is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(pulse_voltage.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(pulse_voltage.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{pulse_voltage.units}"
+    else:
+        logger.warning(f"pyc_file.get_pulse_voltage() returned None")
     del pulse_voltage
 
     trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/hit_positions"
     hit_positions = pyc_file.get_detector_hit_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(hit_positions.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(hit_positions.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{hit_positions.units}"
+    if hit_positions is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(hit_positions.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(hit_positions.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{hit_positions.units}"
+    else:
+        logger.warning(f"pyc_file.get_detector_hit_positions() returned None")
     del hit_positions
 
     return template
@@ -522,27 +610,34 @@ def extract_data_from_cameca_hfive_file(
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
     xyz = hfive_file.get_reconstructed_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(xyz.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{xyz.units}"
+    if xyz is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(xyz.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(xyz.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"hfive_file.get_reconstructed_positions() returned None")
     del xyz
 
     trg = f"{prefix}/atom_probeID[atom_probe]/mass_to_charge_conversion/mass_to_charge"
     m_z = hfive_file.get_mass_to_charge_state_ratio()
-    template[f"{trg}"] = {
-        "compress": np.asarray(m_z.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(m_z.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{m_z.units}"
+    if m_z is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(m_z.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(m_z.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{m_z.units}"
+    else:
+        logger.warning(f"hfive_file.get_mass_to_charge_state_ratio() returned None")
     del m_z
+
     return template
 
 
@@ -560,18 +655,21 @@ def extract_data_from_ops_file(file_path: str, prefix: str, template: dict) -> d
         name in ops_file.voltages
         for name in ["standing_voltage", "pulse_voltage", "next_hit_group_offset"]
     ):
+        logger.warning(f"ops_file unable to construct voltage curve")
         return template
     reference_shape = np.shape(ops_file.voltages["standing_voltage"].magnitude)
     if not all(
         np.shape(ops_file.voltages[name]) == reference_shape
         for name in ["pulse_voltage", "next_hit_group_offset"]
     ):
+        logger.warning(f"ops_file voltage data shape mismatch")
         return template
     del reference_shape
     if (
         not f"{ops_file.voltages['standing_voltage'].units}"
         == f"{ops_file.voltages['pulse_voltage'].units}"
     ):
+        logger.warning(f"ops_file standing and pulse voltage unit mismatch")
         return template
     voltage = np.zeros(
         (np.shape(ops_file.voltages["standing_voltage"].magnitude)[0],),
@@ -628,38 +726,47 @@ def extract_data_from_stuttgart_apyt_raw_file(
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/standing_voltage"
     standing_voltage = apyt_file.get_base_voltage()
-    template[f"{trg}"] = {
-        "compress": np.asarray(standing_voltage.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(standing_voltage.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{standing_voltage.units}"
+    if standing_voltage is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(standing_voltage.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(standing_voltage.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{standing_voltage.units}"
+    else:
+        logger.warning(f"apyt_file.get_base_voltage() returned None")
     del standing_voltage
 
     trg = f"{prefix}/measurement/eventID[event1]/instrument/pulser/pulse_voltage"
     pulse_voltage = apyt_file.get_pulse_voltage()
-    template[f"{trg}"] = {
-        "compress": np.asarray(pulse_voltage.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(pulse_voltage.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{pulse_voltage.units}"
+    if pulse_voltage is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(pulse_voltage.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(pulse_voltage.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{pulse_voltage.units}"
+    else:
+        logger.warning(f"apyt_file.get_pulse_voltage() returned None")
     del pulse_voltage
 
     trg = f"{prefix}/atom_probeID[atom_probe]/voltage_and_bowl/raw_tof"
     raw_time_of_flight = apyt_file.get_raw_time_of_flight()
-    template[f"{trg}"] = {
-        "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{raw_time_of_flight.units}"
+    if raw_time_of_flight is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{raw_time_of_flight.units}"
+    else:
+        logger.warning(f"apyt_file.get_raw_time_of_flight() returned None")
     del raw_time_of_flight
 
     return template
@@ -674,6 +781,9 @@ def extract_data_from_stuttgart_apyt_mass_spectrum_file(
 
     trg = f"{prefix}/atom_probeID[atom_probe]/ranging/mass_to_charge_distribution/"
     m_z = apyt_file.get_complete_spectrum()
+    if m_z is None:
+        logger.warning(f"apyt_file.get_complete_spectrum() returned None")
+        return template
 
     # template[f"{trg}programID[program1]/program"] = "APyT"
     # template[f"{trg}programID[program1]/program/@version"] = "UNKNOWN VERSION"
@@ -728,15 +838,19 @@ def extract_data_from_stuttgart_apyt_recon_file(
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
     xyz = apyt_file.get_reconstructed_positions()
-    template[f"{trg}"] = {
-        "compress": np.asarray(xyz.magnitude, np.float32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(xyz.magnitude, np.float32), (0, 1)
-        ),
-    }
-    template[f"{trg}/@units"] = f"{xyz.units}"
+    if xyz is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(xyz.magnitude, np.float32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(xyz.magnitude, np.float32), (0, 1)
+            ),
+        }
+        template[f"{trg}/@units"] = f"{xyz.units}"
+    else:
+        logger.warning(f"apyt_file.get_reconstructed_positions() returned None")
     del xyz
+
     return template
 
 
