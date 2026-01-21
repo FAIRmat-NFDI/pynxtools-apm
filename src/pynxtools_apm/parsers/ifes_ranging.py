@@ -203,7 +203,7 @@ def add_standardize_molecular_ions(
 def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which a ENV file has."""
     logger.debug(f"Extracting data from ENV file: {file_path}")
-    rangefile = ReadEnvFileFormat(file_path)
+    rangefile = ReadEnvFileFormat(file_path, unique=True)
     if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -216,7 +216,7 @@ def extract_data_from_fig_txt_file(
 ) -> dict:
     """Add those required information which a FIG.TXT file has."""
     logger.debug(f"Extracting data from FIG.TXT file: {file_path}")
-    rangefile = ReadFigTxtFileFormat(file_path)
+    rangefile = ReadFigTxtFileFormat(file_path, unique=True)
     if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -229,8 +229,8 @@ def extract_data_from_pyccapt_file(
 ) -> dict:
     """Add those required information which a pyccapt/ranging HDF5 file has."""
     logger.debug(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
-    rangefile = ReadPyccaptRangingFileFormat(file_path)
-    if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+    rangefile = ReadPyccaptRangingFileFormat(file_path, unique=True)
+    if len(rangefile.pyc["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
@@ -240,7 +240,7 @@ def extract_data_from_pyccapt_file(
 def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information from XML-serialized IVAS state dumps."""
     logger.debug(f"Extracting data from XML-serialized IVAS analysis file: {file_path}")
-    rangefile = ReadImagoAnalysisFileFormat(file_path)
+    rangefile = ReadImagoAnalysisFileFormat(file_path, unique=True)
     if len(rangefile.imago["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -253,7 +253,7 @@ def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) 
 def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which an RNG file has."""
     logger.debug(f"Extracting data from RNG file: {file_path}")
-    rangefile = ReadRngFileFormat(file_path)
+    rangefile = ReadRngFileFormat(file_path, unique=True)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -264,7 +264,7 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
 def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dict:
     """Add those required information which an RRNG file has."""
     logger.debug(f"Extracting data from RRNG file: {file_path}")
-    rangefile = ReadRrngFileFormat(file_path, unique=False)
+    rangefile = ReadRrngFileFormat(file_path, unique=True)
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -278,7 +278,7 @@ def extract_data_from_cameca_hfive_file(
     """Add those required information which a Cameca HDF5 file has."""
     logger.debug(f"Extracting data from Cameca HDF5 file: {file_path}")
     rangefile = ReadCamecaHfiveFileFormat(file_path)
-    if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+    if len(rangefile.cameca["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
     add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
@@ -316,7 +316,8 @@ class IfesRangingDefinitionsParser:
                 break
         if self.meta["file_format"] is not None:
             self.supported = True
-        logger.warning(f"{file_path} is not a supported ranging definitions file")
+        else:
+            logger.warning(f"{file_path} is not a supported ranging definitions file")
 
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""

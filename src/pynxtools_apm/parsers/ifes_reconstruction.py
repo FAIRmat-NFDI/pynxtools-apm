@@ -311,7 +311,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             np.shape(detx.magnitude) == np.shape(dety.magnitude)
             and f"{detx.units}" == f"{dety.units}"
         ):
-            values = np.zeros((np.shape(detx.magnitude), 2), np.float32)
+            values = np.zeros((np.shape(detx.magnitude)[0], 2), np.float32)
             values[:, 0] = detx.magnitude
             values[:, 1] = dety.magnitude
             template[f"{trg}"] = {
@@ -870,7 +870,8 @@ class IfesReconstructionParser:
                 break
         if self.meta["file_format"] is not None:
             self.supported = True
-        logger.warning(f"{file_path} is not a supported reconstruction file")
+        else:
+            logger.warning(f"{file_path} is not a supported reconstruction file")
 
     def parse(self, template: dict) -> dict:
         """Copy data from self into template the application definition instance.

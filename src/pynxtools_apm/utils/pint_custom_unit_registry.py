@@ -28,7 +28,9 @@ except ImportError as exc:
 # ureg.formatter.default_format = "D"
 # https://pint.readthedocs.io/en/stable/user/formatting.html
 
-# customizations for NeXus
+# source code for customizations of NeXus is archived in previous releases
+# of pynxtools-apm in the same here file, causing a logger message that one
+# could get rid of at some point
 ureg.define("nx_unitless = 1")
 ureg.define("nx_dimensionless = 1")
 ureg.define("nx_any = 1")
