@@ -31,6 +31,7 @@ from pynxtools._version import version as pynx_core_version
 from pynxtools.dataconverter.convert import convert
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 from pynxtools_apm._version import version as pynx_apm_version
+from ifes_apt_tc_data_modeling._version import version as ifes_lib_version
 
 from pynxtools_apm.examples.get_sha256_of_directories import SEPARATOR
 from pynxtools_apm.examples.oasisb_eln import generate_eln_data_yaml
@@ -47,6 +48,8 @@ config: dict[str, str | int] = {
     "pynxtools_version": f"{pynx_core_version}",
     "pynxtools_apm_name": f"pynxtools_apm/{__name__}",
     "pynxtools_apm_version": f"{pynx_apm_version}",
+    "ifes_apt_tc_data_modeling_name": f"ifes_apt_tc_data_modeling",
+    "ifes_apt_tc_data_modeling_version": f"{ifes_lib_version}",
     "source_directory": sys.argv[1],  # e.g., endswith {os.sep}data
     "target_directory": sys.argv[2],
     # therein, {os.sep}decompressed for the input_files and {os.sep}nexus_hfive for the output NeXus/HDF5 files
