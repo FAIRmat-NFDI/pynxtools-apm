@@ -109,7 +109,7 @@ def prioritized_axes_heuristic(
             return True
     if all(int(extent) >= 1 for extent in chunk_shape):
         logger.info(
-            f"chunk strategy, custom for shape {shape} with byte_per_item {byte_per_item} using chunk_shape {chunk_shape}, byte_per_chunk {byte_per_chunk}"
+            f"chunk strategy, {tuple(int(extent) for extent in chunk_shape)} for shape {shape} with byte_per_item {byte_per_item} using chunk_shape {chunk_shape}, byte_per_chunk {byte_per_chunk}"
         )
         return tuple(int(extent) for extent in chunk_shape)
     logger.info(f"chunk strategy, auto")
