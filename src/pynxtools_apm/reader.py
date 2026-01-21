@@ -104,7 +104,7 @@ class APMReader(BaseReader):
         # TODO deactivate for production run in the first iteration as we will run
         # two parsing rounds, the first with pynxtools-apm, the second appending eventually
         # other content, like voltage curves; if these exist, they should be the
-        # default plot, so the following two lines need to be run in the second round
+        # default plot, so the following two lines need to be run after the second round
         # logger.debug("Create NeXus default plottable data...")
         # apm_default_plot_generator(template, entry_id)
 

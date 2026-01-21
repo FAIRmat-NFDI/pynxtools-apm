@@ -88,7 +88,7 @@ def prioritized_axes_heuristic(
     while True:
         idx += 1
         byte_per_chunk = np.prod(chunk_shape) * byte_per_item
-        # logger.debug(f"{idx}, {dim}, {chunk_shape}, {byte_per_chunk}")
+        logger.info(f"{idx}, {dim}, {chunk_shape}, {byte_per_chunk}")
         if byte_per_chunk < max_byte_per_chunk:
             break
         if chunk_shape[dim] % 2 == 0:
@@ -103,10 +103,16 @@ def prioritized_axes_heuristic(
                 # along dim, so unfortunately need to consider splitting across
                 # the next, less prioritized axis
         else:
+            # continue splitting on the same axes irrespective if ndims == 1 or higher
+            if chunk_shape[dim] >= 2:
+                continue
+
+            # can't figure something out that is anywhere smarter, go with h5py chunking heuristic
             logger.info(
                 f"chunk strategy, auto, no more axes can be splitted to reduce byte_per_chunk"
             )
             return True
+
     if all(int(extent) >= 1 for extent in chunk_shape):
         logger.info(
             f"chunk strategy, {tuple(int(extent) for extent in chunk_shape)} for shape {shape} with byte_per_item {byte_per_item} using chunk_shape {chunk_shape}, byte_per_chunk {byte_per_chunk}"
