@@ -88,7 +88,9 @@ def prioritized_axes_heuristic(
     while True:
         idx += 1
         byte_per_chunk = np.prod(chunk_shape) * byte_per_item
-        logger.info(f"{idx}, {dim}, {chunk_shape}, {byte_per_chunk}")
+        logger.info(
+            f"chunk strategy, while {idx}, {dim}, {chunk_shape}, {byte_per_chunk}"
+        )
         if byte_per_chunk < max_byte_per_chunk:
             break
         if chunk_shape[dim] % 2 == 0:
