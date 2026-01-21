@@ -21,6 +21,8 @@
 import numpy as np
 from pynxtools.dataconverter.chunk_cache import CHUNK_CONFIG_DEFAULT
 
+from pynxtools_apm.utils.custom_logging import logger
+
 
 def prioritized_axes_heuristic(
     data: np.ndarray,
@@ -62,24 +64,31 @@ def prioritized_axes_heuristic(
     * tuple[int, ...], explicit chunk size
     * True, replying on h5py guess_chunk auto-chunking via chunk_shape=True."""
     if not isinstance(data, np.ndarray):  # only np.ndarray supported
+        logger.warning(f"chunk strategy, auto, for non-numpy array")
         return True
     shape: tuple[int, ...] = np.shape(data)
     if any(extent == 0 for extent in shape):  # unlimited axis not supported
+        logger.warning(f"chunk strategy, auto, for datasets with unlimited axes")
         return True
     if set(priority) != set(range(len(priority))):  # all dim indices need to be present
+        logger.warning(f"chunk strategy, auto, incorrect axes priority setting")
         return True
     if len(shape) == 0:
         raise ValueError("chunk_shape not allowed for scalar datasets.")
+        # also h5py by default would raise in such a case
     chunk_shape: list[float] = list(float(extent) for extent in shape)
     max_byte_per_chunk: int = CHUNK_CONFIG_DEFAULT["byte_size"]
     byte_per_item: int = data.itemsize
 
     dim = 0
     idx = 0
+    logger.info(
+        f"chunk strategy, prioritized_axes_heuristic analyzing for shape {shape} and byte_per_item {byte_per_item} ..."
+    )  # allow monitoring if we ever run into an infinite loop
     while True:
         idx += 1
         byte_per_chunk = np.prod(chunk_shape) * byte_per_item
-        print(f"{idx}, {dim}, {chunk_shape}, {byte_per_chunk}")
+        # logger.debug(f"{idx}, {dim}, {chunk_shape}, {byte_per_chunk}")
         if byte_per_chunk < max_byte_per_chunk:
             break
         if chunk_shape[dim] % 2 == 0:
@@ -94,9 +103,16 @@ def prioritized_axes_heuristic(
                 # along dim, so unfortunately need to consider splitting across
                 # the next, less prioritized axis
         else:
+            logger.info(
+                f"chunk strategy, auto, no more axes can be splitted to reduce byte_per_chunk"
+            )
             return True
     if all(int(extent) >= 1 for extent in chunk_shape):
+        logger.info(
+            f"chunk strategy, custom for shape {shape} with byte_per_item {byte_per_item} using chunk_shape {chunk_shape}, byte_per_chunk {byte_per_chunk}"
+        )
         return tuple(int(extent) for extent in chunk_shape)
+    logger.info(f"chunk strategy, auto")
     return True
 
 
