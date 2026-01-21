@@ -45,9 +45,9 @@ def generate_oasis_specific_yaml(
         ),
     ]:
         if entry in bibliography and entry != "":
-            if "author" and "doi" in bibliography[entry]:
+            if "author" in bibliography[entry] and "doi" in bibliography[entry]:
                 cite_dict = {}
-                cite_dict["authors"] = f"{bibliography[entry]['author']}"
+                cite_dict["author"] = f"{bibliography[entry]['author']}"
                 cite_dict["description"] = note
                 cite_dict["doi"] = f"{bibliography[entry]['doi']}"
                 cite_dict["url"] = f"https://doi.org/{bibliography[entry]['doi']}"
