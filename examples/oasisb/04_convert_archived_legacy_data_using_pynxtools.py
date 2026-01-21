@@ -27,21 +27,16 @@ from datetime import datetime
 
 import bibtexparser
 import pandas as pd
+from ifes_apt_tc_data_modeling._version import version as ifes_lib_version
 from pynxtools._version import version as pynx_core_version
 from pynxtools.dataconverter.convert import convert
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
+
 from pynxtools_apm._version import version as pynx_apm_version
-from ifes_apt_tc_data_modeling._version import version as ifes_lib_version
+from pynxtools_apm.examples.oasisb_eln import generate_oasis_specific_yaml
+from pynxtools_apm.examples.oasisb_utils import generate_file_to_hash
 
-from pynxtools_apm.examples.get_sha256_of_directories import SEPARATOR
-from pynxtools_apm.examples.oasisb_eln import generate_eln_data_yaml
-from pynxtools_apm.examples.oasisb_utils import (
-    APT_MIME_TYPES,
-    CAMECA_ROOT_MIME_TYPES,
-    generate_file_to_hash,
-)
-
-config: dict[str, str | int] = {
+config: dict[str, str] = {
     "python_version": f"{sys.version}",
     "working_directory": f"{os.getcwd()}",
     "pynxtools_name": f"pynxtools",
@@ -124,8 +119,11 @@ input_file_path_prefix = f"{config['target_directory']}{os.sep}decompressed"
 output_file_path_prefix = f"{config['target_directory']}{os.sep}nexus_hfive"
 
 for row_idx in range(spread_sheet_of_project.shape[0]):
-    eln_file_path = generate_eln_data_yaml(
-        project_name, row_idx, output_file_path_prefix, bib  # type: ignore
+    eln_file_path = generate_oasis_specific_yaml(
+        project_name,
+        row_idx,  # type: ignore
+        output_file_path_prefix,
+        bib,  # type: ignore
     )
     if eln_file_path == "":
         continue

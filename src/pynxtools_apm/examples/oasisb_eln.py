@@ -23,14 +23,14 @@ import yaml
 from pynxtools_apm.examples.oasisb_bibliography import get_bibliographical_metadata
 
 
-def generate_eln_data_yaml(
+def generate_oasis_specific_yaml(
     project_name: str,
-    row_idx: int,
+    row_idx: str,
     file_path_prefix: str,
     bibliography: dict,
     write_yaml_file: bool = True,
 ) -> str:
-    eln_file_path = f"{file_path_prefix}/{project_name}.{row_idx}.eln_data.yaml"
+    eln_file_path = f"{file_path_prefix}/{project_name}.{row_idx}.oasis.specific.yaml"  # eln_data.yaml"
     eln_data: dict = {}
 
     # eln_data["entry"] = {}
@@ -54,6 +54,7 @@ def generate_eln_data_yaml(
 
                 eln_data["citation"].append(cite_dict)
 
+    # TODO move this from here into generate_eln_data_yaml
     # eln_data["sample"] = {}
     # if isinstance(dirty_atom_types, str):
     #     clean_atom_types = [
