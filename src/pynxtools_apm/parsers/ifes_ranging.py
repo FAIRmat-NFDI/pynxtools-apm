@@ -46,7 +46,10 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 )
 
 from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
-from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm.utils.default_config import (
+    DEFAULT_COMPRESSION_LEVEL,
+    MAKE_RANGING_DEFINITIONS_UNIQUE,
+)
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RANGE
 from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
@@ -203,7 +206,7 @@ def add_standardize_molecular_ions(
 def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which a ENV file has."""
     logger.debug(f"Extracting data from ENV file: {file_path}")
-    rangefile = ReadEnvFileFormat(file_path, unique=True)
+    rangefile = ReadEnvFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -216,7 +219,7 @@ def extract_data_from_fig_txt_file(
 ) -> dict:
     """Add those required information which a FIG.TXT file has."""
     logger.debug(f"Extracting data from FIG.TXT file: {file_path}")
-    rangefile = ReadFigTxtFileFormat(file_path, unique=True)
+    rangefile = ReadFigTxtFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -229,7 +232,7 @@ def extract_data_from_pyccapt_file(
 ) -> dict:
     """Add those required information which a pyccapt/ranging HDF5 file has."""
     logger.debug(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
-    rangefile = ReadPyccaptRangingFileFormat(file_path, unique=True)
+    rangefile = ReadPyccaptRangingFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.pyc["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -240,7 +243,7 @@ def extract_data_from_pyccapt_file(
 def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information from XML-serialized IVAS state dumps."""
     logger.debug(f"Extracting data from XML-serialized IVAS analysis file: {file_path}")
-    rangefile = ReadImagoAnalysisFileFormat(file_path, unique=True)
+    rangefile = ReadImagoAnalysisFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.imago["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -253,7 +256,7 @@ def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) 
 def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which an RNG file has."""
     logger.debug(f"Extracting data from RNG file: {file_path}")
-    rangefile = ReadRngFileFormat(file_path, unique=True)
+    rangefile = ReadRngFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -264,7 +267,7 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
 def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dict:
     """Add those required information which an RRNG file has."""
     logger.debug(f"Extracting data from RRNG file: {file_path}")
-    rangefile = ReadRrngFileFormat(file_path, unique=True)
+    rangefile = ReadRrngFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -277,7 +280,7 @@ def extract_data_from_cameca_hfive_file(
 ) -> dict:
     """Add those required information which a Cameca HDF5 file has."""
     logger.debug(f"Extracting data from Cameca HDF5 file: {file_path}")
-    rangefile = ReadCamecaHfiveFileFormat(file_path)
+    rangefile = ReadCamecaHfiveFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.cameca["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -292,7 +295,7 @@ def extract_data_from_analysisset_file(
 ) -> dict:
     """Add those required information which an analysisset file has."""
     logger.debug(f"Extracting data from analysisset XML file: {file_path}")
-    rangefile = ReadAnalysissetFileFormat(file_path)
+    rangefile = ReadAnalysissetFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.analysisset["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
