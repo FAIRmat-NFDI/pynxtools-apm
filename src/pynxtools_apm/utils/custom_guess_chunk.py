@@ -99,32 +99,32 @@ def prioritized_axes_heuristic(
             # say 1000 * extent(dim1) * extent(dim2) with dim0 the most prominent axis
             # is not yet full-filling the condition but 1000 / 2 does leading to 500
             # although still say 100 * extent(dim1) * extent(dim2) would fit
-            logger.info(
+            logger.debug(
                 f"chunk strategy, below max_byte {idx}, {dim}, {chunk_shape}, {byte_per_chunk}"
             )
             fill_up_along_most_prominent_axis = max_byte_per_chunk / byte_per_item
-            logger.info(
+            logger.debug(
                 f"chunk strategy, below max_byte {fill_up_along_most_prominent_axis}"
             )
             for dim_idx in np.arange(1, len(chunk_shape)):
                 fill_up_along_most_prominent_axis = (
                     fill_up_along_most_prominent_axis / np.ceil(chunk_shape[dim_idx])
                 )
-                logger.info(
+                logger.debug(
                     f"chunk strategy, below_max_byte {fill_up_along_most_prominent_axis}, {dim_idx}, {np.ceil(chunk_shape[dim_idx])}"
                 )
             if 0 < int(shape[0]) < int(fill_up_along_most_prominent_axis):
                 chunk_shape[0] = shape[0]
-                logger.info(
+                logger.debug(
                     f"chunk strategy, below max_byte, cap to shape[0] chunk_shape[0] {chunk_shape[0]}"
                 )
             elif int(fill_up_along_most_prominent_axis) >= 1:
                 chunk_shape[0] = fill_up_along_most_prominent_axis
-                logger.info(
+                logger.debug(
                     f"chunk strategy, below max_byte, fill-up to max chunk_shape[0] {chunk_shape[0]}"
                 )
             else:
-                logger.info(
+                logger.debug(
                     f"chunk strategy, below max_byte, no further tweaking chunk_shape[0] {chunk_shape[0]}"
                 )
 

@@ -177,21 +177,36 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
         logger.warning(f"epos_file.get_hit_positions() returned None")
     del hit_positions
 
-    trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/hit_multiplicity"
-    hit_multiplicity = epos_file.get_ions_per_pulse()
-    if hit_multiplicity is not None:
+    trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/epos_ions_per_pulse"
+    ions_per_pulse = epos_file.get_ions_per_pulse()
+    if ions_per_pulse is not None:
         template[f"{trg}"] = {
-            "compress": np.asarray(hit_multiplicity.magnitude, np.uint32),
+            "compress": np.asarray(ions_per_pulse.magnitude, np.uint32),
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
-                np.asarray(hit_multiplicity.magnitude, np.uint32), (0,)
+                np.asarray(ions_per_pulse.magnitude, np.uint32), (0,)
             ),
         }
     else:
         logger.warning(f"epos_file.get_ions_per_pulse() returned None")
-    del hit_multiplicity
+    del ions_per_pulse
+
+    trg = f"{prefix}/atom_probeID[atom_probe]/hit_finding/epos_number_of_pulses"
+    number_of_pulses = epos_file.get_number_of_pulses()
+    if number_of_pulses is not None:
+        template[f"{trg}"] = {
+            "compress": np.asarray(number_of_pulses.magnitude, np.uint32),
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(number_of_pulses.magnitude, np.uint32), (0,)
+            ),
+        }
+    else:
+        logger.warning(f"epos_file.get_number_of_pulses() returned None")
+    del number_of_pulses
 
     # add multiplicity data from epos
+    # e.g. https://gitlab.com/jesseds/apav/-/blob/master/apav/core/multipleevent.py
     return template
 
 
@@ -210,6 +225,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         del metadata_dict
     logger.info(f"apt_file parsing content from these sections")
 
+    # would be good to parameterize these calls below to make the code more concise
     # def add_to_template(hdf_path: str, quantity_name: str, dtype: type, chunk_priority: tuple)
 
     trg = f"{prefix}/atom_probeID[atom_probe]/reconstruction/reconstructed_positions"
@@ -419,6 +435,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         logger.warning(f"apt_file.get_named_quantity(Pres) returned None")
     del pressure
 
+    # add pulse data for multiplicity analysis
+
     return template
 
 
@@ -456,6 +474,8 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     else:
         logger.warning(f"ato_file.get_mass_to_charge_state_ratio() returned None")
     del m_z
+
+    # add pulse data for multiplicity analysis
 
     return template
 
@@ -607,6 +627,8 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     else:
         logger.warning(f"pyc_file.get_detector_hit_positions() returned None")
     del hit_positions
+
+    # add pulse data for multiplicity analysis
 
     return template
 

@@ -206,7 +206,7 @@ tests/run_tests.sh
 .virtual_documents
 tests/data
 tests/prod
-!src/pynxtools_apm/_version.py
+src/pynxtools_apm/_version.py
 examples/oasisb/old
 !examples/oasisb/05_visualize_nexus_file.ipynb
 
