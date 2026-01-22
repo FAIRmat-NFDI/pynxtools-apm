@@ -41,7 +41,7 @@ from ifes_apt_tc_data_modeling.stuttgart.raw_reader import (
 
 from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL, SEPARATOR
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
 
 
@@ -199,6 +199,16 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     """Add those required information which a APT file has."""
     logger.debug(f"Extracting data from APT file: {file_path}")
     apt_file = ReadAptFileFormat(file_path)
+
+    logger.info(f"apt_file {apt_file.file_path} has the following sections")
+    for section in apt_file.available_sections:
+        metadata_dict = apt_file.available_sections[section].get_metadata()
+        for key, value in iter(metadata_dict.items()):
+            logger.info(
+                f"apt_file{SEPARATOR}{section}{SEPARATOR}{key}{SEPARATOR}{value}"
+            )
+        del metadata_dict
+    logger.info(f"apt_file parsing content from these sections")
 
     # def add_to_template(hdf_path: str, quantity_name: str, dtype: type, chunk_priority: tuple)
 

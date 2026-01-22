@@ -233,7 +233,7 @@ def extract_data_from_pyccapt_file(
     if len(rangefile.pyc["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.pyc["molecular_ions"], template, entry_id)
     return template
 
 
@@ -281,7 +281,9 @@ def extract_data_from_cameca_hfive_file(
     if len(rangefile.cameca["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(
+        rangefile.cameca["molecular_ions"], template, entry_id
+    )
     return template
 
 

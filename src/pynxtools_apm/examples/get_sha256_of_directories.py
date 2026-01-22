@@ -28,8 +28,8 @@ import py7zr
 import rarfile
 
 # import blake3
+from pynxtools_apm.utils.default_config import SEPARATOR
 
-SEPARATOR = "____"
 HASHING = True
 
 from collections.abc import Mapping
