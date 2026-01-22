@@ -113,14 +113,19 @@ def prioritized_axes_heuristic(
                 logger.info(
                     f"chunk strategy, below_max_byte {fill_up_along_most_prominent_axis}, {dim_idx}, {np.ceil(chunk_shape[dim_idx])}"
                 )
-            if int(fill_up_along_most_prominent_axis) > 1:
+            if 0 < int(shape[0]) < int(fill_up_along_most_prominent_axis):
+                chunk_shape[0] = shape[0]
+                logger.info(
+                    f"chunk strategy, below max_byte, cap to shape[0] chunk_shape[0] {chunk_shape[0]}"
+                )
+            elif int(fill_up_along_most_prominent_axis) >= 1:
                 chunk_shape[0] = fill_up_along_most_prominent_axis
                 logger.info(
-                    f"chunk strategy, below max_byte, chunk_shape[0] {chunk_shape[0]}"
+                    f"chunk strategy, below max_byte, fill-up to max chunk_shape[0] {chunk_shape[0]}"
                 )
             else:
                 logger.info(
-                    f"chunk strategy, below max_byte, chunk_shape[0] {chunk_shape[0]}"
+                    f"chunk strategy, below max_byte, no further tweaking chunk_shape[0] {chunk_shape[0]}"
                 )
 
             break
