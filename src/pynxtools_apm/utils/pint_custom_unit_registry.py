@@ -28,8 +28,8 @@ except ImportError as exc:
 # ureg.formatter.default_format = "D"
 # https://pint.readthedocs.io/en/stable/user/formatting.html
 
-# evaporation rate % ions per 100 pulses uses the unit %/100
-ureg.define("%/100 = 1")
+# evaporation rate
+ureg.define("percent_per_100 = percent / 100 = %_per_100")
 
 
 # source code for customizations of NeXus is archived in v0.4.2 release
