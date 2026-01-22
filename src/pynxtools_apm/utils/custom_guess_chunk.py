@@ -88,10 +88,41 @@ def prioritized_axes_heuristic(
     while True:
         idx += 1
         byte_per_chunk = np.prod(chunk_shape) * byte_per_item
-        logger.info(
+        logger.debug(
             f"chunk strategy, while {idx}, {dim}, {chunk_shape}, {byte_per_chunk}"
         )
         if byte_per_chunk < max_byte_per_chunk:
+            # one issue with splitting always in half is that when we break out
+            # here it can happen that max_byte_per_chunk - byte_per_chunk is large
+            # enough that one could still pack another slice of data across the
+            # most prominent axis along we chopped initially, e.g.
+            # say 1000 * extent(dim1) * extent(dim2) with dim0 the most prominent axis
+            # is not yet full-filling the condition but 1000 / 2 does leading to 500
+            # although still say 100 * extent(dim1) * extent(dim2) would fit
+            logger.info(
+                f"chunk strategy, below max_byte {idx}, {dim}, {chunk_shape}, {byte_per_chunk}"
+            )
+            fill_up_along_most_prominent_axis = max_byte_per_chunk / byte_per_item
+            logger.info(
+                f"chunk strategy, below max_byte {fill_up_along_most_prominent_axis}"
+            )
+            for dim_idx in np.arange(1, len(chunk_shape)):
+                fill_up_along_most_prominent_axis = (
+                    fill_up_along_most_prominent_axis / np.ceil(chunk_shape[dim_idx])
+                )
+                logger.info(
+                    f"chunk strategy, below_max_byte {fill_up_along_most_prominent_axis}, {dim_idx}, {np.ceil(chunk_shape[dim_idx])}"
+                )
+            if int(fill_up_along_most_prominent_axis) > 1:
+                chunk_shape[0] = fill_up_along_most_prominent_axis
+                logger.info(
+                    f"chunk strategy, below max_byte, chunk_shape[0] {chunk_shape[0]}"
+                )
+            else:
+                logger.info(
+                    f"chunk strategy, below max_byte, chunk_shape[0] {chunk_shape[0]}"
+                )
+
             break
         if chunk_shape[dim] % 2 == 0:
             chunk_shape[dim] = chunk_shape[dim] / 2

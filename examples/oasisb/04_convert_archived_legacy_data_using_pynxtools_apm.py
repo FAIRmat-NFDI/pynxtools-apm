@@ -168,7 +168,7 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
     # the pynxtools-apm parser plugin using the pynxtools dataconverter
     input_files_tuple = tuple(pynx_apm_input_files)
     logger.debug(f"{input_files_tuple}")
-    output_file_path = f"{eln_file_path.replace('.eln_data.yaml', '')}.output.nxs"
+    output_file_path = f"{eln_file_path.replace('.oasis.specific.yaml', '')}.output.nxs"
     logger.debug(f"{output_file_path}")
 
     log_file_path = f"{output_file_path}.log"
