@@ -26,7 +26,6 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
 from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
-from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
 from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
 from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
@@ -97,9 +96,12 @@ class APMReader(BaseReader):
             nx_apm_recon.parse(template)
 
         if len(case.ranging) == 1:
+            """
             logger.debug("Parse (meta)data from a ranging definitions file...")
             nx_apm_range = IfesRangingDefinitionsParser(case.ranging[0], entry_id)
             nx_apm_range.parse(template)
+            """
+            pass
 
         # TODO deactivate for production run in the first iteration as we will run
         # two parsing rounds, the first with pynxtools-apm, the second appending eventually

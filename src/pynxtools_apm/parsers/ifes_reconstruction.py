@@ -20,7 +20,6 @@
 from typing import Any
 
 import numpy as np
-import numpy.typing as npt
 from ifes_apt_tc_data_modeling.apt.apt6_reader import ReadAptFileFormat
 from ifes_apt_tc_data_modeling.ato.ato_reader import ReadAtoFileFormat
 from ifes_apt_tc_data_modeling.cameca.cameca_reader import ReadCamecaHfiveFileFormat
@@ -354,14 +353,10 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         logger.warning(f"apt_file.get_named_quantity(XDet, YDet) returned None")
     del detx, dety
 
-    trg = f"{prefix}/measurement/detection_rate"
+    trg = f"{prefix}/measurement/eventID[event1]/instrument/DETECTOR[ion_detector]/detection_rate"
     erate = apt_file.get_named_quantity("erate")
     if erate is not None:
-        template[f"{trg}title"] = "Detection rate"
-        template[f"{trg}@signal"] = "detection_rate"
-        template[f"{trg}@axes"] = "axis_id"  # ? evaporation ID ?
-        template[f"{trg}@AXISNAME_indices[@axis_id_indices]"] = np.uint32(0)
-        template[f"{trg}DATA[detection_rate]"] = {
+        template[f"{trg}"] = {
             "compress": np.asarray(erate.magnitude, np.float32),
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
@@ -369,8 +364,21 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
                 (0,),
             ),
         }
-        template[f"{trg}DATA[detection_rate]/@units"] = f"{erate.units}"  # %/100
-        template[f"{trg}DATA[detection_rate]/@long_name"] = (
+        template[f"{trg}/@units"] = f"{erate.units}"
+        """
+        # here is an example how to add this as a default plot but with real examples
+        # these plots show then easily hundred million values making H5Web extremely
+        # resource hungry and slow, in particular an issue is that when that DATA
+        # group is placed inside another group several h5web version pick up on this
+        # and start loading the data for the plot, data reduction techniques required
+
+        trg = f"{prefix}/measurement/DATA[detection_rate]/"
+        template[f"{trg}title"] = "Detection rate"
+        template[f"{trg}@signal"] = "detection_rate"
+        template[f"{trg}@axes"] = "axis_id"  # ? evaporation ID ?
+        template[f"{trg}@AXISNAME_indices[@axis_id_indices]"] = np.uint32(0)
+
+        template[f"{trg}detection_rate/@long_name"] = (
             f"Detection rate ({erate.units})"  # %/100
         )
         number_of_ids = np.shape(erate.magnitude)[0]
@@ -384,6 +392,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         }
         template[f"{trg}AXISNAME[axis_id]/@long_name"] = "Id"  # TODO
         del ids
+        """
     else:
         logger.warning(f"apt_file.get_named_quantity(erate) returned None")
     del erate
@@ -406,6 +415,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}/measurement/eventID[event1]/instrument/stage/temperature_sensor"
     temperature = apt_file.get_named_quantity("Temp")
     if temperature is not None:
+        template[f"{trg}/measurement"] = f"temperature"
         template[f"{trg}/value"] = {
             "compress": np.asarray(temperature.magnitude, np.float32),
             "strength": DEFAULT_COMPRESSION_LEVEL,
@@ -414,7 +424,6 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/value/@units"] = f"{temperature.units}"
-        template[f"{trg}/measurement"] = "temperature"
     else:
         logger.warning(f"apt_file.get_named_quantity(Temp) returned None")
     del temperature
@@ -422,6 +431,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     trg = f"{prefix}/measurement/eventID[event1]/instrument/analysis_chamber/pressure_sensor"
     pressure = apt_file.get_named_quantity("Pres")
     if pressure is not None:
+        template[f"{trg}/measurement"] = "pressure"
         template[f"{trg}/value"] = {
             "compress": np.asarray(pressure.magnitude, np.float32),
             "strength": DEFAULT_COMPRESSION_LEVEL,
@@ -430,7 +440,6 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             ),
         }
         template[f"{trg}/value/@units"] = f"{pressure.units}"
-        template[f"{trg}/measurement"] = "pressure"
     else:
         logger.warning(f"apt_file.get_named_quantity(Pres) returned None")
     del pressure
@@ -682,7 +691,13 @@ def extract_data_from_ops_file(file_path: str, prefix: str, template: dict) -> d
         trg = f"{prefix}/start_time"
         template[f"{trg}"] = ops_file.instrument["time_stamp"]
 
-    trg = f"{prefix}/measurement/voltage_curve/"
+    trg = f"{prefix}/measurement/DATA[voltage_curve]/"
+    # see comments on the potential performance issue with creating such default plots
+    # all over the place, for PoSAP data, back then the number of ions (several million)
+    # nowadays visualization tools are performant enough to render this, so for ops/PoSAP
+    # but this is a special case as e.g. modern LEAP6000 systems can generate datasets
+    # with multiple hundred ions that is overwhelming for typical visualization so data
+    # reduction strategies are required in such case
     if not all(
         name in ops_file.voltages
         for name in ["standing_voltage", "pulse_voltage", "next_hit_group_offset"]
@@ -853,7 +868,7 @@ def extract_data_from_stuttgart_apyt_mass_spectrum_file(
     }
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = f"{m_z[0].units}"
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@long_name"] = (
-        "Mass-to-charge-state-ratio (Da)"  # Da !!
+        f"Mass-to-charge-state-ratio ({m_z[0].units})"
     )
     logger.debug(
         f"Plot mass spectrum ({np.around(m_z[0].magnitude[1] - m_z[0].magnitude[0], decimals=3) if number_of_bins > 1 else ''} {m_z[0].units} binning)"
