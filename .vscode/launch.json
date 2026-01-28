@@ -9,8 +9,10 @@
             "type": "python",  //"debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "../.py3.13.8/bin/dataconverter",
-            "args": [//workflow files str.str, hits.hits, root.root should be created via touch str.str ...
+            "program": "../../.py3.13.11/bin/dataconverter",
+            "args": ["../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/Shank.apt",
+                     "../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/SZPZC_11_Top_Level_ROI_Fixed.RRNG",
+                     //workflow files str.str, hits.hits, root.root should be created via touch str.str ...
                      //"tests/data/apt/Si.apt",
                      //"tests/data/ato3/R31_11378-v01.ato",
                      //"tests/data/cameca_hdf5/R69_152985-v01 Top Level ROI.hdf5",
@@ -23,7 +25,7 @@
                      //"tests/data/default/Si.apt",
                      //"tests/data/default/hits.hits",
                      //"tests/data/default/apm.oasis.specific.yaml",
-                     "tests/data/default/output.nxs_eln_data.yaml",
+                     //"tests/data/default/output.nxs_eln_data.yaml",
                      //"tests/data/env/ErMnO.env",
                      //"tests/data/epos/R45_04472-v03.epos",
                      //"tests/data/fig/Superalloy_MassSpec_ranged.fig.txt",
@@ -43,6 +45,7 @@
                      "--nxdl",
                      "NXapm",
                      //"--skip-verify",
+                     "--output=../../apm.nxs"]
                      //"--output=tests/prod/apt/output.nxs"]
                      //"--output=tests/prod/ato3/output.nxs"]
                      //"--output=tests/prod/cameca_hdf5/output.nxs"]
@@ -50,7 +53,7 @@
                      //"--output=tests/prod/cameca_root/output.nxs"]
                      //"--output=tests/prod/csv/output.nxs"]
                      //"--output=tests/prod/default/output.nxs"]
-                     "--output=tests/prod/eln/output.nxs"]
+                     //"--output=tests/prod/eln/output.nxs"]
                      //"--output=tests/prod/env/output.nxs"]
                      //"--output=tests/prod/epos/output.nxs"]
                      //"--output=tests/prod/fig/output.nxs"]
