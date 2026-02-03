@@ -10,8 +10,9 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "../../.py3.13.11/bin/dataconverter",
-            "args": ["../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/Shank.apt",
-                     "../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/SZPZC_11_Top_Level_ROI_Fixed.RRNG",
+            "args": [//"../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/Shank.apt",
+                     "../../Shank.apt",
+                     //"../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/SZPZC_11_Top_Level_ROI_Fixed.RRNG",
                      //workflow files str.str, hits.hits, root.root should be created via touch str.str ...
                      //"tests/data/apt/Si.apt",
                      //"tests/data/ato3/R31_11378-v01.ato",
@@ -45,7 +46,7 @@
                      "--nxdl",
                      "NXapm",
                      //"--skip-verify",
-                     "--output=../../apm.nxs"]
+                     "--output=../../apm.shank.apt.nxs"]
                      //"--output=tests/prod/apt/output.nxs"]
                      //"--output=tests/prod/ato3/output.nxs"]
                      //"--output=tests/prod/cameca_hdf5/output.nxs"]
