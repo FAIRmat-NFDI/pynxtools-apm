@@ -23,17 +23,38 @@ from pynxtools_apm.utils.get_checksum import (
     get_sha256_of_file_content,
 )
 
-VALID_FILE_NAME_SUFFIX_RECON = [".apt", ".pos", ".epos", ".ato", ".csv", ".h5"]
-VALID_FILE_NAME_SUFFIX_RANGE = [
-    ".rng",
+VALID_FILE_NAME_SUFFIX_RECON: list[str] = [
+    ".apt",
+    ".pos",
+    ".epos",
+    ".ato",
+    ".csv",
+    ".h5",
+    ".hdf5",
+    ".ops",
+    ".raw",
+    "_trimmed.txt",
+    "_xyz.txt",
+]
+VALID_FILE_NAME_SUFFIX_RANGE: list[str] = [
     ".rrng",
+    ".rng",
     ".env",
     ".fig.txt",
     "range_.h5",
     ".analysis",
+    ".hdf5",
+    ".analysisset",
 ]
-VALID_FILE_NAME_SUFFIX_CONFIG = [".yaml", ".yml"]
-VALID_FILE_NAME_SUFFIX_CAMECA = [".cameca", ".str", ".rraw", ".rhit", ".hits", ".root"]
+VALID_FILE_NAME_SUFFIX_CONFIG: list[str] = [".yaml", ".yml", "db.yaml"]
+VALID_FILE_NAME_SUFFIX_CAMECA: list[str] = [
+    ".cameca",
+    ".str",
+    ".rraw",
+    ".rhit",
+    ".hits",
+    ".root",
+]
 from pynxtools_apm.utils.custom_logging import logger
 
 
@@ -44,7 +65,7 @@ class ApmUseCaseSelector:
     too much input. The UseCaseSelector decide what to do in each case.
     """
 
-    def __init__(self, file_paths: tuple[str] = None):
+    def __init__(self, file_paths: tuple[str, ...]):
         """Initialize the class.
 
         dataset injects numerical data and metadata from an analysis.
@@ -70,7 +91,7 @@ class ApmUseCaseSelector:
         self.sort_files_by_file_name_suffix(file_paths)
         self.check_validity_of_file_combinations()
 
-    def sort_files_by_file_name_suffix(self, file_paths: tuple[str] = None):
+    def sort_files_by_file_name_suffix(self, file_paths: tuple[str, ...]):
         """Sort all input-files based on their name suffix to prepare validity check."""
         for suffix in self.supported_file_name_suffixes:
             self.case[suffix] = []
@@ -95,8 +116,8 @@ class ApmUseCaseSelector:
 
     def check_validity_of_file_combinations(self):
         """Check if this combination of types of files is supported."""
-        recon_input = 0  # reconstruction relevant file e.g. POS, ePOS, APT, ATO, CSV
-        range_input = 0  # ranging definition file, e.g. RNG, RRNG, ENV, FIG.TXT
+        recon_input = 0  # reconstruction relevant file e.g., POS, ePOS, APT, ATO, CSV
+        range_input = 0  # ranging definition file, e.g., RNG, RRNG, ENV, FIG.TXT
         other_input = 0  # generic ELN, Oasis-specific configurations
         apsuite_input = 0  # manual yaml files composed from IVAS/AP Suite
         for suffix, value in self.case.items():
@@ -143,7 +164,7 @@ class ApmUseCaseSelector:
             f"Oasis local config: {self.cfg}\n"
         )
         if len(self.apsuite) > 0:
-            logger.info(f"IVAS/APSuite: {self.apsuite}\n")
+            logger.info(f"IVAS/AP Suite: {self.apsuite}\n")
 
     def report_workflow(self, template: dict, entry_id: int) -> dict:
         """Initialize the reporting of the workflow."""
@@ -158,7 +179,6 @@ class ApmUseCaseSelector:
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
                 template[f"{prfx}/file_name"] = f"{fpath}"
-                template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
             prfx = var_path_to_specific_path(
@@ -168,7 +188,6 @@ class ApmUseCaseSelector:
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
                 template[f"{prfx}/file_name"] = f"{fpath}"
-                template[f"{prfx}/type"] = "file"
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         # FAU/Erlangen's pyccapt control and calibration file have not functional
         # distinction which makes it non-trivial to decide if a given HDF5 qualifies

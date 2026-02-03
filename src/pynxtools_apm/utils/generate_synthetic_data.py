@@ -35,7 +35,9 @@ from ifes_apt_tc_data_modeling.utils.utils import (
     nuclide_hash_to_nuclide_list,
 )
 
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 from pynxtools_apm.utils.load_ranging import add_unknown_iontype
 
 # do not use ase directly any longer for NIST isotopes, instead this syntactic equivalent
@@ -248,7 +250,7 @@ class ApmCreateExampleData:
             accept_reject.append(idx[3])
         accept_reject = np.cumsum(accept_reject)
         assert self.xyz != [], (
-            "self.xyz must not be an empty dataset, create a geometry first!"
+            "self.xyz must not be an empty dataset, create a geometry first"
         )
         # logger.debug(f"Accept/reject sampling m/q values for {np.shape(self.xyz)[0])} ions")
 
@@ -262,12 +264,12 @@ class ApmCreateExampleData:
             # logger.debug(self.nrm_composition[idx])
             # logger.debug(np.sum(mask) / np.shape(self.xyz)[0])
         # logger.debug(np.shape(self.m_z))
-        # assert np.sum(self.m_z == np.nan) == 0, "Not all m/q values defined!"
+        # assert np.sum(self.m_z == np.nan) == 0, "Not all m/q values defined"
 
     def composition_to_ranging_definitions(self, template: dict) -> dict:
         """Create ranging definitions based on composition."""
         raise NotImplementedError()
-        assert len(self.nrm_composition) > 0, "Composition is not defined!"
+        assert len(self.nrm_composition) > 0, "Composition is not defined"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/"
         template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
         template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
@@ -372,12 +374,12 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # logger.debug("Parsing specimen...")
         trg = f"/ENTRY[entry{self.entry_id}]/specimen/"
-        assert len(self.nrm_composition) > 0, "Composition list is empty!"
+        assert len(self.nrm_composition) > 0, "Composition list is empty"
         unique_elements = set()
         for tpl in self.nrm_composition:
             symbol_lst = tpl[0]
             for symbol in symbol_lst:
-                assert isinstance(symbol, str), "symbol is not a string!"
+                assert isinstance(symbol, str), "symbol is not a string"
                 if (symbol in chemical_symbols) & (symbol != "X"):
                     unique_elements.add(str(symbol))
         logger.debug(f"Unique elements are: {list(unique_elements)}")
@@ -626,14 +628,20 @@ class ApmCreateExampleData:
             trg = f"{prefix}reconstruction/"
             template[f"{trg}reconstructed_positions"] = {
                 "compress": np.asarray(self.xyz, np.float32),
-                "strength": 1,
+                "strength": DEFAULT_COMPRESSION_LEVEL,
+                "chunks": prioritized_axes_heuristic(
+                    np.asarray(self.xyz, np.float32), (0, 1)
+                ),
             }
             template[f"{trg}reconstructed_positions/@units"] = "nm"
 
             trg = f"{prefix}mass_to_charge_conversion/"
             template[f"{trg}mass_to_charge"] = {
                 "compress": np.asarray(self.m_z, np.float32),
-                "strength": 1,
+                "strength": DEFAULT_COMPRESSION_LEVEL,
+                "chunks": prioritized_axes_heuristic(
+                    np.asarray(self.m_z, np.float32), (0,)
+                ),
             }
             template[f"{trg}mass_to_charge/@units"] = "Da"
 

@@ -22,6 +22,10 @@ from typing import Any
 
 import numpy as np
 from ase.data import chemical_symbols
+from ifes_apt_tc_data_modeling.analysisset.analysisset_reader import (
+    ReadAnalysissetFileFormat,
+)
+from ifes_apt_tc_data_modeling.cameca.cameca_reader import ReadCamecaHfiveFileFormat
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
@@ -41,6 +45,11 @@ from ifes_apt_tc_data_modeling.utils.utils import (
     nuclide_hash_to_nuclide_list,
 )
 
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
+from pynxtools_apm.utils.default_config import (
+    DEFAULT_COMPRESSION_LEVEL,
+    MAKE_RANGING_DEFINITIONS_UNIQUE,
+)
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RANGE
 from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
@@ -127,30 +136,54 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["nuclide_hash"], np.uint16
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
+                        (0,),
+                    ),
                 }
                 template[f"{path}charge_state"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["charge_state"], np.int8
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["charge_state"], np.int8),
+                        (0,),
+                    ),
                 }
                 template[f"{path}mass"] = {
                     "compress": np.asarray(ion.charge_state_model["mass"], np.float64),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["mass"], np.float64), (0,)
+                    ),
                 }
                 template[f"{path}mass/@units"] = "Da"
                 template[f"{path}natural_abundance_product"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["natural_abundance_product"], np.float64
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(
+                            ion.charge_state_model["natural_abundance_product"],
+                            np.float64,
+                        ),
+                        (0,),
+                    ),
                 }
                 template[f"{path}shortest_half_life"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["shortest_half_life"], np.float64
                     ),
-                    "strength": 1,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(
+                            ion.charge_state_model["shortest_half_life"], np.float64
+                        ),
+                        (0,),
+                    ),
                 }
                 template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1
@@ -173,7 +206,7 @@ def add_standardize_molecular_ions(
 def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which a ENV file has."""
     logger.debug(f"Extracting data from ENV file: {file_path}")
-    rangefile = ReadEnvFileFormat(file_path)
+    rangefile = ReadEnvFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -186,7 +219,7 @@ def extract_data_from_fig_txt_file(
 ) -> dict:
     """Add those required information which a FIG.TXT file has."""
     logger.debug(f"Extracting data from FIG.TXT file: {file_path}")
-    rangefile = ReadFigTxtFileFormat(file_path)
+    rangefile = ReadFigTxtFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -199,18 +232,18 @@ def extract_data_from_pyccapt_file(
 ) -> dict:
     """Add those required information which a pyccapt/ranging HDF5 file has."""
     logger.debug(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
-    rangefile = ReadPyccaptRangingFileFormat(file_path)
-    if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+    rangefile = ReadPyccaptRangingFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
+    if len(rangefile.pyc["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.pyc["molecular_ions"], template, entry_id)
     return template
 
 
 def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information from XML-serialized IVAS state dumps."""
     logger.debug(f"Extracting data from XML-serialized IVAS analysis file: {file_path}")
-    rangefile = ReadImagoAnalysisFileFormat(file_path)
+    rangefile = ReadImagoAnalysisFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.imago["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -223,7 +256,7 @@ def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) 
 def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which an RNG file has."""
     logger.debug(f"Extracting data from RNG file: {file_path}")
-    rangefile = ReadRngFileFormat(file_path)
+    rangefile = ReadRngFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -234,7 +267,7 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
 def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dict:
     """Add those required information which an RRNG file has."""
     logger.debug(f"Extracting data from RRNG file: {file_path}")
-    rangefile = ReadRrngFileFormat(file_path, unique=False)
+    rangefile = ReadRrngFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -242,10 +275,41 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     return template
 
 
+def extract_data_from_cameca_hfive_file(
+    file_path: str, template: dict, entry_id
+) -> dict:
+    """Add those required information which a Cameca HDF5 file has."""
+    logger.debug(f"Extracting data from Cameca HDF5 file: {file_path}")
+    rangefile = ReadCamecaHfiveFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
+    if len(rangefile.cameca["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
+
+    add_standardize_molecular_ions(
+        rangefile.cameca["molecular_ions"], template, entry_id
+    )
+    return template
+
+
+def extract_data_from_analysisset_file(
+    file_path: str, template: dict, entry_id
+) -> dict:
+    """Add those required information which an analysisset file has."""
+    logger.debug(f"Extracting data from analysisset XML file: {file_path}")
+    rangefile = ReadAnalysissetFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
+    if len(rangefile.analysisset["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
+
+    add_standardize_molecular_ions(
+        rangefile.analysisset["molecular_ions"], template, entry_id
+    )
+    return template
+
+
 class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
+        self.supported = False
         self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
@@ -255,10 +319,10 @@ class IfesRangingDefinitionsParser:
             if file_path.lower().endswith(suffix):
                 self.meta["file_format"] = suffix
                 break
-        if self.meta["file_format"] is None:
-            raise ValueError(
-                f"{file_path} is not a supported ranging definitions file!"
-            )
+        if self.meta["file_format"] is not None:
+            self.supported = True
+        else:
+            logger.warning(f"{file_path} is not a supported ranging definitions file")
 
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
@@ -304,6 +368,8 @@ class IfesRangingDefinitionsParser:
         with the application definition.
         """
         # resolve the next two program references more informatively
+        if not self.supported:
+            return template
         trg = (
             f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
             f"ranging/peak_identification/"
@@ -343,6 +409,14 @@ class IfesRangingDefinitionsParser:
                 )
             elif self.meta["file_format"] == ".rrng":
                 extract_data_from_rrng_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
+            elif self.meta["file_format"] == ".hdf5":
+                extract_data_from_cameca_hfive_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
+            elif self.meta["file_format"] == ".analysisset":
+                extract_data_from_analysisset_file(
                     self.meta["file_path"], template, self.meta["entry_id"]
                 )
             else:

@@ -15,24 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Utility tool constants and versioning."""
 
-from pynxtools_apm._version import version as pynx_apm_version
+"""Default parameters."""
 
-NX_APM_ADEF_NAME = "NXapm"
-PYNX_APM_NAME = "pynxtools-apm/reader.py"
+from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 
+MASS_SPECTRUM_DEFAULT_BINNING = ureg.Quantity(0.01, ureg.dalton)
+NAIVE_GRID_DEFAULT_VOXEL_SIZE = ureg.Quantity(1.0, ureg.nanometer)
+DEFAULT_COMPRESSION_LEVEL = 9
+MAKE_RANGING_DEFINITIONS_UNIQUE = True
 
-def get_apm_exec_version() -> str:
-    # TODO:deprecate, remove when versions are properly resolved with the next NOMAD release
-    # then also remove the function call altogether
-    # tag = get_repo_last_commit()
-    # if tag is not None:
-    #     return f"https://github.com/FAIRmat-NFDI/pynxtools-em/commit/{tag}"
-    if pynx_apm_version is not None:
-        return f"{pynx_apm_version}"
-    else:
-        return "UNKNOWN COMMIT"
-
-
-PYNX_APM_VERSION = get_apm_exec_version()
+SEPARATOR = "____"

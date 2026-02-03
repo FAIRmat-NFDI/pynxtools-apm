@@ -26,7 +26,7 @@ IS_REGULAR_DATASET = 1
 IS_COMPOUND_DATASET = 2
 IS_FIELD_IN_COMPOUND_DATASET = 3
 IS_ATTRIBUTE = 4
-VERSION_MANAGEMENT: dict = {
+VERSION_MANAGEMENT: dict[str, list] = {
     "tech_partner": [],
     "schema_name": [],
     "schema_version": [],
@@ -51,9 +51,9 @@ class Concept:
                 if len(instance_name) > 0:
                     self.name = instance_name
                 else:
-                    raise ValueError("instance_name must not be empty!")
+                    raise ValueError("instance_name must not be empty")
             else:
-                raise ValueError("instance_name has to be a string or None!")
+                raise ValueError("instance_name has to be a string or None")
         else:
             self.name = None
         if concept_name is not None:
@@ -61,9 +61,9 @@ class Concept:
                 if len(concept_name) > 0:
                     self.concept = concept_name
                 else:
-                    raise ValueError("concept_name must not be empty!")
+                    raise ValueError("concept_name must not be empty")
             else:
-                raise ValueError("concept_name has to be a string or None!")
+                raise ValueError("concept_name has to be a string or None")
         else:
             self.concept = None
         self.value = value
@@ -76,9 +76,9 @@ class Concept:
                     # testing against pint
                     self.unit = unit_info
                 else:
-                    raise ValueError("unit_info must not be empty!")
+                    raise ValueError("unit_info must not be empty")
             else:
-                raise ValueError("unit_info has to be a string or None!")
+                raise ValueError("unit_info has to be a string or None")
         else:
             self.unit = None
         if "hdf_type" in kwargs.keys():

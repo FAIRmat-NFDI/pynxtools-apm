@@ -33,7 +33,9 @@ from ifes_apt_tc_data_modeling.utils.utils import create_nuclide_hash
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.cameca_cfg import APM_CAMECA_TO_NEXUS
+from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 
 
 class NxApmCustomElnCamecaRoot:
@@ -41,7 +43,7 @@ class NxApmCustomElnCamecaRoot:
 
     def __init__(self, file_path: str = "", entry_id: int = 1, verbose: bool = False):
         """Construct class"""
-        logger.debug(f"Extracting data from IVAS/APSuite file: {file_path}")
+        logger.debug(f"Extracting data from IVAS/AP Suite file: {file_path}")
         if pathlib.Path(file_path).name.endswith(".cameca"):
             self.file_path = file_path
         self.entry_id = entry_id if entry_id > 0 else 1
@@ -200,7 +202,7 @@ class NxApmCustomElnCamecaRoot:
                             if len(element_multiplicity) != 2:
                                 raise ValueError(
                                     f"Line {line}, element multiplicity is not "
-                                    f"correctly formatted {len(element_multiplicity)}!"
+                                    f"correctly formatted {len(element_multiplicity)}"
                                 )
                             if (
                                 element_multiplicity[0] in chemical_symbols[1::]
@@ -284,19 +286,38 @@ class NxApmCustomElnCamecaRoot:
                                 "compress": np.asarray(
                                     ion.charge_state_model["nuclide_hash"], np.uint16
                                 ),
-                                "strength": 1,
+                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "chunks": prioritized_axes_heuristic(
+                                    np.asarray(
+                                        ion.charge_state_model["nuclide_hash"],
+                                        np.uint16,
+                                    ),
+                                    (0,),
+                                ),
                             }
                             template[f"{path}charge_state"] = {
                                 "compress": np.asarray(
                                     ion.charge_state_model["charge_state"], np.int8
                                 ),
-                                "strength": 1,
+                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "chunks": prioritized_axes_heuristic(
+                                    np.asarray(
+                                        ion.charge_state_model["charge_state"], np.int8
+                                    ),
+                                    (0,),
+                                ),
                             }
                             template[f"{path}mass"] = {
                                 "compress": np.asarray(
                                     ion.charge_state_model["mass"], np.float64
                                 ),
-                                "strength": 1,
+                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "chunks": prioritized_axes_heuristic(
+                                    np.asarray(
+                                        ion.charge_state_model["mass"], np.float64
+                                    ),
+                                    (0,),
+                                ),
                             }
                             template[f"{path}mass/@units"] = "Da"
                             template[f"{path}natural_abundance_product"] = {
@@ -304,14 +325,30 @@ class NxApmCustomElnCamecaRoot:
                                     ion.charge_state_model["natural_abundance_product"],
                                     np.float64,
                                 ),
-                                "strength": 1,
+                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "chunks": prioritized_axes_heuristic(
+                                    np.asarray(
+                                        ion.charge_state_model[
+                                            "natural_abundance_product"
+                                        ],
+                                        np.float64,
+                                    ),
+                                    (0,),
+                                ),
                             }
                             template[f"{path}shortest_half_life"] = {
                                 "compress": np.asarray(
                                     ion.charge_state_model["shortest_half_life"],
                                     np.float64,
                                 ),
-                                "strength": 1,
+                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "chunks": prioritized_axes_heuristic(
+                                    np.asarray(
+                                        ion.charge_state_model["shortest_half_life"],
+                                        np.float64,
+                                    ),
+                                    (0,),
+                                ),
                             }
                             template[f"{path}shortest_half_life/@units"] = "s"
 

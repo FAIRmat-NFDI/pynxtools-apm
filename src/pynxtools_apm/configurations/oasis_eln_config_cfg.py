@@ -73,5 +73,5 @@ OASISCFG_APM_CSYS_TO_NEXUS = {
 OASISCFG_APM_CITATION_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/citeID[cite*]",
     "prefix_src": "",
-    "map_to_str": ["authors", "doi", "description", "url"],
+    "map_to_str": ["author", "doi", "description", "url"],
 }

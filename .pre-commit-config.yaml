@@ -19,10 +19,10 @@ repos:
       - id: pyupgrade
         args: [--py36-plus]  # modernizes syntax for Python 3.6+
 
-  - repo: https://github.com/kynan/nbstripout
-    rev: 0.6.0
-    hooks:
-      - id: nbstripout  # removes notebook outputs before committing
+  # - repo: https://github.com/kynan/nbstripout
+  #   rev: 0.6.0
+  #   hooks:
+  #     - id: nbstripout  # removes notebook outputs before committing
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
     rev: v6.31.1

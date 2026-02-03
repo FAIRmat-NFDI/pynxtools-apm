@@ -605,7 +605,7 @@ definitions:
                 type: str
                 description: |
                   Name of the program used to perform the reconstruction with.
-                  Examples are IVAS, APSuite, or names of open-source tools.
+                  Examples are IVAS, AP Suite, or names of open-source tools.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
@@ -691,7 +691,7 @@ definitions:
                 description: |
                   Different reconstruction protocols exist. Although these approaches
                   are qualitatively similar, each protocol uses different parameters
-                  (and interprets these differently). The source code to IVAS/APSuite
+                  (and interprets these differently). The source code to IVAS/AP Suite
                   is not open. For now users should store reconstruction parameter
                   they deem relevant in this free text field.
                 m_annotations:
@@ -722,7 +722,7 @@ definitions:
                 type: str
                 description: |
                   Name of the program used to perform the ranging with.
-                  Examples are IVAS, APSuite, or names of open-source tools.
+                  Examples are IVAS, AP Suite, or names of open-source tools.
                 m_annotations:
                   eln:
                     component: StringEditQuantity

@@ -28,19 +28,15 @@ except ImportError as exc:
 # ureg.formatter.default_format = "D"
 # https://pint.readthedocs.io/en/stable/user/formatting.html
 
-# customizations for NeXus
-ureg.define("nx_unitless = 1")
-ureg.define("nx_dimensionless = 1")
-ureg.define("nx_any = 1")
+# evaporation rate
+ureg.define("percent_per_100 = percent / 100")
 
-NX_UNITLESS = ureg.Quantity(1, ureg.nx_unitless)
-NX_DIMENSIONLESS = ureg.Quantity(1, ureg.nx_dimensionless)
-NX_ANY = ureg.Quantity(1, ureg.nx_any)
+
+# source code for customizations of NeXus is archived in v0.4.2 release
 
 
 def is_not_special_unit(qnt: pint.Quantity) -> bool:
-    """True if not a special NeXus unit category."""
-    for special_units in [NX_UNITLESS.units, NX_DIMENSIONLESS.units, NX_ANY.units]:
-        if qnt.units == special_units:
-            return False
-    return True
+    """Assure that only non-empty string units attribute values are written to HDF5."""
+    if len(f"{qnt.units}") > 0:
+        return True
+    return False

@@ -26,11 +26,9 @@ from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
 from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
-from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
 from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
 from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
-from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
 from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
@@ -49,9 +47,9 @@ class APMReader(BaseReader):
 
     def read(
         self,
-        template: dict | None = None,
-        file_paths: tuple[str] | None = None,
-        objects: tuple[Any] | None = None,
+        template: dict = None,
+        file_paths: tuple[str, ...] = None,
+        objects: tuple[Any, ...] = None,
     ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
         logger.info(os.getcwd())
@@ -67,7 +65,7 @@ class APMReader(BaseReader):
         case = ApmUseCaseSelector(file_paths)
         if not case.is_valid:
             logger.warning(
-                "Such a combination of input-file(s, if any) is not supported !"
+                "Such a combination of input-file(s, if any) is not supported"
             )
             return {}
         case.report_workflow(template, entry_id)
@@ -98,12 +96,19 @@ class APMReader(BaseReader):
             nx_apm_recon.parse(template)
 
         if len(case.ranging) == 1:
+            """
             logger.debug("Parse (meta)data from a ranging definitions file...")
             nx_apm_range = IfesRangingDefinitionsParser(case.ranging[0], entry_id)
             nx_apm_range.parse(template)
+            """
+            pass
 
-        logger.debug("Create NeXus default plottable data...")
-        apm_default_plot_generator(template, entry_id)
+        # TODO deactivate for production run in the first iteration as we will run
+        # two parsing rounds, the first with pynxtools-apm, the second appending eventually
+        # other content, like voltage curves; if these exist, they should be the
+        # default plot, so the following two lines need to be run after the second round
+        # logger.debug("Create NeXus default plottable data...")
+        # apm_default_plot_generator(template, entry_id)
 
         logger.debug("Naive removal of concepts that have missing values")
         # these are introduced via the "use" functor but might not be populated with instance data
