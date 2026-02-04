@@ -30,6 +30,7 @@ from pynxtools_apm.configurations.oasis_eln_cfg import (
     APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
     APM_INSTRUMENT_STATIC_TO_NEXUS,
     APM_MEASUREMENT_TO_NEXUS,
+    APM_PROJECT_TO_NEXUS,
     APM_RANGE_TO_NEXUS,
     APM_RECON_TO_NEXUS,
     APM_SAMPLE_TO_NEXUS,
@@ -207,6 +208,7 @@ class NxApmNomadOasisElnSchemaParser:
         identifier = [self.entry_id, 1]
         for cfg in [
             APM_ENTRY_TO_NEXUS,
+            APM_PROJECT_TO_NEXUS,
             APM_SAMPLE_TO_NEXUS,
             APM_SPECIMEN_TO_NEXUS,
             APM_MEASUREMENT_TO_NEXUS,
