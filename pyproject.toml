@@ -78,11 +78,12 @@ exclude = ["dev/*"]
 [tool.setuptools_scm]
 version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
-write_to = "src/pynxtools_apm/utils/_version.py"
+write_to = "src/pynxtools_apm/_version.py"
 git_describe_command = ["git", "describe", "--dirty", "--long", "--tags", "--match", "*[0-9]*", "--abbrev=8"]
 
 [tool.ruff]
 include = ["src/pynxtools_apm/*.py", "tests/*.py"]
+exclude = ["src/pynxtools_apm/_version.py"]
 line-length = 88
 indent-width = 4
 
