@@ -17,7 +17,7 @@
 #
 """Utility tool constants and versioning."""
 
-from pynxtools_apm.utils._version import version as __version__
+from pynxtools_apm._version import version as __version__
 
 NX_APM_ADEF_NAME = "NXapm"
 PYNX_APM_NAME = "pynxtools-apm/reader.py"

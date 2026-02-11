@@ -206,4 +206,4 @@ tests/run_tests.sh
 .virtual_documents
 tests/data
 tests/prod
-src/pynxtools_apm/utils/_version.py
+src/pynxtools_apm/_version.py
