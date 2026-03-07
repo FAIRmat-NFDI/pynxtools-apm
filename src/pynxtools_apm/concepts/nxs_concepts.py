@@ -17,12 +17,18 @@
 #
 """Implement NeXus-specific groups and fields to document software and versions used."""
 
-from pynxtools.helpers.versioning import get_pynxtools_version
+from typing import Any
+
+import flatdict as fd
+from ifes_apt_tc_data_modeling.utils.versioning import (
+    get_ifes_apt_tc_data_modeling_version,
+)
+from pynxtools.dataconverter.helpers.versioning import get_pynxtools_version
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
-APM_PYNX_TO_NEXUS = {
+APM_PYNX_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/profiling",
     "prefix_src": "",
     "use": [
@@ -47,5 +53,7 @@ class NxApmAppDef:
 
     def parse(self, template: dict) -> dict:
         """Parse application definition."""
-        add_specific_metadata_pint(APM_PYNX_TO_NEXUS, {}, [self.entry_id], template)
+        add_specific_metadata_pint(
+            APM_PYNX_TO_NEXUS, fd.FlatDict({}, delimiter="/"), [self.entry_id], template
+        )
         return template
