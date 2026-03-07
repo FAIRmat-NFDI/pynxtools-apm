@@ -23,7 +23,7 @@ import flatdict as fd
 from ifes_apt_tc_data_modeling.utils.versioning import (
     get_ifes_apt_tc_data_modeling_version,
 )
-from pynxtools.dataconverter.helpers.versioning import get_pynxtools_version
+from pynxtools.dataconverter.helpers import get_pynxtools_version
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
