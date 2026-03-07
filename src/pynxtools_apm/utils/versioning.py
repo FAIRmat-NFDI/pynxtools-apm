@@ -17,22 +17,17 @@
 #
 """Utility tool constants and versioning."""
 
-from pynxtools_apm._version import version as pynx_apm_version
+import importlib.metadata
+
+
+def get_pynxtools_apm_version() -> str:
+    """Attempt getting the version of pynxtools-apm at runtime with fallback."""
+    try:
+        return f"{importlib.metadata.version('pynxtools-apm')}"
+    except importlib.metadata.PackageNotFoundError:
+        return f"unknown_version"
+
 
 NX_APM_ADEF_NAME = "NXapm"
-PYNX_APM_NAME = "pynxtools-apm/reader.py"
-
-
-def get_apm_exec_version() -> str:
-    # TODO:deprecate, remove when versions are properly resolved with the next NOMAD release
-    # then also remove the function call altogether
-    # tag = get_repo_last_commit()
-    # if tag is not None:
-    #     return f"https://github.com/FAIRmat-NFDI/pynxtools-em/commit/{tag}"
-    if pynx_apm_version is not None:
-        return f"{pynx_apm_version}"
-    else:
-        return "UNKNOWN COMMIT"
-
-
-PYNX_APM_VERSION = get_apm_exec_version()
+PYNX_APM_NAME = "pynxtools-apm"
+PYNX_APM_VERSION = get_pynxtools_apm_version()
