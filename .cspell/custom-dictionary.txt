@@ -35,6 +35,7 @@ Markus
 Metainfo
 Monajem
 NFDI
+NTHREADS
 OASISCFG
 OINA
 PRNG

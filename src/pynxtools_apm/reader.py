@@ -23,6 +23,7 @@ from typing import Any
 
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
+from pynxtools.dataconverter.writer import NTHREADS_BLOSC
 
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
 from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
@@ -32,6 +33,7 @@ from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
 from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_FILTER
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
 from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
 from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
@@ -130,6 +132,12 @@ class APMReader(BaseReader):
         trg = f"/ENTRY[entry{entry_id}]/profiling/CS_PROFILING_EVENT[pynxtools_apm]"
         template[f"{trg}/elapsed_time"] = np.float64((toc - tic) / 1.0e9)
         template[f"{trg}/elapsed_time/@units"] = "s"
+        template[f"{trg}/max_processes"] = np.uint32(1)
+        template[f"{trg}/max_threads"] = (
+            np.uint32(NTHREADS_BLOSC)
+            if DEFAULT_COMPRESSION_FILTER == "blosc"
+            else np.uint32(1)
+        )
         template[f"{trg}/PROGRAM[program]/program"] = PYNX_APM_NAME
         template[f"{trg}/PROGRAM[program]/program/@version"] = PYNX_APM_VERSION
         return template
