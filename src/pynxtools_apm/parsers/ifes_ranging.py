@@ -85,13 +85,29 @@ def add_standardize_molecular_ions(
     )
     for ion in ion_lst:
         path = f"{trg}ionID[ion{ion_id}]/"
-        template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash, np.uint16)
+        template[f"{path}nuclide_hash"] = {
+            "compress": np.asarray(ion.nuclide_hash, np.uint16),
+            "filter": DEFAULT_COMPRESSION_FILTER,
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(ion.nuclide_hash, np.uint16),
+                (0,),
+            ),
+        }
         template[f"{path}charge_state"] = np.int8(ion.charge_state)
         template[f"{path}mass_to_charge_range"] = np.asarray(
             ion.ranges.magnitude, np.float32
         )
         template[f"{path}mass_to_charge_range/@units"] = f"{ion.ranges.units}"
-        template[f"{path}nuclide_list"] = ion.nuclide_list
+        template[f"{path}nuclide_list"] = {
+            "compress": np.asarray(ion.nuclide_list, np.uint16),
+            "filter": DEFAULT_COMPRESSION_FILTER,
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(ion.nuclide_list, np.uint16),
+                (0, 1),
+            ),
+        }
         template[f"{path}name"] = ion.name
 
         if ion.charge_state_model["n_cand"] > 0:
@@ -117,9 +133,17 @@ def add_standardize_molecular_ions(
                 ion.charge_state_model["sacrifice_isotopic_uniqueness"]
             )
             if ion.charge_state_model["n_cand"] == 1:
-                template[f"{path}nuclide_hash"] = np.asarray(
-                    ion.charge_state_model["nuclide_hash"], np.uint16
-                )
+                template[f"{path}nuclide_hash"] = {
+                    "compress": np.asarray(
+                        ion.charge_state_model["nuclide_hash"], np.uint16
+                    ),
+                    "filter": DEFAULT_COMPRESSION_FILTER,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
+                        (0,),
+                    ),
+                }
                 template[f"{path}charge_state"] = np.int8(
                     ion.charge_state_model["charge_state"]
                 )
