@@ -138,7 +138,9 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         "compress": np.asarray(hist3d[0], np.uint32),
         "filter": DEFAULT_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(np.asarray(hist3d[0], np.uint32), (0,)),
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(hist3d[0], np.uint32), (0, 1, 2)
+        ),
     }
     col = 0
     for dim in dims:
