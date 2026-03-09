@@ -34,6 +34,8 @@ def generate_oasis_specific_yaml(
     eln_data: dict = {}
 
     # eln_data["entry"] = {}
+    eln_data["project"] = {}
+    eln_data["project"]["name"] = project_name
 
     eln_data["citation"] = []
     data, article = get_bibliographical_metadata(bibliography, project_name)
