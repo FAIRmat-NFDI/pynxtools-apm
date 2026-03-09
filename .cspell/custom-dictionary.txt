@@ -65,6 +65,7 @@ apsuite
 apt
 apyt
 ato
+blosc
 cand
 caplog
 creationtime
