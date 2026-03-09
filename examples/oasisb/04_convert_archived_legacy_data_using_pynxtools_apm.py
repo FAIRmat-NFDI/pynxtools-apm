@@ -185,7 +185,7 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
     # pynxtools-apm in append mode (if root_parser_used == True) or not (if False)
     if pynxtools_camecaroot_version != "unknown_version":
         pynx_root_input_files: list[str] = []
-        for col_idx in range(1, 3):  # ignore str_rraw
+        for col_idx in range(1, 6):  # ignore str_rraw
             # col_idx int will be 0, str_rraw, 1, rhit_hits, 2, root,
             # 3, pos_epos_apt_ato_csv, 4, rng_rrng_fig_env, 5, hdf_xml_nxs_raw_ops
             value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
@@ -209,6 +209,7 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
                 input_file=input_files_tuple,
                 reader="camecaroot",
                 nxdl=nxdl,
+                append=False,
                 skip_verify=True,
                 ignore_undocumented=True,
                 output=output_file_path,
@@ -257,6 +258,7 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
             input_file=input_files_tuple,
             reader="apm",
             nxdl=nxdl,
+            append=False,
             skip_verify=True,
             ignore_undocumented=True,
             output=output_file_path,
