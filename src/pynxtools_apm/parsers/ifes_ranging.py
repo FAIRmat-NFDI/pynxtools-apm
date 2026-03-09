@@ -47,6 +47,7 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 
 from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.default_config import (
+    DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
     MAKE_RANGING_DEFINITIONS_UNIQUE,
 )
@@ -136,6 +137,7 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["nuclide_hash"], np.uint16
                     ),
+                    "filter": DEFAULT_COMPRESSION_FILTER,
                     "strength": DEFAULT_COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
@@ -146,6 +148,7 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["charge_state"], np.int8
                     ),
+                    "filter": DEFAULT_COMPRESSION_FILTER,
                     "strength": DEFAULT_COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["charge_state"], np.int8),
@@ -154,6 +157,7 @@ def add_standardize_molecular_ions(
                 }
                 template[f"{path}mass"] = {
                     "compress": np.asarray(ion.charge_state_model["mass"], np.float64),
+                    "filter": DEFAULT_COMPRESSION_FILTER,
                     "strength": DEFAULT_COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["mass"], np.float64), (0,)
@@ -164,6 +168,7 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["natural_abundance_product"], np.float64
                     ),
+                    "filter": DEFAULT_COMPRESSION_FILTER,
                     "strength": DEFAULT_COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(
@@ -177,6 +182,7 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["shortest_half_life"], np.float64
                     ),
+                    "filter": DEFAULT_COMPRESSION_FILTER,
                     "strength": DEFAULT_COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(

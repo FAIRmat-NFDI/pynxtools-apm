@@ -34,6 +34,7 @@ from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generat
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
 from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
+from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 
 class APMReader(BaseReader):
@@ -86,6 +87,7 @@ class APMReader(BaseReader):
         nxs = NxApmAppDef(entry_id)
         nxs.parse(template)
 
+        # deprecated
         if 1 <= len(case.apsuite) <= 2:
             logger.debug("Parse (meta)data coming from a customized ELN...")
             for cameca_input_file in case.apsuite:
@@ -123,9 +125,13 @@ class APMReader(BaseReader):
 
         logger.debug("Forward instantiated template to the NXS writer...")
         toc = perf_counter_ns()
-        trg = f"/ENTRY[entry{entry_id}]/profiling/template_filling_elapsed_time"
-        template[f"{trg}"] = np.float64((toc - tic) / 1.0e9)
-        template[f"{trg}/@units"] = "s"
+        # not standardized, should be improved, APMReader has no access to output file
+        # if in append mode code should check if already a program1 version present
+        trg = f"/ENTRY[entry{entry_id}]/profiling/CS_PROFILING_EVENT[pynxtools_apm]"
+        template[f"{trg}/elapsed_time"] = np.float64((toc - tic) / 1.0e9)
+        template[f"{trg}/elapsed_time/@units"] = "s"
+        template[f"{trg}/PROGRAM[program]/program"] = PYNX_APM_NAME
+        template[f"{trg}/PROGRAM[program]/program/@version"] = PYNX_APM_VERSION
         return template
 
 

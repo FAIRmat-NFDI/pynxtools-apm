@@ -37,7 +37,10 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 
 from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm.utils.default_config import (
+    DEFAULT_COMPRESSION_FILTER,
+    DEFAULT_COMPRESSION_LEVEL,
+)
 from pynxtools_apm.utils.load_ranging import add_unknown_iontype
 
 # do not use ase directly any longer for NIST isotopes, instead this syntactic equivalent
@@ -638,6 +641,7 @@ class ApmCreateExampleData:
             trg = f"{prefix}mass_to_charge_conversion/"
             template[f"{trg}mass_to_charge"] = {
                 "compress": np.asarray(self.m_z, np.float32),
+                "filter": DEFAULT_COMPRESSION_FILTER,
                 "strength": DEFAULT_COMPRESSION_LEVEL,
                 "chunks": prioritized_axes_heuristic(
                     np.asarray(self.m_z, np.float32), (0,)
