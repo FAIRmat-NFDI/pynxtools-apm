@@ -37,8 +37,8 @@ from ifes_apt_tc_data_modeling.stuttgart.apyt_reader import (
 from ifes_apt_tc_data_modeling.stuttgart.raw_reader import (
     ReadStuttgartApytRawFileFormat,
 )
+from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
-from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.default_config import (
     DEFAULT_COMPRESSION_FILTER,

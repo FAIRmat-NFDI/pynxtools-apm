@@ -122,7 +122,7 @@ parse: int = 1
 project_name = config["project_name"]
 input_file_path_prefix = f"{config['target_directory']}{os.sep}decompressed"
 output_file_path_prefix = (
-    f"{config['target_directory']}{os.sep}ahod2026"  # nexus_hfive"
+    f"{config['target_directory']}{os.sep}apm_prepare_nomad_v142"  # nexus_hfive"
 )
 
 # NeXus file is composed eventually from multiple files and sources
@@ -154,6 +154,8 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
         output_file_path_prefix,
         bib,  # type: ignore
     )
+    print(eln_file_path)
+
     if eln_file_path == "":
         continue
 

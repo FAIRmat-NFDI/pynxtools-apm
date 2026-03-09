@@ -30,10 +30,10 @@ from ifes_apt_tc_data_modeling.utils.definitions import (
 )
 from ifes_apt_tc_data_modeling.utils.nx_ion import NxIon
 from ifes_apt_tc_data_modeling.utils.utils import create_nuclide_hash
+from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.cameca_cfg import APM_CAMECA_TO_NEXUS
-from pynxtools_apm.utils.custom_guess_chunk import prioritized_axes_heuristic
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_LEVEL
 

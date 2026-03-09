@@ -19,7 +19,7 @@
 """Utilities for overwriting h5py chunking heuristic to consider domain-specific access pattern."""
 
 import numpy as np
-from pynxtools.dataconverter.chunk_cache import CHUNK_CONFIG_DEFAULT
+from pynxtools.dataconverter.chunk import CHUNK_CONFIG_DEFAULT
 
 from pynxtools_apm.utils.custom_logging import logger
 
