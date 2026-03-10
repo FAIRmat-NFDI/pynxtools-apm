@@ -26,6 +26,7 @@ from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_p
 from pynxtools_apm.configurations.oasis_eln_config_cfg import (
     OASISCFG_APM_CITATION_TO_NEXUS,
     OASISCFG_APM_CSYS_TO_NEXUS,
+    OASISCFG_APM_PROJECT_TO_NEXUS,
 )
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.get_checksum import get_sha256_of_file_content
@@ -76,6 +77,11 @@ class NxApmNomadOasisConfigParser:
             )
             self.parse_reference_frames(template)
             self.parse_example(template)
+            identifier = [self.entry_id]
+            for cfg in [OASISCFG_APM_PROJECT_TO_NEXUS]:
+                add_specific_metadata_pint(
+                    cfg, self.flat_metadata, identifier, template
+                )
         return template
 
     def parse_reference_frames(self, template: dict) -> dict:

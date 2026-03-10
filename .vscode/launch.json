@@ -9,9 +9,11 @@
             "type": "python",  //"debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "../../.py3.13.11/bin/dataconverter",
-            "args": [//"../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/Shank.apt",
-                     "../../Shank.apt",
+            "program": "../../.py3.13.12/bin/dataconverter",
+            "args": [//"aus_sydney_bilal.0.oasis.specific.yaml",
+                     //"aus_sydney_bilal.0.4.012706a5c5e11b32e5266f38262036e5fc8ed2cdeaaec94abcfa88fdbac9c94a.rrng",
+                     //"../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/Shank.apt",
+                     //"../../Shank.apt",
                      //"../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/SZPZC_11_Top_Level_ROI_Fixed.RRNG",
                      //workflow files str.str, hits.hits, root.root should be created via touch str.str ...
                      //"tests/data/apt/Si.apt",
@@ -45,8 +47,10 @@
                      "apm",
                      "--nxdl",
                      "NXapm",
+                     //"--append",
                      //"--skip-verify",
-                     "--output=../../apm.shank.apt.nxs"]
+                     "--output=aus_sydney_bilal.0.output.nxs"]
+                     //"--output=../../apm.shank.apt.nxs"]
                      //"--output=tests/prod/apt/output.nxs"]
                      //"--output=tests/prod/ato3/output.nxs"]
                      //"--output=tests/prod/cameca_hdf5/output.nxs"]
