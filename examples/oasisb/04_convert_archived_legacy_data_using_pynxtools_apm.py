@@ -162,9 +162,13 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
             continue
 
     eln_file_path = f"{output_file_path_prefix}/{project_name}.{row_idx}.oasis.specific.yaml"  # eln_data.yaml"
+    if not os.path.isfile(eln_file_path):
+        continue
 
     # DEFINE OUTPUT NAME OF THE NEXUS FILE
     output_file_path = f"{eln_file_path.replace('.oasis.specific.yaml', '')}.output.nxs"
+    if not os.path.isfile(output_file_path):
+        continue
 
     # split log one log file for each pair of root and open parsing
     log_file_path = f"{output_file_path}.log"
@@ -276,7 +280,7 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
         # running the garbage collection, ok for now but should be fixed
         # for better machine utilization at some point.
 
-    input_files_tuple = tuple(eln_file_path)
+    input_files_tuple = tuple([eln_file_path])
     logger.debug(f"{input_files_tuple}")
     logger.debug(f"{output_file_path}")
 
