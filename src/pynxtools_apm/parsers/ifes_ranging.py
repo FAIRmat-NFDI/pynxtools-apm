@@ -153,7 +153,7 @@ def add_standardize_molecular_ions(
                     "strength": DEFAULT_COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
-                        (0,),
+                        (0, 1),  # for a charge state model a 2d matrix not a 1d vector!
                     ),
                 }
                 template[f"{path}charge_state"] = np.int8(
@@ -177,7 +177,7 @@ def add_standardize_molecular_ions(
                     "strength": DEFAULT_COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
-                        (0,),
+                        (0, 1),
                     ),
                 }
                 template[f"{path}charge_state"] = {
