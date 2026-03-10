@@ -63,14 +63,26 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     # all unidentifiable ions are mapped on the unknown type
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ionID[ion0]/"
     ivec = create_nuclide_hash([])
-    template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
+    template[f"{trg}nuclide_hash"] = {
+        "compress": np.asarray(ivec, np.uint16),
+        "filter": DEFAULT_COMPRESSION_FILTER,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(np.asarray(ivec, np.uint16), (0,)),
+    }
     template[f"{trg}charge_state"] = np.int8(0)
     template[f"{trg}mass_to_charge_range"] = np.reshape(
         np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2)
     )
     template[f"{trg}mass_to_charge_range/@units"] = "Da"
     nuclide_list = nuclide_hash_to_nuclide_list(ivec)
-    template[f"{trg}nuclide_list"] = np.asarray(nuclide_list, np.uint16)
+    template[f"{trg}nuclide_list"] = {
+        "compress": np.asarray(nuclide_list, np.uint16),
+        "filter": DEFAULT_COMPRESSION_FILTER,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(nuclide_list, np.uint16), (0, 1)
+        ),
+    }
     template[f"{trg}name"] = nuclide_hash_to_human_readable_name(ivec, 0)
     return template
 
@@ -373,7 +385,7 @@ class IfesRangingDefinitionsParser:
         for ion_id in np.arange(1, number_of_ion_types):
             trg = f"{prefix}ionID[ion{ion_id}]/nuclide_list"
             if trg in template:
-                nuclide_list = template[trg][:, 1]
+                nuclide_list = template[trg]["compress"][:, 1]
                 # second row of NXion/nuclide_list yields atom number to decode element
                 for atom_number in nuclide_list:
                     if 0 < atom_number <= max_atom_number:
