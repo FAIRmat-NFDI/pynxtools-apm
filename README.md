@@ -5,19 +5,17 @@
 ![](https://img.shields.io/pypi/pyversions/pynxtools-apm)
 ![](https://img.shields.io/pypi/l/pynxtools-apm)
 ![](https://img.shields.io/pypi/v/pynxtools-apm)
-![](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools-apm/badge.svg?branch=main)
+![Coverage Status](https://coveralls.io/repos/github/FAIRmat-NFDI/pynxtools-apm/badge.svg?branch=main)
 [![DOI](https://zenodo.org/badge/759916501.svg)](https://doi.org/10.5281/zenodo.14263076)
 
 # `pynxtools-apm`: A `pynxtools` reader for APM data
 
-This `pynxtools` plugin was generated with [`cookiecutter`](https://github.com/cookiecutter/cookiecutter) using the [`pynxtools-plugin-template`](https://github.com/FAIRmat-NFDI/`pynxtools-plugin-template) template.
+This `pynxtools` plugin was generated with [`cookiecutter`](https://github.com/cookiecutter/cookiecutter) using the [`pynxtools-plugin-template`](https://github.com/FAIRmat-NFDI/pynxtools-plugin-template) template.
 
 ## Installation
-It is recommended to use python 3.12 with a dedicated virtual environment for this package.
-Learn how to manage [python versions](https://github.com/pyenv/pyenv) and
-[virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
+It is recommended to use python 3.12 with a dedicated virtual environment for this package. Learn how to manage [python versions](https://github.com/pyenv/pyenv) and [virtual environments](https://realpython.com/python-virtual-environments-a-primer/).
 
-This package is a reader plugin for [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) and can be
+This package is a reader plugin for [`pynxtools`](https://github.com/FAIRmat-NFDI/pynxtools) and should be
 installed together with `pynxtools`:
 
 ```shell

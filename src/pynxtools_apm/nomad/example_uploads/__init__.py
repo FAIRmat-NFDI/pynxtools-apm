@@ -24,7 +24,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-apm_example_upload_entry_point = ExampleUploadEntryPoint(
+apm_example_upload = ExampleUploadEntryPoint(
     title="Atom Probe Microscopy (APM)",
     category="NeXus Experiment Examples",
     description="""

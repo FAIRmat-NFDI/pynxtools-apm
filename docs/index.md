@@ -45,9 +45,10 @@ pynxtools-apm is useful for scientists from the atom probe community, for techno
 ### Learn
 <!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type explanation.-->
 
-- [Scope and idea](explanation/learn.md)
-<!-- - [NOMAD App](explanation/apmapp.md)-->
-- [Known issues](explanation/issues.md)
+- [Scope and idea](learn/learn.md)
+<!-- - [NOMAD App](learn/apmapp.md)-->
+- [Note on versioning](learn/versioning.md)
+- [Known issues](learn/issues.md)
 
 </div>
 <div markdown="block">

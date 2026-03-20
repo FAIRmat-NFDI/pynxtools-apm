@@ -23,7 +23,9 @@ from typing import Any
 
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
-from pynxtools.dataconverter.writer import NTHREADS_BLOSC
+
+# from pynxtools.dataconverter.writer import NTHREADS_BLOSC
+NTHREADS_BLOSC = 1
 
 from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
@@ -73,84 +75,78 @@ class APMReader(BaseReader):
                 "Such a combination of input-file(s, if any) is not supported"
             )
             return {}
-        do_not_execute = False
-        if do_not_execute:
-            case.report_workflow(template, entry_id)
+
+        # execute = True
+        # if execute:
+        case.report_workflow(template, entry_id)
 
         if len(case.cfg) == 1:
             logger.debug("Parse (meta)data coming from a custom NOMAD OASIS RDM...")
             nx_apm_cfg = NxApmNomadOasisConfigParser(case.cfg[0], entry_id, False)
             nx_apm_cfg.parse(template)
 
-        if do_not_execute:
-            if len(case.eln) == 1:
-                logger.debug(
-                    "Parse (meta)data coming from an ELN exemplified for NOMAD"
-                )
-                nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
-                nx_apm_eln.parse(template)
+        if len(case.eln) == 1:
+            logger.debug("Parse (meta)data coming from an ELN exemplified for NOMAD")
+            nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
+            nx_apm_eln.parse(template)
 
-            logger.debug("Parse NeXus application definition-specific content...")
-            nxs = NxApmAppDef(entry_id)
-            nxs.parse(template)
+        logger.debug("Parse NeXus application definition-specific content...")
+        nxs = NxApmAppDef(entry_id)
+        nxs.parse(template)
 
-            # deprecated
-            if 1 <= len(case.apsuite) <= 2:
-                logger.debug("Parse (meta)data coming from a customized ELN...")
-                for cameca_input_file in case.apsuite:
-                    nx_apm_cameca = NxApmCustomElnCamecaRoot(
-                        cameca_input_file, entry_id
-                    )
-                    nx_apm_cameca.parse(template)
+        # deprecated
+        if 1 <= len(case.apsuite) <= 2:
+            logger.debug("Parse (meta)data coming from a customized ELN...")
+            for cameca_input_file in case.apsuite:
+                nx_apm_cameca = NxApmCustomElnCamecaRoot(cameca_input_file, entry_id)
+                nx_apm_cameca.parse(template)
 
-            if len(case.reconstruction) == 1:
-                logger.debug("Parse (meta)data from a reconstructed dataset file...")
-                nx_apm_recon = IfesReconstructionParser(
-                    case.reconstruction[0], entry_id
-                )
-                nx_apm_recon.parse(template)
+        if len(case.reconstruction) == 1:
+            logger.debug("Parse (meta)data from a reconstructed dataset file...")
+            nx_apm_recon = IfesReconstructionParser(case.reconstruction[0], entry_id)
+            nx_apm_recon.parse(template)
 
-            if len(case.ranging) == 1:
-                logger.debug("Parse (meta)data from a ranging definitions file...")
-                nx_apm_range = IfesRangingDefinitionsParser(case.ranging[0], entry_id)
-                nx_apm_range.parse(template)
+        if len(case.ranging) == 1:
+            logger.debug("Parse (meta)data from a ranging definitions file...")
+            nx_apm_range = IfesRangingDefinitionsParser(case.ranging[0], entry_id)
+            nx_apm_range.parse(template)
 
-            # TODO deactivate for production run in the first iteration as we will run
-            # two parsing rounds, the first with pynxtools-apm, the second appending eventually
-            # other content, like voltage curves; if these exist, they should be the
-            # default plot, so the following two lines need to be run after the second round
-            logger.debug("Create NeXus default plottable data...")
-            apm_default_plot_generator(template, entry_id)
+        # TODO deactivate for production run in the first iteration as we will run
+        # two parsing rounds, the first with pynxtools-apm, the second appending eventually
+        # other content, like voltage curves; if these exist, they should be the
+        # default plot, so the following two lines need to be run after the second round
+        logger.debug("Create NeXus default plottable data...")
+        apm_default_plot_generator(template, entry_id)
 
-            logger.debug("Naive removal of concepts that have missing values")
-            # these are introduced via the "use" functor but might not be populated with instance data
-            remove_uninstantiated_sensors(template, entry_id)
+        logger.debug("Naive removal of concepts that have missing values")
+        # these are introduced via the "use" functor but might not be populated with instance data
+        remove_uninstantiated_sensors(template, entry_id)
 
-            debugging = False
-            if debugging:
-                logger.debug(
-                    "Reporting state of template before passing to HDF5 writing..."
-                )
-                for keyword, value in sorted(template.items()):
-                    logger.info(f"{keyword}____{type(value)}____{value}")
-
-            logger.debug("Forward instantiated template to the NXS writer...")
-            toc = perf_counter_ns()
-            # not standardized, should be improved, APMReader has no access to output file
-            # if in append mode code should check if already a program1 version present
-            trg = f"/ENTRY[entry{entry_id}]/profiling/CS_PROFILING_EVENT[pynxtools_apm]"
-            template[f"{trg}/elapsed_time"] = np.float64((toc - tic) / 1.0e9)
-            template[f"{trg}/elapsed_time/@units"] = "s"
-            template[f"{trg}/max_processes"] = np.uint32(1)
-            template[f"{trg}/max_threads"] = (
-                np.uint32(NTHREADS_BLOSC)
-                if DEFAULT_COMPRESSION_FILTER == "blosc"
-                else np.uint32(1)
+        debugging = False
+        if debugging:
+            logger.debug(
+                "Reporting state of template before passing to HDF5 writing..."
             )
-            template[f"{trg}/PROGRAM[program]/program"] = "pynxtools-apm"
-            template[f"{trg}/PROGRAM[program]/program/@version"] = (
-                get_pynxtools_apm_version()
-            )
+            for keyword, value in sorted(template.items()):
+                logger.info(f"{keyword}____{type(value)}____{value}")
+
+        logger.debug("Forward instantiated template to the NXS writer...")
+        toc = perf_counter_ns()
+        # not standardized, should be improved, APMReader has no access to output file
+        # if in append mode code should check if already a program1 version present
+        trg = f"/ENTRY[entry{entry_id}]/profiling/CS_PROFILING_EVENT[pynxtools_apm]"
+        template[f"{trg}/elapsed_time"] = np.float64((toc - tic) / 1.0e9)
+        template[f"{trg}/elapsed_time/@units"] = "s"
+        template[f"{trg}/max_processes"] = np.uint32(1)
+        template[f"{trg}/max_threads"] = (
+            np.uint32(NTHREADS_BLOSC)
+            if DEFAULT_COMPRESSION_FILTER == "blosc"
+            else np.uint32(1)
+        )
+        template[f"{trg}/PROGRAM[program]/program"] = "pynxtools-apm"
+        template[f"{trg}/PROGRAM[program]/program/@version"] = (
+            get_pynxtools_apm_version()
+        )
         return template
 
 

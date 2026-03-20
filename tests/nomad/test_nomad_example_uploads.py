@@ -40,6 +40,7 @@ from pynxtools_apm.nomad.example_uploads import apm_example_upload
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
+    "..",
     "src",
     "pynxtools_apm",
     "nomad",

@@ -23,6 +23,7 @@ classifiers = [
 dependencies = [
     "pynxtools>=0.13.0",
     "ifes_apt_tc_data_modeling>=0.4.1",
+    "pytz",
 ]
 
 [project.optional-dependencies]
@@ -47,9 +48,7 @@ docs = [
     "pymdown-extensions",
     "mkdocs-click"
 ]
-nomad = [
-    "nomad-lab[infrastructure]>=1.4.1"
-]
+nomad = ["nomad-lab[infrastructure]>=1.4.1"]
 ipynb = [
     "jupyter",
     "jupyterlab",
@@ -71,8 +70,8 @@ batch = [
 apm = "pynxtools_apm.reader:APMReader"
 
 [project.entry-points.'nomad.plugin']
-# apm_app_entry_point = "pynxtools_apm.nomad.apps:apm_app_entry_point"
-apm_example_upload_entry_point = "pynxtools_apm.nomad.example_uploads:apm_example_upload_entry_point"
+apm_app = "pynxtools_apm.nomad.apps:apm_app"
+apm_example_upload = "pynxtools_apm.nomad.example_uploads:apm_example_upload"
 
 [tool.uv]
 extra-index-url = [
@@ -90,7 +89,7 @@ version_scheme = "no-guess-dev"
 local_scheme = "node-and-date"
 
 [tool.ruff]
-include = ["src/pynxtools_apm/*.py", "tests/*.py"]
+include = ["src/pynxtools_apm/**/*.py", "tests/**/*.py"]
 line-length = 88
 indent-width = 4
 
