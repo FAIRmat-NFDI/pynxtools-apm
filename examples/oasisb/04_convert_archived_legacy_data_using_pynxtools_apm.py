@@ -37,9 +37,9 @@ from pynxtools.dataconverter.helpers import (
     get_pynxtools_version,
 )
 
+from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.examples.oasisb_eln import generate_oasis_specific_yaml
 from pynxtools_apm.examples.oasisb_utils import generate_file_to_hash
-from pynxtools_apm.utils.versioning import get_pynxtools_apm_version
 
 config: dict[str, str] = {
     "python_version": f"{sys.version}",
@@ -147,28 +147,26 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
         continue
     del col_idx
 
-    # GENERATE OASIS-SPECIFIC ELN content (to get remaining metadata not stored in files)
-    do_not_execute = False
-    if do_not_execute:
-        eln_file_path = generate_oasis_specific_yaml(
-            project_name,
-            row_idx,  # type: ignore
-            output_file_path_prefix,
-            bib,  # type: ignore
-        )
-        print(eln_file_path)
+    ### GENERATE OASIS-SPECIFIC ELN content (remaining metadata not stored in files)
+    eln_file_path = generate_oasis_specific_yaml(
+        project_name,
+        row_idx,  # type: ignore
+        output_file_path_prefix,
+        bib,  # type: ignore
+    )
+    print(eln_file_path)
 
-        if eln_file_path == "":
-            continue
+    if eln_file_path == "":
+        continue
 
-    eln_file_path = f"{output_file_path_prefix}/{project_name}.{row_idx}.oasis.specific.yaml"  # eln_data.yaml"
+    # eln_file_path = f"{output_file_path_prefix}/{project_name}.{row_idx}.oasis.specific.yaml"  # eln_data.yaml"
     if not os.path.isfile(eln_file_path):
         continue
 
-    # DEFINE OUTPUT NAME OF THE NEXUS FILE
+    ### DEFINE OUTPUT NAME OF THE NEXUS FILE
     output_file_path = f"{eln_file_path.replace('.oasis.specific.yaml', '')}.output.nxs"
-    if not os.path.isfile(output_file_path):
-        continue
+    # if not os.path.isfile(output_file_path):
+    #     continue
 
     # split log one log file for each pair of root and open parsing
     log_file_path = f"{output_file_path}.log"
@@ -181,62 +179,26 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
         logger.info(f"{key} {value}")
     del key, value
 
-    if do_not_execute:
-        ### DO WE HAVE PROPRIETARY INPUT ?
-        try:
-            pynxtools_camecaroot_version = (
-                f"{importlib.metadata.version('pynxtools-camecaroot')}"
-            )
-        except importlib.metadata.PackageNotFoundError:
-            pynxtools_camecaroot_version = "unknown_version"
+    ### DO WE HAVE PROPRIETARY INPUT ?
+    try:
+        # pynxtools-camecaroot is not in the public domain!
+        pynxtools_camecaroot_version = (
+            f"{importlib.metadata.version('pynxtools-camecaroot')}"
+        )
+    except importlib.metadata.PackageNotFoundError:
+        pynxtools_camecaroot_version = "unknown_version"
 
-        root_parser_used: bool = False  # relevant to distinguish if we need to run
-        # pynxtools-apm in append mode (if root_parser_used == True) or not (if False)
-        if pynxtools_camecaroot_version != "unknown_version":
-            pynx_root_input_files: list[str] = []
-            for col_idx in range(1, 6):  # ignore str_rraw
-                # col_idx int will be 0, str_rraw, 1, rhit_hits, 2, root,
-                # 3, pos_epos_apt_ato_csv, 4, rng_rrng_fig_env, 5, hdf_xml_nxs_raw_ops
-                value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
-                if value == "":
-                    continue
-                pynx_root_input_files.append(
-                    f"{input_file_path_prefix}{os.sep}"
-                    f"{project_name}.{row_idx}.{col_idx}."
-                    f"{file_to_hash[value]}."  # type: ignore
-                    f"{value.rsplit('.', 1)[-1].lower()}"  # type: ignore
-                )
-            del col_idx
-
-            if len(pynx_root_input_files) > 0:
-                # RUN DATACONVERTER USING PYNXTOOLS-CAMECAROOT
-                input_files_tuple = tuple(pynx_root_input_files)
-                logger.debug(f"{input_files_tuple}")
-                logger.debug(f"{output_file_path}")
-
-                _ = convert(
-                    input_file=input_files_tuple,
-                    reader="camecaroot",
-                    nxdl=nxdl,
-                    append=False,
-                    skip_verify=True,
-                    ignore_undocumented=True,
-                    output=output_file_path,
-                )
-                root_parser_used = True
-
-                # release memory and resources associated with previous processing
-                del _, pynx_root_input_files, input_files_tuple
-
-        # DO WE HAVE OPEN-SOURCE INPUT ?
-        pynx_open_input_files: list[str] = []
-        for col_idx in range(3, 6):
+    root_parser_used: bool = False  # relevant to distinguish if we need to run
+    # pynxtools-apm in append mode (if root_parser_used == True) or not (if False)
+    if pynxtools_camecaroot_version != "unknown_version" and root_parser_used:
+        pynx_root_input_files: list[str] = []
+        for col_idx in range(1, 6):  # ignore str_rraw
             # col_idx int will be 0, str_rraw, 1, rhit_hits, 2, root,
             # 3, pos_epos_apt_ato_csv, 4, rng_rrng_fig_env, 5, hdf_xml_nxs_raw_ops
             value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
             if value == "":
                 continue
-            pynx_open_input_files.append(
+            pynx_root_input_files.append(
                 f"{input_file_path_prefix}{os.sep}"
                 f"{project_name}.{row_idx}.{col_idx}."
                 f"{file_to_hash[value]}."  # type: ignore
@@ -244,56 +206,94 @@ for row_idx in range(spread_sheet_of_project.shape[0]):
             )
         del col_idx
 
-        # in every case ELN content is added by pynxtools-apm
-        pynx_open_input_files.append(eln_file_path)
+        if len(pynx_root_input_files) > 0:
+            # RUN DATACONVERTER USING PYNXTOOLS-CAMECAROOT
+            input_files_tuple = tuple(pynx_root_input_files)
+            logger.debug(f"{input_files_tuple}")
+            logger.debug(f"{output_file_path}")
 
-        # RUN DATACONVERTER USING PYNXTOOLS-APM
-        input_files_tuple = tuple(pynx_open_input_files)
-        logger.debug(f"{input_files_tuple}")
-        logger.debug(f"{output_file_path}")
-
-        if root_parser_used:
             _ = convert(
                 input_file=input_files_tuple,
-                reader="apm",
-                nxdl=nxdl,
-                append=True,
-                skip_verify=True,  # obsolete as append switches validation off anyway
-                ignore_undocumented=True,
-                output=output_file_path,
-            )
-        else:
-            _ = convert(
-                input_file=input_files_tuple,
-                reader="apm",
+                reader="camecaroot",
                 nxdl=nxdl,
                 append=False,
                 skip_verify=True,
                 ignore_undocumented=True,
                 output=output_file_path,
             )
+            root_parser_used = True
 
-        # release memory and resources associated with previous processing
-        del _, pynx_open_input_files, input_files_tuple
-        # TODO::there is evidence of that the switch_root_logfile causes a memory
-        # leak as the more its called the more memory does not get freed despite
-        # running the garbage collection, ok for now but should be fixed
-        # for better machine utilization at some point.
+            # release memory and resources associated with previous processing
+            del _, pynx_root_input_files, input_files_tuple
 
-    input_files_tuple = tuple([eln_file_path])
+    ### DO WE HAVE OPEN-SOURCE INPUT ?
+    pynx_open_input_files: list[str] = []
+    for col_idx in range(3, 6):
+        # col_idx int will be 0, str_rraw, 1, rhit_hits, 2, root,
+        # 3, pos_epos_apt_ato_csv, 4, rng_rrng_fig_env, 5, hdf_xml_nxs_raw_ops
+        value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
+        if value == "":
+            continue
+        pynx_open_input_files.append(
+            f"{input_file_path_prefix}{os.sep}"
+            f"{project_name}.{row_idx}.{col_idx}."
+            f"{file_to_hash[value]}."  # type: ignore
+            f"{value.rsplit('.', 1)[-1].lower()}"  # type: ignore
+        )
+    del col_idx
+
+    # in every case ELN content is added by pynxtools-apm
+    pynx_open_input_files.append(eln_file_path)
+
+    # RUN DATACONVERTER USING PYNXTOOLS-APM
+    input_files_tuple = tuple(pynx_open_input_files)
     logger.debug(f"{input_files_tuple}")
     logger.debug(f"{output_file_path}")
 
-    _ = convert(
-        input_file=input_files_tuple,
-        reader="apm",
-        nxdl=nxdl,
-        append=True,
-        skip_verify=True,  # obsolete as append switches validation off anyway
-        ignore_undocumented=True,
-        output=output_file_path,
-    )
-    del _, input_files_tuple
+    if root_parser_used:
+        _ = convert(
+            input_file=input_files_tuple,
+            reader="apm",
+            nxdl=nxdl,
+            append=True,
+            skip_verify=True,  # obsolete as append switches validation off anyway
+            ignore_undocumented=True,
+            output=output_file_path,
+        )
+    else:
+        _ = convert(
+            input_file=input_files_tuple,
+            reader="apm",
+            nxdl=nxdl,
+            append=False,
+            skip_verify=True,
+            ignore_undocumented=True,
+            output=output_file_path,
+        )
+
+    # release memory and resources associated with previous processing
+    del _, pynx_open_input_files, input_files_tuple
+    # TODO::there is evidence of that the switch_root_logfile causes a memory
+    # leak as the more its called the more memory does not get freed despite
+    # running the garbage collection, ok for now but should be fixed
+    # for better machine utilization at some point.
+
+    execute: bool = False
+    if execute:
+        input_files_tuple = tuple([eln_file_path])
+        logger.debug(f"{input_files_tuple}")
+        logger.debug(f"{output_file_path}")
+
+        _ = convert(
+            input_file=input_files_tuple,
+            reader="apm",
+            nxdl=nxdl,
+            append=True,
+            skip_verify=True,  # obsolete as append switches validation off anyway
+            ignore_undocumented=True,
+            output=output_file_path,
+        )
+        del _, input_files_tuple
 
     gc.collect()
 

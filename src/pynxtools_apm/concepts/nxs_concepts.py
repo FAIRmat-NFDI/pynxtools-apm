@@ -25,15 +25,15 @@ from ifes_apt_tc_data_modeling.utils.versioning import (
 )
 from pynxtools.dataconverter.helpers import get_pynxtools_version
 
+from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
-from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 APM_PYNX_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/profiling",
     "prefix_src": "",
     "use": [
-        ("programID[program1]/program", PYNX_APM_NAME),
-        ("programID[program1]/program/@version", PYNX_APM_VERSION),
+        ("programID[program1]/program", "pynxtools-apm"),
+        ("programID[program1]/program/@version", get_pynxtools_apm_version()),
         ("programID[program2]/program", "pynxtools"),
         ("programID[program2]/program/@version", get_pynxtools_version()),
         ("programID[program3]/program", "ifes_apt_tc_data_modeling"),

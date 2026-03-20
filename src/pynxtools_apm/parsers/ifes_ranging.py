@@ -46,13 +46,13 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 )
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
+from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.utils.default_config import (
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
     MAKE_RANGING_DEFINITIONS_UNIQUE,
 )
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RANGE
-from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 WARNING_TOO_MANY_DEFINITIONS = f"More than {MAX_NUMBER_OF_ION_SPECIES} ranging definitions. Check if there are duplicates."
 from pynxtools_apm.utils.custom_logging import logger
@@ -423,8 +423,10 @@ class IfesRangingDefinitionsParser:
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
-        template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
-        template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
+        template[f"{trg}programID[program1]/program"] = "pynxtools-apm"
+        template[f"{trg}programID[program1]/program/@version"] = (
+            get_pynxtools_apm_version()
+        )
 
         add_unknown_iontype(template, self.meta["entry_id"])
 

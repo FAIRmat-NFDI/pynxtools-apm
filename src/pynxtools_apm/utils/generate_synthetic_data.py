@@ -36,17 +36,16 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 )
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
+# do not use ase directly any longer for NIST isotopes, instead this syntactic equivalent
+# from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
+#     import isotopes
+from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.default_config import (
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
 )
 from pynxtools_apm.utils.load_ranging import add_unknown_iontype
-
-# do not use ase directly any longer for NIST isotopes, instead this syntactic equivalent
-# from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
-#     import isotopes
-from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 # parameter affecting reconstructed positions and size
 CRYSTAL_ORIENTATION = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -274,8 +273,10 @@ class ApmCreateExampleData:
         raise NotImplementedError()
         assert len(self.nrm_composition) > 0, "Composition is not defined"
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/"
-        template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
-        template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
+        template[f"{trg}programID[program1]/program"] = "pynxtools-apm"
+        template[f"{trg}programID[program1]/program/@version"] = (
+            get_pynxtools_apm_version()
+        )
 
         trg = f"/ENTRY[entry{self.entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/"
         template[f"{trg}programID[program1]/program"] = "synthetic"
@@ -311,8 +312,10 @@ class ApmCreateExampleData:
         # check if required fields exists and are valid
         # logger.debug("Parsing entry...")
         trg = f"/ENTRY[entry{self.entry_id}]/"
-        template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
-        template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
+        template[f"{trg}programID[program1]/program"] = "pynxtools-apm"
+        template[f"{trg}programID[program1]/program/@version"] = (
+            get_pynxtools_apm_version()
+        )
         template[f"{trg}start_time"] = datetime.datetime.now().astimezone().isoformat()
         template[f"{trg}end_time"] = datetime.datetime.now().astimezone().isoformat()
         msg = """
