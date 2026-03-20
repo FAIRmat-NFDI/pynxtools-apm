@@ -21,9 +21,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    # needs newest pynxtools and ifes
-    "pynxtools>=0.12.0",
-    "ifes_apt_tc_data_modeling>=0.4.0",
+    "pynxtools>=0.13.0",
+    "ifes_apt_tc_data_modeling>=0.4.1",
 ]
 
 [project.optional-dependencies]
@@ -37,7 +36,8 @@ dev = [
     "types-pyyaml",
     "types-pytz",
     "types-requests",
-    "pre-commit"
+    "pre-commit",
+    "cruft"
 ]
 docs = [
     "mkdocs",
