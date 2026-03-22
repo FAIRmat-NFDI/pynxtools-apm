@@ -52,7 +52,7 @@ nomad = ["nomad-lab[infrastructure]>=1.4.1"]
 ipynb = [
     "jupyter",
     "jupyterlab",
-    "jupyterlab_h5web>=12.7.0"
+    "jupyterlab_h5web"
 ]
 batch = [
     "odfpy",
