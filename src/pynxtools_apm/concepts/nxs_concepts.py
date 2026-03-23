@@ -17,15 +17,30 @@
 #
 """Implement NeXus-specific groups and fields to document software and versions used."""
 
-from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
-from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
+from typing import Any
 
-APM_PYNX_TO_NEXUS = {
+import flatdict as fd
+from ifes_apt_tc_data_modeling.utils.versioning import (
+    get_ifes_apt_tc_data_modeling_version,
+)
+from pynxtools.dataconverter.helpers import get_pynxtools_version
+
+from pynxtools_apm import get_pynxtools_apm_version
+from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
+
+APM_PYNX_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/profiling",
     "prefix_src": "",
     "use": [
-        ("programID[program1]/program", PYNX_APM_NAME),
-        ("programID[program1]/program/@version", PYNX_APM_VERSION),
+        ("programID[program1]/program", "pynxtools-apm"),
+        ("programID[program1]/program/@version", get_pynxtools_apm_version()),
+        ("programID[program2]/program", "pynxtools"),
+        ("programID[program2]/program/@version", get_pynxtools_version()),
+        ("programID[program3]/program", "ifes_apt_tc_data_modeling"),
+        (
+            "programID[program3]/program/@version",
+            get_ifes_apt_tc_data_modeling_version(),
+        ),
     ],
 }
 
@@ -38,5 +53,7 @@ class NxApmAppDef:
 
     def parse(self, template: dict) -> dict:
         """Parse application definition."""
-        add_specific_metadata_pint(APM_PYNX_TO_NEXUS, {}, [self.entry_id], template)
+        add_specific_metadata_pint(
+            APM_PYNX_TO_NEXUS, fd.FlatDict({}, delimiter="/"), [self.entry_id], template
+        )
         return template

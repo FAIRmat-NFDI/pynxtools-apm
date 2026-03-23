@@ -22,6 +22,10 @@ from typing import Any
 
 import numpy as np
 from ase.data import chemical_symbols
+from ifes_apt_tc_data_modeling.analysisset.analysisset_reader import (
+    ReadAnalysissetFileFormat,
+)
+from ifes_apt_tc_data_modeling.cameca.cameca_reader import ReadCamecaHfiveFileFormat
 from ifes_apt_tc_data_modeling.env.env_reader import ReadEnvFileFormat
 from ifes_apt_tc_data_modeling.fig.fig_reader import ReadFigTxtFileFormat
 from ifes_apt_tc_data_modeling.imago.imago_reader import ReadImagoAnalysisFileFormat
@@ -40,9 +44,15 @@ from ifes_apt_tc_data_modeling.utils.utils import (
     nuclide_hash_to_human_readable_name,
     nuclide_hash_to_nuclide_list,
 )
+from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
+from pynxtools_apm import get_pynxtools_apm_version
+from pynxtools_apm.utils.default_config import (
+    DEFAULT_COMPRESSION_FILTER,
+    DEFAULT_COMPRESSION_LEVEL,
+    MAKE_RANGING_DEFINITIONS_UNIQUE,
+)
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RANGE
-from pynxtools_apm.utils.versioning import PYNX_APM_NAME, PYNX_APM_VERSION
 
 WARNING_TOO_MANY_DEFINITIONS = f"More than {MAX_NUMBER_OF_ION_SPECIES} ranging definitions. Check if there are duplicates."
 from pynxtools_apm.utils.custom_logging import logger
@@ -53,14 +63,26 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     # all unidentifiable ions are mapped on the unknown type
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/peak_identification/ionID[ion0]/"
     ivec = create_nuclide_hash([])
-    template[f"{trg}nuclide_hash"] = np.asarray(ivec, np.uint16)
+    template[f"{trg}nuclide_hash"] = {
+        "compress": np.asarray(ivec, np.uint16),
+        "filter": DEFAULT_COMPRESSION_FILTER,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(np.asarray(ivec, np.uint16), (0,)),
+    }
     template[f"{trg}charge_state"] = np.int8(0)
     template[f"{trg}mass_to_charge_range"] = np.reshape(
         np.asarray([0.0, MQ_EPSILON], np.float32), (1, 2)
     )
     template[f"{trg}mass_to_charge_range/@units"] = "Da"
     nuclide_list = nuclide_hash_to_nuclide_list(ivec)
-    template[f"{trg}nuclide_list"] = np.asarray(nuclide_list, np.uint16)
+    template[f"{trg}nuclide_list"] = {
+        "compress": np.asarray(nuclide_list, np.uint16),
+        "filter": DEFAULT_COMPRESSION_FILTER,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(nuclide_list, np.uint16), (0, 1)
+        ),
+    }
     template[f"{trg}name"] = nuclide_hash_to_human_readable_name(ivec, 0)
     return template
 
@@ -75,13 +97,29 @@ def add_standardize_molecular_ions(
     )
     for ion in ion_lst:
         path = f"{trg}ionID[ion{ion_id}]/"
-        template[f"{path}nuclide_hash"] = np.asarray(ion.nuclide_hash, np.uint16)
+        template[f"{path}nuclide_hash"] = {
+            "compress": np.asarray(ion.nuclide_hash, np.uint16),
+            "filter": DEFAULT_COMPRESSION_FILTER,
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(ion.nuclide_hash, np.uint16),
+                (0,),
+            ),
+        }
         template[f"{path}charge_state"] = np.int8(ion.charge_state)
         template[f"{path}mass_to_charge_range"] = np.asarray(
             ion.ranges.magnitude, np.float32
         )
         template[f"{path}mass_to_charge_range/@units"] = f"{ion.ranges.units}"
-        template[f"{path}nuclide_list"] = ion.nuclide_list
+        template[f"{path}nuclide_list"] = {
+            "compress": np.asarray(ion.nuclide_list, np.uint16),
+            "filter": DEFAULT_COMPRESSION_FILTER,
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(ion.nuclide_list, np.uint16),
+                (0, 1),
+            ),
+        }
         template[f"{path}name"] = ion.name
 
         if ion.charge_state_model["n_cand"] > 0:
@@ -107,9 +145,17 @@ def add_standardize_molecular_ions(
                 ion.charge_state_model["sacrifice_isotopic_uniqueness"]
             )
             if ion.charge_state_model["n_cand"] == 1:
-                template[f"{path}nuclide_hash"] = np.asarray(
-                    ion.charge_state_model["nuclide_hash"], np.uint16
-                )
+                template[f"{path}nuclide_hash"] = {
+                    "compress": np.asarray(
+                        ion.charge_state_model["nuclide_hash"], np.uint16
+                    ),
+                    "filter": DEFAULT_COMPRESSION_FILTER,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
+                        (0, 1),  # for a charge state model a 2d matrix not a 1d vector!
+                    ),
+                }
                 template[f"{path}charge_state"] = np.int8(
                     ion.charge_state_model["charge_state"]
                 )
@@ -127,30 +173,59 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["nuclide_hash"], np.uint16
                     ),
-                    "strength": 1,
+                    "filter": DEFAULT_COMPRESSION_FILTER,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
+                        (0, 1),
+                    ),
                 }
                 template[f"{path}charge_state"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["charge_state"], np.int8
                     ),
-                    "strength": 1,
+                    "filter": DEFAULT_COMPRESSION_FILTER,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["charge_state"], np.int8),
+                        (0,),
+                    ),
                 }
                 template[f"{path}mass"] = {
                     "compress": np.asarray(ion.charge_state_model["mass"], np.float64),
-                    "strength": 1,
+                    "filter": DEFAULT_COMPRESSION_FILTER,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(ion.charge_state_model["mass"], np.float64), (0,)
+                    ),
                 }
                 template[f"{path}mass/@units"] = "Da"
                 template[f"{path}natural_abundance_product"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["natural_abundance_product"], np.float64
                     ),
-                    "strength": 1,
+                    "filter": DEFAULT_COMPRESSION_FILTER,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(
+                            ion.charge_state_model["natural_abundance_product"],
+                            np.float64,
+                        ),
+                        (0,),
+                    ),
                 }
                 template[f"{path}shortest_half_life"] = {
                     "compress": np.asarray(
                         ion.charge_state_model["shortest_half_life"], np.float64
                     ),
-                    "strength": 1,
+                    "filter": DEFAULT_COMPRESSION_FILTER,
+                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "chunks": prioritized_axes_heuristic(
+                        np.asarray(
+                            ion.charge_state_model["shortest_half_life"], np.float64
+                        ),
+                        (0,),
+                    ),
                 }
                 template[f"{path}shortest_half_life/@units"] = "s"
         ion_id += 1
@@ -173,7 +248,7 @@ def add_standardize_molecular_ions(
 def extract_data_from_env_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which a ENV file has."""
     logger.debug(f"Extracting data from ENV file: {file_path}")
-    rangefile = ReadEnvFileFormat(file_path)
+    rangefile = ReadEnvFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.env["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -186,7 +261,7 @@ def extract_data_from_fig_txt_file(
 ) -> dict:
     """Add those required information which a FIG.TXT file has."""
     logger.debug(f"Extracting data from FIG.TXT file: {file_path}")
-    rangefile = ReadFigTxtFileFormat(file_path)
+    rangefile = ReadFigTxtFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.fig["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -199,18 +274,18 @@ def extract_data_from_pyccapt_file(
 ) -> dict:
     """Add those required information which a pyccapt/ranging HDF5 file has."""
     logger.debug(f"Extracting data from pyccapt/ranging HDF5 file: {file_path}")
-    rangefile = ReadPyccaptRangingFileFormat(file_path)
-    if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+    rangefile = ReadPyccaptRangingFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
+    if len(rangefile.pyc["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
-    add_standardize_molecular_ions(rangefile.rng["molecular_ions"], template, entry_id)
+    add_standardize_molecular_ions(rangefile.pyc["molecular_ions"], template, entry_id)
     return template
 
 
 def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information from XML-serialized IVAS state dumps."""
     logger.debug(f"Extracting data from XML-serialized IVAS analysis file: {file_path}")
-    rangefile = ReadImagoAnalysisFileFormat(file_path)
+    rangefile = ReadImagoAnalysisFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.imago["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -223,7 +298,7 @@ def extract_data_from_imago_file(file_path: str, template: dict, entry_id: int) 
 def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) -> dict:
     """Add those required information which an RNG file has."""
     logger.debug(f"Extracting data from RNG file: {file_path}")
-    rangefile = ReadRngFileFormat(file_path)
+    rangefile = ReadRngFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.rng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -234,7 +309,7 @@ def extract_data_from_rng_file(file_path: str, template: dict, entry_id: int) ->
 def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dict:
     """Add those required information which an RRNG file has."""
     logger.debug(f"Extracting data from RRNG file: {file_path}")
-    rangefile = ReadRrngFileFormat(file_path, unique=False)
+    rangefile = ReadRrngFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
     if len(rangefile.rrng["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
         logger.warning(WARNING_TOO_MANY_DEFINITIONS)
 
@@ -242,10 +317,41 @@ def extract_data_from_rrng_file(file_path: str, template: dict, entry_id) -> dic
     return template
 
 
+def extract_data_from_cameca_hfive_file(
+    file_path: str, template: dict, entry_id
+) -> dict:
+    """Add those required information which a Cameca HDF5 file has."""
+    logger.debug(f"Extracting data from Cameca HDF5 file: {file_path}")
+    rangefile = ReadCamecaHfiveFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
+    if len(rangefile.cameca["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
+
+    add_standardize_molecular_ions(
+        rangefile.cameca["molecular_ions"], template, entry_id
+    )
+    return template
+
+
+def extract_data_from_analysisset_file(
+    file_path: str, template: dict, entry_id
+) -> dict:
+    """Add those required information which an analysisset file has."""
+    logger.debug(f"Extracting data from analysisset XML file: {file_path}")
+    rangefile = ReadAnalysissetFileFormat(file_path, MAKE_RANGING_DEFINITIONS_UNIQUE)
+    if len(rangefile.analysisset["molecular_ions"]) > np.iinfo(np.uint8).max + 1:
+        logger.warning(WARNING_TOO_MANY_DEFINITIONS)
+
+    add_standardize_molecular_ions(
+        rangefile.analysisset["molecular_ions"], template, entry_id
+    )
+    return template
+
+
 class IfesRangingDefinitionsParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
     def __init__(self, file_path: str, entry_id: int):
+        self.supported = False
         self.meta: dict[str, Any] = {
             "file_format": None,
             "file_path": file_path,
@@ -255,10 +361,10 @@ class IfesRangingDefinitionsParser:
             if file_path.lower().endswith(suffix):
                 self.meta["file_format"] = suffix
                 break
-        if self.meta["file_format"] is None:
-            raise ValueError(
-                f"{file_path} is not a supported ranging definitions file!"
-            )
+        if self.meta["file_format"] is not None:
+            self.supported = True
+        else:
+            logger.warning(f"{file_path} is not a supported ranging definitions file")
 
     def update_atom_types_ranging_definitions_based(self, template: dict) -> dict:
         """Update the atom_types list in the specimen based on ranging defs."""
@@ -279,7 +385,7 @@ class IfesRangingDefinitionsParser:
         for ion_id in np.arange(1, number_of_ion_types):
             trg = f"{prefix}ionID[ion{ion_id}]/nuclide_list"
             if trg in template:
-                nuclide_list = template[trg][:, 1]
+                nuclide_list = template[trg]["compress"][:, 1]
                 # second row of NXion/nuclide_list yields atom number to decode element
                 for atom_number in nuclide_list:
                     if 0 < atom_number <= max_atom_number:
@@ -304,6 +410,8 @@ class IfesRangingDefinitionsParser:
         with the application definition.
         """
         # resolve the next two program references more informatively
+        if not self.supported:
+            return template
         trg = (
             f"/ENTRY[entry{self.meta['entry_id']}]/atom_probeID[atom_probe]/"
             f"ranging/peak_identification/"
@@ -315,8 +423,10 @@ class IfesRangingDefinitionsParser:
         # mass_to_charge_distribution will be filled by default plot
         # background_quantification data are not available in RNG/RRNG files
         # peak_search_and_deconvolution data are not available in RNG/RRNG files
-        template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
-        template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
+        template[f"{trg}programID[program1]/program"] = "pynxtools-apm"
+        template[f"{trg}programID[program1]/program/@version"] = (
+            get_pynxtools_apm_version()
+        )
 
         add_unknown_iontype(template, self.meta["entry_id"])
 
@@ -343,6 +453,14 @@ class IfesRangingDefinitionsParser:
                 )
             elif self.meta["file_format"] == ".rrng":
                 extract_data_from_rrng_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
+            elif self.meta["file_format"] == ".hdf5":
+                extract_data_from_cameca_hfive_file(
+                    self.meta["file_path"], template, self.meta["entry_id"]
+                )
+            elif self.meta["file_format"] == ".analysisset":
+                extract_data_from_analysisset_file(
                     self.meta["file_path"], template, self.meta["entry_id"]
                 )
             else:

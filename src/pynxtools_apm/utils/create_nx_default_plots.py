@@ -18,13 +18,15 @@
 """Generator for NXapm default plots."""
 
 import numpy as np
+from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
+from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.versioning import (
+from pynxtools_apm.utils.default_config import (
+    DEFAULT_COMPRESSION_FILTER,
+    DEFAULT_COMPRESSION_LEVEL,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
-    PYNX_APM_NAME,
-    PYNX_APM_VERSION,
 )
 
 
@@ -78,9 +80,9 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     for dim in ["x", "y", "z"]:
         aabb[f"{dim}"] = [np.min(xyz[:, col]), np.max(xyz[:, col])]
         logger.debug(f"\t{dim}: {aabb[f'''{dim}''']}")
-        imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE
-        imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE
-        aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)
+        imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
+        imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
+        aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
         col += 1
 
     hist3d = np.histogramdd(
@@ -88,17 +90,16 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         bins=(aabb["xedge"], aabb["yedge"], aabb["zedge"]),
     )
     del xyz
-    if isinstance(hist3d[0], np.ndarray) is False:
-        raise ValueError("Hist3d computation from the reconstruction failed!")
-    if len(np.shape(hist3d[0])) != 3:
-        raise ValueError("Hist3d computation from the reconstruction failed!")
+    if isinstance(hist3d[0], np.ndarray) is False or len(np.shape(hist3d[0])) != 3:
+        logger.warning("Hist3d computation from the reconstruction failed")
+        return template
     for idx in [0, 1, 2]:
         if np.shape(hist3d[0])[idx] == 0:
-            raise ValueError(f"Dimensions {idx} has no length!")
+            raise ValueError(f"Dimensions {idx} has no length")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/reconstruction/naive_discretization/"
-    template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
-    template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
+    template[f"{trg}programID[program1]/program"] = "pynxtools-apm"
+    template[f"{trg}programID[program1]/program/@version"] = get_pynxtools_apm_version()
     trg = (
         f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/reconstruction/"
         f"naive_discretization/DATA[data]/"
@@ -108,7 +109,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     template[f"{trg}@signal"] = "intensity"
     template[f"{trg}@default_slice"] = [
         ".",
-        f"{icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)}",
+        f"{icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
         ".",
     ]
     # there is an issue lately with H5Web in how it reads default_slice
@@ -116,10 +117,10 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     # jupyterlab_h5web 12.4.0 and hgrove 2.3.0
     # template[f"{trg}@default_slice"] = []
     # for dim in ["x", "y", "z"]:
-    #     imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE
-    #     imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE
+    #     imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
+    #     imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
     #     template[f"{trg}@default_slice"].append(
-    #         icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE)
+    #         icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
     #     )
 
     col = 0
@@ -135,19 +136,27 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     # might be necessary, for now we implement the transpose in the application definition
     template[f"{trg}intensity"] = {
         "compress": np.asarray(hist3d[0], np.uint32),
-        "strength": 1,
+        "filter": DEFAULT_COMPRESSION_FILTER,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(hist3d[0], np.uint32), (0, 1, 2)
+        ),
     }
     col = 0
     for dim in dims:
         template[f"{trg}AXISNAME[axis_{dim}]"] = {
             "compress": np.asarray(hist3d[1][col][1::], np.float32),
-            "strength": 1,
+            "filter": DEFAULT_COMPRESSION_FILTER,
+            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "chunks": prioritized_axes_heuristic(
+                np.asarray(hist3d[1][col][1::], np.float32), (0,)
+            ),
         }
         template[f"{trg}AXISNAME[axis_{dim}]/@units"] = "nm"
         template[f"{trg}AXISNAME[axis_{dim}]/@long_name"] = f"{dim} (nm)"
         col += 1
     logger.debug(
-        f"Default plot naive discretization 3D {NAIVE_GRID_DEFAULT_VOXEL_SIZE} nm^3."
+        f"Default plot naive discretization 3D ({NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}) ** 3."
     )
     return template
 
@@ -160,7 +169,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     logger.debug(f"\tEnter mass spectrum computation, np.shape(m_z) {np.shape(m_z)}")
     # the next three in u
     mass_to_charge_min = 0.0
-    mass_to_charge_increment = MASS_SPECTRUM_DEFAULT_BINNING
+    mass_to_charge_increment = MASS_SPECTRUM_DEFAULT_BINNING.magnitude
     mass_to_charge_max = np.ceil(np.max(m_z[:]))
     number_mass_to_charge_bins = (
         int(
@@ -181,17 +190,16 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
         ),
     )
     del m_z
-    if isinstance(hist1d[0], np.ndarray) is False:
-        raise ValueError("Hist1d computation from the mass spectrum failed!")
-    if len(np.shape(hist1d[0])) != 1:
-        raise ValueError("Hist1d computation from the mass spectrum failed!")
+    if isinstance(hist1d[0], np.ndarray) is False or len(np.shape(hist1d[0])) != 1:
+        logger.warning("Hist1d computation from the mass spectrum failed")
+        return template
     for idx in np.arange(0, 1):
         if np.shape(hist1d[0])[idx] == 0:
-            raise ValueError(f"Dimensions {idx} has no length!")
+            raise ValueError(f"Dimensions {idx} has no length")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/ranging/mass_to_charge_distribution/"
-    template[f"{trg}programID[program1]/program"] = PYNX_APM_NAME
-    template[f"{trg}programID[program1]/program/@version"] = PYNX_APM_VERSION
+    template[f"{trg}programID[program1]/program"] = "pynxtools-apm"
+    template[f"{trg}programID[program1]/program/@version"] = get_pynxtools_apm_version()
 
     template[f"{trg}min_mass_to_charge"] = np.float32(mass_to_charge_min)
     template[f"{trg}min_mass_to_charge/@units"] = "Da"
@@ -203,19 +211,24 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
         f"mass_to_charge_distribution/mass_spectrum/"
     )
     template[f"{trg}title"] = (
-        f"Mass spectrum ({MASS_SPECTRUM_DEFAULT_BINNING} Da binning)"
+        f"Mass spectrum ({MASS_SPECTRUM_DEFAULT_BINNING.magnitude} {MASS_SPECTRUM_DEFAULT_BINNING.units} binning)"
     )
     template[f"{trg}@signal"] = "intensity"
     template[f"{trg}@axes"] = "axis_mass_to_charge"
     template[f"{trg}@AXISNAME_indices[@axis_mass_to_charge_indices]"] = np.uint32(0)
     template[f"{trg}DATA[intensity]"] = {
         "compress": np.asarray(hist1d[0], np.uint32),
-        "strength": 1,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(np.asarray(hist1d[0], np.uint32), (0,)),
     }
     template[f"{trg}DATA[intensity]/@long_name"] = "Intensity (1)"  # Counts (1)"
     template[f"{trg}AXISNAME[axis_mass_to_charge]"] = {
         "compress": np.asarray(hist1d[1][1::], np.float32),
-        "strength": 1,
+        "filter": DEFAULT_COMPRESSION_FILTER,
+        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "chunks": prioritized_axes_heuristic(
+            np.asarray(hist1d[1][1::], np.float32), (0,)
+        ),
     }
     del hist1d
     template[f"{trg}AXISNAME[axis_mass_to_charge]/@units"] = "Da"
@@ -223,7 +236,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
         "Mass-to-charge-state-ratio (Da)"
     )
     logger.debug(
-        f"Plot mass spectrum at {MASS_SPECTRUM_DEFAULT_BINNING} Da binning was created."
+        f"Plot mass spectrum at {MASS_SPECTRUM_DEFAULT_BINNING.magnitude} {MASS_SPECTRUM_DEFAULT_BINNING.units} binning was created."
     )
     return template
 

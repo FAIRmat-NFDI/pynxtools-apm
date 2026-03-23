@@ -1,4 +1,3 @@
-# https://fairmat-nfdi.github.io/nexus_definitions/classes/contributed_definitions/NXapm.html#nxapm
 definitions:
   name: 'Atom_Probe_ELN_Example'
   eln:
@@ -6,17 +5,14 @@ definitions:
   sections:
     ELN_for_Atom_Probe:
       base_sections:
-        - 'pynxtools.nomad.dataconverter.NexusDataConverter'
-        - 'nomad.datamodel.data.EntryData'
+        - pynxtools.nomad.schema_packages.dataconverter.ElnYamlConverter
+        - nomad.datamodel.data.EntryData
       m_annotations:
         template:
           reader: apm
           nxdl: NXapm
-        # Listing quantities in the hide component will not show them in the ELN.
-        # This would be useful to make the default values set in `template` fixed.
-        # Leave the hide key even if you want to pass an empty list like in this example.
         eln:
-          hide: ['nxdl', 'reader']
+          hide: []
           label: 'ELN for Atom Probe'
       sub_sections:
         entry:
@@ -605,7 +601,7 @@ definitions:
                 type: str
                 description: |
                   Name of the program used to perform the reconstruction with.
-                  Examples are IVAS, APSuite, or names of open-source tools.
+                  Examples are IVAS, AP Suite, or names of open-source tools.
                 m_annotations:
                   eln:
                     component: StringEditQuantity
@@ -691,7 +687,7 @@ definitions:
                 description: |
                   Different reconstruction protocols exist. Although these approaches
                   are qualitatively similar, each protocol uses different parameters
-                  (and interprets these differently). The source code to IVAS/APSuite
+                  (and interprets these differently). The source code to IVAS/AP Suite
                   is not open. For now users should store reconstruction parameter
                   they deem relevant in this free text field.
                 m_annotations:
@@ -722,7 +718,7 @@ definitions:
                 type: str
                 description: |
                   Name of the program used to perform the ranging with.
-                  Examples are IVAS, APSuite, or names of open-source tools.
+                  Examples are IVAS, AP Suite, or names of open-source tools.
                 m_annotations:
                   eln:
                     component: StringEditQuantity

@@ -24,6 +24,10 @@ from typing import Any
 import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
+# from pynxtools.dataconverter.writer import NTHREADS_BLOSC
+NTHREADS_BLOSC = 1
+
+from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
 from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
 from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
@@ -32,6 +36,7 @@ from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
 from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
+from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_FILTER
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
 from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
 
@@ -49,9 +54,9 @@ class APMReader(BaseReader):
 
     def read(
         self,
-        template: dict | None = None,
-        file_paths: tuple[str] | None = None,
-        objects: tuple[Any] | None = None,
+        template: dict = None,
+        file_paths: tuple[str, ...] = None,
+        objects: tuple[Any, ...] = None,
     ) -> dict:
         """Read data from given file, return filled template dictionary apm."""
         logger.info(os.getcwd())
@@ -67,9 +72,12 @@ class APMReader(BaseReader):
         case = ApmUseCaseSelector(file_paths)
         if not case.is_valid:
             logger.warning(
-                "Such a combination of input-file(s, if any) is not supported !"
+                "Such a combination of input-file(s, if any) is not supported"
             )
             return {}
+
+        # execute = True
+        # if execute:
         case.report_workflow(template, entry_id)
 
         if len(case.cfg) == 1:
@@ -86,6 +94,7 @@ class APMReader(BaseReader):
         nxs = NxApmAppDef(entry_id)
         nxs.parse(template)
 
+        # deprecated
         if 1 <= len(case.apsuite) <= 2:
             logger.debug("Parse (meta)data coming from a customized ELN...")
             for cameca_input_file in case.apsuite:
@@ -102,6 +111,10 @@ class APMReader(BaseReader):
             nx_apm_range = IfesRangingDefinitionsParser(case.ranging[0], entry_id)
             nx_apm_range.parse(template)
 
+        # TODO deactivate for production run in the first iteration as we will run
+        # two parsing rounds, the first with pynxtools-apm, the second appending eventually
+        # other content, like voltage curves; if these exist, they should be the
+        # default plot, so the following two lines need to be run after the second round
         logger.debug("Create NeXus default plottable data...")
         apm_default_plot_generator(template, entry_id)
 
@@ -119,9 +132,21 @@ class APMReader(BaseReader):
 
         logger.debug("Forward instantiated template to the NXS writer...")
         toc = perf_counter_ns()
-        trg = f"/ENTRY[entry{entry_id}]/profiling/template_filling_elapsed_time"
-        template[f"{trg}"] = np.float64((toc - tic) / 1.0e9)
-        template[f"{trg}/@units"] = "s"
+        # not standardized, should be improved, APMReader has no access to output file
+        # if in append mode code should check if already a program1 version present
+        trg = f"/ENTRY[entry{entry_id}]/profiling/CS_PROFILING_EVENT[pynxtools_apm]"
+        template[f"{trg}/elapsed_time"] = np.float64((toc - tic) / 1.0e9)
+        template[f"{trg}/elapsed_time/@units"] = "s"
+        template[f"{trg}/max_processes"] = np.uint32(1)
+        template[f"{trg}/max_threads"] = (
+            np.uint32(NTHREADS_BLOSC)
+            if DEFAULT_COMPRESSION_FILTER == "blosc"
+            else np.uint32(1)
+        )
+        template[f"{trg}/PROGRAM[program]/program"] = "pynxtools-apm"
+        template[f"{trg}/PROGRAM[program]/program/@version"] = (
+            get_pynxtools_apm_version()
+        )
         return template
 
 

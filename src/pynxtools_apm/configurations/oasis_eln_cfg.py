@@ -34,6 +34,13 @@ APM_ENTRY_TO_NEXUS: dict[str, Any] = {
 }
 
 
+APM_PROJECT_TO_NEXUS: dict[str, Any] = {
+    "prefix_trg": "/ENTRY[entry*]/project",
+    "prefix_src": "project/",
+    "map_to_str": ["name"],
+}
+
+
 APM_SAMPLE_TO_NEXUS: dict[str, Any] = {
     "prefix_trg": "/ENTRY[entry*]/sample",
     "prefix_src": "sample/",

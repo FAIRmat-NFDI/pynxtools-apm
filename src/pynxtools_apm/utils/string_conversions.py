@@ -18,7 +18,7 @@
 """Utility function to map quantities that have been serialized as strings back to other type."""
 
 
-def string_to_number(arg: str):
+def string_to_number(arg: str) -> float | str | int:
     """Convert input string to int, float, or leave string."""
     if isinstance(arg, str):
         try:
@@ -32,7 +32,7 @@ def string_to_number(arg: str):
         else:
             return val
     else:
-        raise TypeError(f"Input argument {arg} needs to be a string!")
+        raise TypeError(f"Input argument {arg} needs to be a string")
 
 
 # str_val = "-0.4899999"
@@ -42,7 +42,7 @@ def string_to_number(arg: str):
 # logger.debug(f"{string_to_number(str_val)}, {type(string_to_number(str_val))}")
 
 
-def right_chop(s, suffix):
-    if suffix and s.endswith(suffix):
-        return s[: -len(suffix)]
-    return s
+def right_chop(string: str, suffix: str) -> str:
+    if suffix and string.endswith(suffix):
+        return string[: -len(suffix)]
+    return string

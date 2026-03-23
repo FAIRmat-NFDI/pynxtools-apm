@@ -138,7 +138,7 @@ class HdfFiveBaseParser:
             return cache_key
         else:
             raise ValueError(
-                f"Existent named cache {cache_key} must not be overwritten !"
+                f"Existent named cache {cache_key} must not be overwritten"
             )
 
     def clear_cache(self, cache_key: str):
@@ -210,7 +210,7 @@ class HdfFiveBaseParser:
                                     )
                             else:
                                 raise ValueError(
-                                    f"Unknown formatting of an h5py.Dataset, inspect {node_name} !"
+                                    f"Unknown formatting of an h5py.Dataset, inspect {node_name}"
                                 )
                         else:  # h5obj.dtype.names is a tuple of struct variable names
                             n_dims = len(np.shape(h5obj))
@@ -350,11 +350,11 @@ class HdfFiveBaseParser:
                     else:
                         raise ValueError(
                             f"hasattr(h5obj.dtype, 'fields') and hasattr("
-                            f"h5obj.dtype, 'names') failed, inspect {node_name} !"
+                            f"h5obj.dtype, 'names') failed, inspect {node_name}"
                         )
                 else:
                     raise ValueError(
-                        f"hasattr(h5obj, dtype) failed, inspect {node_name} !"
+                        f"hasattr(h5obj, dtype) failed, inspect {node_name}"
                     )
         else:
             if node_name not in self.groups:
@@ -417,7 +417,7 @@ class HdfFiveBaseParser:
                     )
                 else:
                     raise ValueError(
-                        f"Unknown formatting of an attribute, inspect {prefix}/@{key} !"
+                        f"Unknown formatting of an attribute, inspect {prefix}/@{key}"
                     )
 
     def get_content(self):

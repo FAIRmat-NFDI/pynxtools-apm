@@ -30,6 +30,7 @@ from pynxtools_apm.configurations.oasis_eln_cfg import (
     APM_INSTRUMENT_SPECIMEN_TO_NEXUS,
     APM_INSTRUMENT_STATIC_TO_NEXUS,
     APM_MEASUREMENT_TO_NEXUS,
+    APM_PROJECT_TO_NEXUS,
     APM_RANGE_TO_NEXUS,
     APM_RECON_TO_NEXUS,
     APM_SAMPLE_TO_NEXUS,
@@ -72,7 +73,7 @@ class NxApmNomadOasisElnSchemaParser:
                     for key, val in self.yml.items():
                         logger.info(f"key: {key}, value: {val}")
         except (OSError, FileNotFoundError):
-            logger.warning(f"File {self.file_path} not found !")
+            logger.warning(f"File {self.file_path} not found")
             self.yml = fd.FlatDict({}, delimiter="/")
             return
 
@@ -195,7 +196,7 @@ class NxApmNomadOasisElnSchemaParser:
                                     ]["unit"]
                         laser_id += 1
                     return template
-        logger.warning("pulse_mode != voltage but no laser details specified!")
+        logger.warning("pulse_mode != voltage but no laser details specified")
         return template
 
     def parse(self, template: dict) -> dict:
@@ -207,6 +208,7 @@ class NxApmNomadOasisElnSchemaParser:
         identifier = [self.entry_id, 1]
         for cfg in [
             APM_ENTRY_TO_NEXUS,
+            APM_PROJECT_TO_NEXUS,
             APM_SAMPLE_TO_NEXUS,
             APM_SPECIMEN_TO_NEXUS,
             APM_MEASUREMENT_TO_NEXUS,

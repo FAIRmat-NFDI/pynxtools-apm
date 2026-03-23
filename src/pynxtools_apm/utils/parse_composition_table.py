@@ -138,7 +138,7 @@ def parse_composition_table(composition_list):
                     if normalization != composition_table["normalization"]:
                         raise ValueError(
                             "Composition list is contradicting as it \
-                                         mixes atom- with weight-percent normalization!"
+                                         mixes atom- with weight-percent normalization"
                         )
 
             if element not in composition_table:
@@ -146,7 +146,7 @@ def parse_composition_table(composition_list):
             else:
                 raise ValueError(
                     "Composition list is incorrectly formatted as if has \
-                                 at least multiple lines for the same element!"
+                                 at least multiple lines for the same element"
                 )
             continue
         if instruction == "define_matrix":
@@ -156,7 +156,7 @@ def parse_composition_table(composition_list):
             else:
                 raise ValueError(
                     "Composition list is contradicting as it includes \
-                                 at least two statements what the matrix should be!"
+                                 at least two statements what the matrix should be"
                 )
 
     # determine remaining fraction
@@ -171,7 +171,7 @@ def parse_composition_table(composition_list):
     if remainder_element is None:
         raise ValueError(
             "Composition list inconsistent because either fractions for \
-                         elements do not add up to 100. or no symbol for matrix defined!"
+                         elements do not add up to 100. or no symbol for matrix defined"
         )
 
     if composition_table:  # means != {}

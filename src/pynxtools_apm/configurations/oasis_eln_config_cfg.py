@@ -39,6 +39,7 @@
 # in the template get overwritten
 
 import datetime as dt
+from typing import Any
 
 OASISCFG_APM_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]",
@@ -69,9 +70,15 @@ OASISCFG_APM_CSYS_TO_NEXUS = {
     ],
 }
 
+OASISCFG_APM_PROJECT_TO_NEXUS: dict[str, Any] = {
+    "prefix_trg": "/ENTRY[entry*]/project",
+    "prefix_src": "project/",
+    "map_to_str": ["name"],
+}
+
 
 OASISCFG_APM_CITATION_TO_NEXUS = {
     "prefix_trg": "/ENTRY[entry*]/citeID[cite*]",
     "prefix_src": "",
-    "map_to_str": ["authors", "doi", "description", "url"],
+    "map_to_str": ["author", "doi", "description", "url"],
 }

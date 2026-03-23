@@ -190,7 +190,7 @@ def set_value(template: dict, trg: str, src_val: Any, trg_dtype: str = "") -> di
                 template[f"{trg}"] = ", ".join(src_val)
             else:
                 raise TypeError(
-                    f"Not List[str] {type(src_val)} found for not trg_dtype case !"
+                    f"Not list[str] {type(src_val)} found for not trg_dtype case !"
                 )
         elif (
             isinstance(src_val, (np.ndarray, np.generic))

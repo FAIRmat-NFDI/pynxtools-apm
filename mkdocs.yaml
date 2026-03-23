@@ -16,22 +16,27 @@ nav:
   # - How-To:
   #    - how-tos/howto.md
   - Learn:
-    - explanation/learn.md
-    # - explanation/apmapp.md
-    - explanation/issues.md
+    - learn/learn.md
+    # - learn/apmapp.md
+    - learn/versioning.md
+    - learn/issues.md
   - Reference:
     - reference/contextualization.md
     - reference/apt.md
-    - reference/epos.md
     - reference/pos.md
-    - reference/rng.md
+    - reference/epos.md
     - reference/rrng.md
+    - reference/rng.md
     - reference/faufig.md
     - reference/pyccapt.md
     - reference/ato.md
     - reference/env.md
     - reference/csv.md
-    - reference/inspico.md
+    - reference/stuttgart.md
+    - reference/posap.md
+    - reference/imago.md
+    - reference/analysisset.md
+    - reference/camecahfive.md
     - reference/camecaroot.md
     - reference/mqanalysis.md
     - reference/atomtypes.md
@@ -92,5 +97,4 @@ extra_css:
 
 extra_javascript:
   - javascript.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

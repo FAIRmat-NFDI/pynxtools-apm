@@ -45,9 +45,10 @@ pynxtools-apm is useful for scientists from the atom probe community, for techno
 ### Learn
 <!--This is the place where to add documentation of [diátaxis](https://diataxis.fr) content type explanation.-->
 
-- [Scope and idea](explanation/learn.md)
-<!-- - [NOMAD App](explanation/apmapp.md)-->
-- [Known issues](explanation/issues.md)
+- [Scope and idea](learn/learn.md)
+<!-- - [NOMAD App](learn/apmapp.md)-->
+- [Note on versioning](learn/versioning.md)
+- [Known issues](learn/issues.md)
 
 </div>
 <div markdown="block">
@@ -59,16 +60,20 @@ respective file formats of the atom probe tomography and field-ion microscopy co
 
 - [How to map pieces of information to NeXus](reference/contextualization.md)
 - [APT file format](reference/apt.md)
-- [ePOS file format](reference/epos.md)
 - [POS file format](reference/pos.md)
-- [RNG file format](reference/rng.md)
+- [ePOS file format](reference/epos.md)
 - [RRNG file format](reference/rrng.md)
+- [RNG file format](reference/rng.md)
 - [Matlab Atom Probe Toolbox ranging definitions](reference/faufig.md)
 - [OXCART instrument and pyccapt](reference/pyccapt.md)
 - [ATO file format](reference/ato.md)
 - [ENV file format](reference/env.md)
 - [CSV file format](reference/csv.md)
-- [Inspico file formats](reference/inspico.md)
+- [Inspico/(M)-TAP/APyT file formats](reference/stuttgart.md)
+- [PoSAP OPS file format](reference/posap.md)
+- [Imago/AMETEK/Cameca/IVAS XML analysis file format](reference/imago.md)
+- [AP Suite XML analysisset file format](reference/analysisset.md)
+- [AMETEK/Cameca HDF5 file format](reference/camecahfive.md)
 - [AMETEK/Cameca ROOT-based formats](reference/camecaroot.md)
 - [Automated charge state analysis](reference/mqanalysis.md)
 - [Automated extraction of elements](reference/atomtypes.md)

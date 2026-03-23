@@ -27,7 +27,7 @@ except ImportError as exc:
 
 schema = "pynxtools.nomad.schema.Root"
 
-apm_app_entry_point = AppEntryPoint(
+apm_app = AppEntryPoint(
     name="APM App",
     description="App for APM data.",
     app=App(

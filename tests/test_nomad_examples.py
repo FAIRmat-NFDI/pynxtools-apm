@@ -35,7 +35,7 @@ from pynxtools.testing.nomad_example import (
     parse_nomad_examples,
 )
 
-from pynxtools_apm.nomad.example_uploads import apm_example_upload_entry_point
+from pynxtools_apm.nomad.example_uploads import apm_example_upload
 
 EXAMPLE_PATH = os.path.join(
     os.path.dirname(__file__),
@@ -61,9 +61,9 @@ def test_parse_nomad_examples(mainfile):
     ("entrypoint", "example_path"),
     [
         pytest.param(
-            apm_example_upload_entry_point,
+            apm_example_upload,
             EXAMPLE_PATH,
-            id="apm_example_upload_entry_point",
+            id="apm_example_upload",
         ),
     ],
 )
