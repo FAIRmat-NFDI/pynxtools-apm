@@ -1,0 +1,18 @@
+{
+    "data": {
+        "m_def": "pynxtools.nomad.schema_packages.dataconverter.NexusDataConverter",
+        "input_files": [
+            "Si.str",
+            "Si.rhit",
+            "Si.root",
+            "Si.apt",
+            "Si.rrng",
+            "eln_data.yaml",
+            "apm.oasis.specific.yaml"
+        ],
+        "reader": "apm",
+        "nxdl": "NXapm",
+        "output": "Si.apt.nxs"
+    },
+    "m_ref_archives": {}
+}
