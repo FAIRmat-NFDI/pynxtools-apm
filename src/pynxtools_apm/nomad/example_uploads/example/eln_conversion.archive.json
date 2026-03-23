@@ -3,7 +3,7 @@
   "m_def": "../upload/raw/apm.scheme.archive.yaml#definitions/section_definitions/0",
   "output": "eln_data.yaml",
   "entry": {
-   "experiment_description": "<p>normal<br /><strong>bold</strong></p>\n<p><em>italics</em></p>\n<p><em>fixed!!</em></p>\n<p>&nbsp;</p>",
+   "experiment_description": "<p>normal<br /><strong>bold</strong></p>\n<p><em>italics</em></p><p>&nbsp;</p>",
    "start_time": "2025-03-22T08:39:00+00:00",
    "end_time": "2025-03-22T08:39:00+00:00",
    "run_number": 2121,
