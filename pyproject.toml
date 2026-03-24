@@ -70,7 +70,7 @@ batch = [
 apm = "pynxtools_apm.reader:APMReader"
 
 [project.entry-points.'nomad.plugin']
-apm_app = "pynxtools_apm.nomad.apps:apm_app"
+# apm_app = "pynxtools_apm.nomad.apps:apm_app"
 apm_example_upload = "pynxtools_apm.nomad.example_uploads:apm_example_upload"
 
 [tool.uv]

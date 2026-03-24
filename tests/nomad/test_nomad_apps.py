@@ -32,4 +32,4 @@ def test_importing_app():
     # this will raise an exception if pydantic model validation fails for the app
     from pynxtools_apm.nomad.apps import apm_app  # noqa: PLC0415
 
-    assert apm_app.app.label == "Atom Probe Microscopy App"
+    assert apm_app.app.label == "APM"
