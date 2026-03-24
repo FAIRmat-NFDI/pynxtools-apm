@@ -1,10 +1,10 @@
 citation:
-- doi: https://doi.org/repo
+- doi: 10.5281/zenodo.7885531
   description: DOI to the respective entry in a data repository.
-- doi: https://doi.org/paper
+- doi: 10.21105/joss.04862
   description: DOI to the respective publication.
 custom_coordinate_system:
-- alias: Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen.
+- alias: This is an example! Following the idea of McStas that the z-axis points along the direction of an ion leaving the apex along the longest direction of the specimen.
   type: cartesian
   handedness: right_handed
   xaxis_direction: Direction 1 that is perpendicular to the z_direction for a right_handed cartesian
