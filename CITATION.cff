@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: 'pynxtools-apm: A pynxtools reader plugin for atom probe tomography and related field-ion microscopy (APM) data'
-version: 0.5.1
+version: 0.5.2
 message:
   If you use this software, please cite it using the
   metadata from this file.
@@ -21,15 +21,15 @@ authors:
   - given-names: Heiko B.
     family-names: Weber
     orcid: 'https://orcid.org/0000-0002-6403-9022'
-  - given-names: Christoph
+  - given-names: Christoph T.
     family-names: Koch
     orcid: 'https://orcid.org/0000-0002-3984-1523'
   - given-names: Claudia
     family-names: Draxl
     orcid: 'https://orcid.org/0000-0003-3523-6657'
-doi: 10.5281/zenodo.14263076
-repository-code: https://github.com/FAIRmat-NFDI/pynxtools-apm
-url: https://zenodo.org/records/14263076
+repository-code: 'https://github.com/FAIRmat-NFDI/pynxtools-apm'
+doi: '10.5281/zenodo.14263076'
+url: 'https://zenodo.org/records/14263076'
 keywords:
   - NeXus
   - pynxtools
@@ -38,18 +38,18 @@ keywords:
   - Field ion microscopy
   - Microscopy
 abstract:
-  pynxtools-apm is a reader plugin for pynxtools (https://github.com/FAIRmat-NFDI/pynxtools)
-  written in Python. pynxtools-apm is a tool for reading and translating data from various proprietary
-  and open-source data formats from technology partners and the wider atom probe community and
-  standardizing it such that it is compliant with the NeXus application definition NXapm
-  (https://fairmat-nfdi.github.io/nexus_definitions/).
+  pynxtools-apm is a reader plugin for pynxtools (https://github.com/FAIRmat-NFDI/pynxtools) written in Python.
+
+  pynxtools-apm is a tool for reading and translating data from various proprietary and open-source data formats
+  from technology partners of the atom probe community. The tool standardizes the data to become compliant with
+  the NeXus application definition NXapm (https://fairmat-nfdi.github.io/nexus_definitions/).
 
   pynxtools-apm is developed both as a standalone reader and as a tool within NOMAD,
   an open-source research data management platform for Materials Science (https://nomad-lab.eu/nomad-lab/).
 
   The work is funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) - 460197019 (FAIRmat)
   (https://gepris.dfg.de/gepris/projekt/460197019?language=en).
-license: Apache Software License 2.0
+license: Apache-2.0
 funding:
   - name: Deutsche Forschungsgemeinschaft
     award-number: 460197019
