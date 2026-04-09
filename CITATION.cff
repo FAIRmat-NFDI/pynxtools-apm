@@ -27,9 +27,9 @@ authors:
   - given-names: Claudia
     family-names: Draxl
     orcid: 'https://orcid.org/0000-0003-3523-6657'
-doi: 10.5281/zenodo.14263076
 repository-code: 'https://github.com/FAIRmat-NFDI/pynxtools-apm'
-url: https://zenodo.org/records/14263076
+doi: '10.5281/zenodo.14263076'
+url: 'https://zenodo.org/records/14263076'
 keywords:
   - NeXus
   - pynxtools
@@ -38,11 +38,11 @@ keywords:
   - Field ion microscopy
   - Microscopy
 abstract:
-  pynxtools-apm is a reader plugin for pynxtools (https://github.com/FAIRmat-NFDI/pynxtools)
-  written in Python. pynxtools-apm is a tool for reading and translating data from various proprietary
-  and open-source data formats from technology partners and the wider atom probe community and
-  standardizing it such that it is compliant with the NeXus application definition NXapm
-  (https://fairmat-nfdi.github.io/nexus_definitions/).
+  pynxtools-apm is a reader plugin for pynxtools (https://github.com/FAIRmat-NFDI/pynxtools) written in Python.
+
+  pynxtools-apm is a tool for reading and translating data from various proprietary and open-source data formats
+  from technology partners of the atom probe community. The tool standardizes the data to become compliant with
+  the NeXus application definition NXapm (https://fairmat-nfdi.github.io/nexus_definitions/).
 
   pynxtools-apm is developed both as a standalone reader and as a tool within NOMAD,
   an open-source research data management platform for Materials Science (https://nomad-lab.eu/nomad-lab/).
