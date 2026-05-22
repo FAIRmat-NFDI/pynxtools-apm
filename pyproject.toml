@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=78.1.1", "setuptools-scm[toml]>=6.2"]
+requires = ["setuptools>=78.1.1", "setuptools-scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,11 +17,12 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools>=0.13.0",
+    "pynxtools==0.14.0",
     "ifes_apt_tc_data_modeling>=0.4.1",
     "pytz",
 ]
@@ -29,7 +30,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "mypy",
-    "ruff>=0.15.0",
+    "ruff>=0.15",
     "pytest",
     "pytest-cov",
     "pytest-timeout",
@@ -48,7 +49,7 @@ docs = [
     "pymdown-extensions",
     "mkdocs-click"
 ]
-nomad = ["nomad-lab[infrastructure]>=1.4.1"]
+nomad = ["nomad-lab[infrastructure]>=1.4.2"]
 ipynb = [
     "jupyter",
     "jupyterlab",
@@ -60,7 +61,8 @@ batch = [
     "bibtexparser",
     "pycountry",
     "rarfile",
-    "py7zr",
+    "py7zr<1.0.0",
+    "requests"
 ]
 
 [project.urls]
