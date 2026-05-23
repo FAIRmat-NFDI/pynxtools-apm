@@ -23,6 +23,13 @@ import yaml
 from pycountry import countries
 
 
+def get_project_id(project_name: str) -> str:
+    """Convert integer project_name ids like 1, 2, 3, ..., to three-digit format with prefix D for dataset or A for article."""
+    if 1 <= len(project_name) <= 3:
+        return f"{'0' * (3 - len(project_name))}{project_name}"
+    return ""
+
+
 def snake_case_to_camel_case(snake_case: str) -> str:
     camel_case = ""
     for token in snake_case.split("_"):

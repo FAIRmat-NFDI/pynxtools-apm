@@ -16,7 +16,14 @@
 # limitations under the License.
 #
 
+import re
+
 from pynxtools_apm.examples.oasisb_utils import snake_case_to_camel_case
+
+
+def is_valid_doi(token: str) -> bool:
+    pattern = r"^10\.\d{4,9}/[-._;()/:A-Z0-9]+$"
+    return bool(re.match(pattern, token, re.IGNORECASE))
 
 
 def get_bibliographical_metadata(bib: dict, snake_case_project_name: str) -> list[str]:

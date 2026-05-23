@@ -192,6 +192,12 @@ def analyze_sevenzip_file(
                             # = datetime.datetime(*obj.creationtime).timestamp()
                             mdata[key]["size"] = obj.uncompressed
                 if hashing:
+                    # read and readall became deprecated in py7zr >=1.x
+                    # data = seven_file_hdl.read()
+                    # for key, ifo in mdata.items():
+                    #     bio = data[key]
+                    #     sh = hashlib.sha256(bio.getbuffer())
+                    #     mdata[key]["sha256"] = sh.hexdigest()
                     for key, bio in seven_file_hdl.readall().items():
                         if key in mdata:
                             sh = hashlib.sha256(bio.getbuffer())
