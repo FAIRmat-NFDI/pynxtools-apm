@@ -39,7 +39,7 @@ from pynxtools.dataconverter.helpers import (
 
 from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.examples.oasisb_eln import generate_oasis_specific_yaml
-from pynxtools_apm.examples.oasisb_utils import generate_file_to_hash
+from pynxtools_apm.examples.oasisb_utils import load_file_to_hash
 
 config: dict[str, str] = {
     "python_version": f"{sys.version}",
@@ -110,7 +110,7 @@ spread_sheet_of_project = pd.read_excel(
 with open(f"{config['source_directory']}{os.sep}aaa_legacy_data.bib") as fp:
     bib = bibtexparser.load(fp).entries_dict
 
-file_to_hash = generate_file_to_hash(
+file_to_hash = load_file_to_hash(
     f"{config['source_directory']}{os.sep}{config['project_name']}.sha256.results.csv"
 )  # TODO
 

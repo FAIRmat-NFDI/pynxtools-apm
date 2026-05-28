@@ -26,7 +26,9 @@ def is_valid_doi(token: str) -> bool:
     return bool(re.match(pattern, token, re.IGNORECASE))
 
 
-def get_bibliographical_metadata(bib: dict, snake_case_project_name: str) -> list[str]:
+def get_bibliographical_metadata(
+    bib: dict, snake_case_project_name: str, verbose: bool = True
+) -> list[str]:
     """Get dataset and article citation_key for given project."""
     matching: dict[str, list[str]] = {
         "data": [],
@@ -43,14 +45,16 @@ def get_bibliographical_metadata(bib: dict, snake_case_project_name: str) -> lis
         (1, "paper", "an original research article"),
     ]:
         if len(matching[cls]) == 0:
-            print(
-                f"{'ERROR' if cls == 'data' else 'WARNING'}, {snake_case_project_name} has no reference for {entry_type}"
-            )
-            # print(f"@Misc{{D_{camel_case_project_name}}},\n  author={{}},\n note = {{personal communication}},\n year = {{2024}},\n}},")
+            if verbose:
+                print(
+                    f"{'ERROR' if cls == 'data' else 'WARNING'}, {snake_case_project_name} has no reference for {entry_type}"
+                )
+                # print(f"@Misc{{D_{camel_case_project_name}}},\n  author={{}},\n note = {{personal communication}},\n year = {{2024}},\n}},")
         elif len(matching[cls]) > 1:
-            print(
-                f"WARNING, {snake_case_project_name} has more than one reference for {entry_type}"
-            )
+            if verbose:
+                print(
+                    f"WARNING, {snake_case_project_name} has more than one reference for {entry_type}"
+                )
         else:
             data_article[idx] = matching[cls][0]
     return data_article

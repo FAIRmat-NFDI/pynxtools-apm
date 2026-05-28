@@ -52,6 +52,7 @@ Sandor
 Schmitz
 Sherjeel
 TAPHR
+Tarda
 Templatized
 UNITLESS
 Universität
@@ -76,6 +77,8 @@ deconvolution
 detx
 dety
 diátaxis
+duesseldorf
+eich
 endianness
 epos
 erate
@@ -102,6 +105,7 @@ issubdtype
 itemsize
 iufc
 kfactor
+kuehbach
 laserpower
 latticeconstant
 libatomprobe
