@@ -22,8 +22,6 @@ import platform
 import numpy as np
 from pynxtools.dataconverter.chunk import BLOSC_NTHREADS
 
-from pynxtools_apm import get_pynxtools_apm_version
-
 # try:
 #     from cpuinfo import get_cpu_info
 #
@@ -58,7 +56,7 @@ def simple_profiling(
     template[f"{trg}/max_gpus"] = np.uint32(0)
     template[f"{trg}/template_filling_elapsed_time"] = np.float64((toc - tic) / 1.0e9)
     template[f"{trg}/template_filling_elapsed_time/@units"] = "s"
-    template[f"{trg}/PROGRAM[program]/program"] = "pynxtools-apm"
-    template[f"{trg}/PROGRAM[program]/program/@version"] = get_pynxtools_apm_version()
+    # template[f"{trg}/PROGRAM[program]/program"] = "pynxtools-apm"
+    # template[f"{trg}/PROGRAM[program]/program/@version"] = get_pynxtools_apm_version()
 
     return template
