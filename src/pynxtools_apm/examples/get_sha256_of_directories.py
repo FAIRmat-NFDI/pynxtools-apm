@@ -28,7 +28,7 @@ import py7zr
 import rarfile
 
 # import blake3
-from pynxtools_apm.utils.default_config import SEPARATOR
+from pynxtools_apm.configurations.default_config import SEPARATOR
 
 HASHING = True
 

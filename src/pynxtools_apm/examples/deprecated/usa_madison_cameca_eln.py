@@ -34,11 +34,11 @@ from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.cameca_cfg import APM_CAMECA_TO_NEXUS
-from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.default_config import (
+from pynxtools_apm.configurations.default_config import (
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
 )
+from pynxtools_apm.utils.custom_logging import logger
 
 
 class NxApmCustomElnCamecaRoot:

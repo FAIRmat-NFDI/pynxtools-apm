@@ -39,7 +39,8 @@ dev = [
     "types-pytz",
     "types-requests",
     "pre-commit",
-    "cruft"
+    "cruft",
+    # "py-cpuinfo",
 ]
 docs = [
     "mkdocs",

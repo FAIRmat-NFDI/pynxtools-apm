@@ -21,23 +21,22 @@ import os
 from time import perf_counter_ns
 from typing import Any
 
-import numpy as np
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
-# from pynxtools.dataconverter.writer import NTHREADS_BLOSC
-NTHREADS_BLOSC = 1
-
-from pynxtools_apm import get_pynxtools_apm_version
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
-from pynxtools_apm.examples.usa_madison_cameca_eln import NxApmCustomElnCamecaRoot
+from pynxtools_apm.configurations.default_config import SEPARATOR
+
+# from pynxtools_apm.examples.deprecated.usa_madison_cameca_eln import (
+#     NxApmCustomElnCamecaRoot,
+# )
 from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
 from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
 from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
 from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.default_config import DEFAULT_COMPRESSION_FILTER
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
+from pynxtools_apm.utils.profiling import simple_profiling
 from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
 
 
@@ -95,11 +94,11 @@ class APMReader(BaseReader):
         nxs.parse(template)
 
         # deprecated
-        if 1 <= len(case.apsuite) <= 2:
-            logger.debug("Parse (meta)data coming from a customized ELN...")
-            for cameca_input_file in case.apsuite:
-                nx_apm_cameca = NxApmCustomElnCamecaRoot(cameca_input_file, entry_id)
-                nx_apm_cameca.parse(template)
+        # if 1 <= len(case.apsuite) <= 2:
+        #     logger.debug("Parse (meta)data coming from a customized ELN...")
+        #     for cameca_input_file in case.apsuite:
+        #         nx_apm_cameca = NxApmCustomElnCamecaRoot(cameca_input_file, entry_id)
+        #         nx_apm_cameca.parse(template)
 
         if len(case.reconstruction) == 1:
             logger.debug("Parse (meta)data from a reconstructed dataset file...")
@@ -128,25 +127,12 @@ class APMReader(BaseReader):
                 "Reporting state of template before passing to HDF5 writing..."
             )
             for keyword, value in sorted(template.items()):
-                logger.info(f"{keyword}____{type(value)}____{value}")
+                logger.info(f"{keyword}{SEPARATOR}{type(value)}{SEPARATOR}{value}")
 
         logger.debug("Forward instantiated template to the NXS writer...")
         toc = perf_counter_ns()
-        # not standardized, should be improved, APMReader has no access to output file
-        # if in append mode code should check if already a program1 version present
-        trg = f"/ENTRY[entry{entry_id}]/profiling/CS_PROFILING_EVENT[pynxtools_apm]"
-        template[f"{trg}/elapsed_time"] = np.float64((toc - tic) / 1.0e9)
-        template[f"{trg}/elapsed_time/@units"] = "s"
-        template[f"{trg}/max_processes"] = np.uint32(1)
-        template[f"{trg}/max_threads"] = (
-            np.uint32(NTHREADS_BLOSC)
-            if DEFAULT_COMPRESSION_FILTER == "blosc"
-            else np.uint32(1)
-        )
-        template[f"{trg}/PROGRAM[program]/program"] = "pynxtools-apm"
-        template[f"{trg}/PROGRAM[program]/program/@version"] = (
-            get_pynxtools_apm_version()
-        )
+        simple_profiling(template, tic, toc, "pynxtools_apm", entry_id)
+
         return template
 
 

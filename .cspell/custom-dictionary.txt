@@ -154,3 +154,8 @@ zedge
 zenodo
 zmax
 zmin
+bibtexparser
+camecaroot
+CAMECAROOT
+bilal
+autorecover

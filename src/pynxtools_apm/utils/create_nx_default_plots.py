@@ -21,13 +21,13 @@ import numpy as np
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
 from pynxtools_apm import get_pynxtools_apm_version
-from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.default_config import (
+from pynxtools_apm.configurations.default_config import (
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
 )
+from pynxtools_apm.utils.custom_logging import logger
 
 
 def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:

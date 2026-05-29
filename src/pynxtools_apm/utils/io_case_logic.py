@@ -48,7 +48,7 @@ VALID_FILE_NAME_SUFFIX_RANGE: list[str] = [
 ]
 VALID_FILE_NAME_SUFFIX_CONFIG: list[str] = [".yaml", ".yml", "db.yaml"]
 VALID_FILE_NAME_SUFFIX_CAMECA: list[str] = [
-    ".cameca",
+    # ".cameca",  # deprecated
     ".str",
     ".rraw",
     ".rhit",

@@ -39,12 +39,12 @@ from ifes_apt_tc_data_modeling.stuttgart.raw_reader import (
 )
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
-from pynxtools_apm.utils.custom_logging import logger
-from pynxtools_apm.utils.default_config import (
+from pynxtools_apm.configurations.default_config import (
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
     SEPARATOR,
 )
+from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
 
 

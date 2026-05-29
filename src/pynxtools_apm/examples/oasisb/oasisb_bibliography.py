@@ -18,7 +18,7 @@
 
 import re
 
-from pynxtools_apm.examples.oasisb_utils import snake_case_to_camel_case
+from pynxtools_apm.examples.oasisb.oasisb_utils import snake_case_to_camel_case
 
 
 def is_valid_doi(token: str) -> bool:

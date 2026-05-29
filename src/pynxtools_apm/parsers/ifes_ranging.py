@@ -47,7 +47,7 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
 from pynxtools_apm import get_pynxtools_apm_version
-from pynxtools_apm.utils.default_config import (
+from pynxtools_apm.configurations.default_config import (
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
     MAKE_RANGING_DEFINITIONS_UNIQUE,
