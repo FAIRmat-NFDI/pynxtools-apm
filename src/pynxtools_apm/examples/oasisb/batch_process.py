@@ -123,12 +123,12 @@ def process_project(
     logger.setLevel(logging.DEBUG)
     logger.addHandler(master_handler)
     for key, original_path in config.items():
-        logger.info(f"{key};{original_path}")
+        print(f"INFO {key};{original_path}")
 
     nxdl = "NXapm"
     nxdl_root, nxdl_file = get_nxdl_root_and_path(nxdl)
     if not os.path.exists(nxdl_file):
-        logger.error(f"Unable to load {nxdl_file}")
+        print(f"ERROR Unable to load {nxdl_file}")
         return
 
     try:
@@ -139,14 +139,14 @@ def process_project(
             dtype=str,
         ).fillna("")
     except (FileNotFoundError, OSError):
-        logger.error(f"Unable to load {config_file}")
+        print(f"ERROR Unable to load {config_file}")
         return
 
     try:
         with open(bib_file) as fp:
             bib = bibtexparser.load(fp).entries_dict
     except (FileNotFoundError, OSError):
-        logger.error(f"Unable to load {bib_file}")
+        print(f"ERROR Unable to load {bib_file}")
         return
 
     # compute hashes for each file when processing legacy data serves two purposes
@@ -178,7 +178,7 @@ def process_project(
                     if line.path.lower().endswith(tuple(mime_type_list)):  # type: ignore
                         file_to_hash[line.path] = line.sha256  # type: ignore
     except (FileNotFoundError, OSError):
-        logger.error(f"Unable to load {hash_file}")
+        print(f"ERROR Unable to load {hash_file}")
         return
 
     # we inject already queried content from the OpenAlex literature reference database
@@ -193,7 +193,7 @@ def process_project(
             with open(openalex_file, encoding="utf-8") as fp:
                 openalex = fd.FlatDict(json.load(fp), delimiter="/")
         except (FileNotFoundError, json.JSONDecodeError, OSError):
-            logger.error(f"Unable to load {openalex_file}")
+            print(f"ERROR Unable to load {openalex_file}")
 
     # one NeXus file per row, compositing from at least one atom probe file surplus
     # f"{project_name}.{row_idx}.oasis_specific.yaml ELN
@@ -222,11 +222,15 @@ def process_project(
                 has_input = True
                 break
         if not has_input:
-            logger.warning(f"No content to parse for row {row_idx}")
+            print(f"WARNING No content to parse for row {row_idx}")
             continue
 
         # define the name of the NeXus file
-        output_file_path = f"{project_name}.{row_idx}.nxs"
+        output_file_path = f"{target_directory}{os.sep}{project_name}.{row_idx}.nxs"
+        if os.path.isfile(output_file_path):
+            print(f"WARNING deleting older version of {output_file_path}")
+            os.remove(output_file_path)
+        print(f"INFO Compositing {output_file_path}")
 
         # file path aliasing
         alias_to_original: dict[str, str] = {}
@@ -250,10 +254,11 @@ def process_project(
                         pynx_root_input_files.append(alias_path)
                         alias_to_original[alias_path] = original_path
                     else:
-                        logger.error(f"Unable to find hash for {row_idx}.{col_idx}")
+                        print(f"ERROR Unable to find hash for {row_idx}.{col_idx}")
                         pynx_root_input_files = []
 
             if len(pynx_root_input_files) > 0:
+                print(f"INFO pynxtools-cameca")
                 _ = convert(
                     input_file=tuple(pynx_root_input_files),
                     reader="camecaroot",
@@ -283,7 +288,7 @@ def process_project(
                     # /home/testuser/a.zip:b.pos original path will at least contain
                     # a.zip:b.pos but not necessarily a prefix
                 else:
-                    logger.error(f"Unable to find hash for {row_idx}.{col_idx}")
+                    print(f"ERROR Unable to find hash for {row_idx}.{col_idx}")
 
         if not os.path.isfile(output_file_path):  # camecaroot did not ran or threw
             if len(pynx_open_input_files) == 0:
@@ -310,6 +315,7 @@ def process_project(
             continue
 
         pynx_open_input_files.append(eln_file_path)
+        print(f"INFO pynxtools-apm {pynx_open_input_files}")
         # in every case ELN content has been added by pynxtools-apm
         if os.path.isfile(output_file_path):
             _ = convert(
@@ -331,7 +337,7 @@ def process_project(
                 ignore_undocumented=True,
                 output=output_file_path,
             )
-        logger.info(f"{output_file_path} generated")
+        print(f"INFO {output_file_path} generated")
 
     with open(
         f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv", "w"

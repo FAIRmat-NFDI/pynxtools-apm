@@ -24,7 +24,9 @@ from pynxtools_apm.utils.pint_custom_unit_registry import ureg
 MASS_SPECTRUM_DEFAULT_BINNING = ureg.Quantity(0.01, ureg.dalton)
 NAIVE_GRID_DEFAULT_VOXEL_SIZE = ureg.Quantity(1.0, ureg.nanometer)
 DEFAULT_COMPRESSION_FILTER = "gzip"
-FAST_COMPRESSION_FILTER = "blosc"
+FAST_COMPRESSION_FILTER = (
+    "gzip"  # workaround 2026/05/29, develop still uses pynxtools 0.132"blosc"
+)
 DEFAULT_COMPRESSION_LEVEL = 9
 MAKE_RANGING_DEFINITIONS_UNIQUE = True
 SEPARATOR = "____"
