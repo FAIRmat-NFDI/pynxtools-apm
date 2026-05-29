@@ -18,19 +18,19 @@
 
 """Script to batch-convert to NeXus/HDF5 using pynxtools-apm."""
 
-# python3 pynxtools-apm/examples/oasisb/04_convert_archived_legacy_data_using_pynxtools.py ... /harvest_examples/data ... /scidat_nomad_apt aus_sydney_bilal
-import gc
-import importlib.metadata
+# e.g. python3 pynxtools-apm/examples/oasisb/04_convert_archived_legacy_data_using_pynxtools.py .../harvest_examples/data aus_sydney_bilal .../scidat_nomad_apt
+import io
+import json
 import logging
 import os
 import sys
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import bibtexparser
+import flatdict as fd
 import pandas as pd
-from ifes_apt_tc_data_modeling.utils.versioning import (
-    get_ifes_apt_tc_data_modeling_version,
-)
+from ifes_apt_tc_data_modeling import get_ifes_apt_tc_data_modeling_version
 from pynxtools.dataconverter.convert import convert
 from pynxtools.dataconverter.helpers import (
     get_nxdl_root_and_path,
@@ -38,34 +38,39 @@ from pynxtools.dataconverter.helpers import (
 )
 
 from pynxtools_apm import get_pynxtools_apm_version
+
+
+class ISO8601Formatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):
+        dt = datetime.fromtimestamp(
+            record.created,
+            tz=ZoneInfo("Europe/Berlin"),
+        )
+        return dt.isoformat()
+
+
+try:
+    # pynxtools-camecaroot is not in the public domain!
+    from pynxtools_camecaroot import get_pynxtools_camecaroot_version
+
+    if get_pynxtools_camecaroot_version() != "unknown_version":
+        USE_WORKING_CAMECAROOT_PLUGIN = True
+    else:
+        USE_WORKING_CAMECAROOT_PLUGIN = False
+except (ImportError, ModuleNotFoundError):
+    USE_WORKING_CAMECAROOT_PLUGIN = False
+
 from pynxtools_apm.examples.oasisb_eln import generate_oasis_specific_yaml
-from pynxtools_apm.examples.oasisb_utils import load_file_to_hash
-
-config: dict[str, str] = {
-    "python_version": f"{sys.version}",
-    "working_directory": f"{os.getcwd()}",
-    "pynxtools_name": f"pynxtools",
-    "pynxtools_version": f"{get_pynxtools_version()}",
-    "pynxtools_apm_name": f"pynxtools_apm/{__name__}",
-    "pynxtools_apm_version": f"{get_pynxtools_apm_version()}",
-    "ifes_apt_tc_data_modeling_name": f"ifes_apt_tc_data_modeling",
-    "ifes_apt_tc_data_modeling_version": f"{get_ifes_apt_tc_data_modeling_version()}",
-    "source_directory": sys.argv[1],  # e.g., endswith {os.sep}data
-    "target_directory": sys.argv[2],
-    # therein, {os.sep}decompressed for the input_files and {os.sep}nexus_hfive for the output NeXus/HDF5 files
-    # the actual legacy atom probe project to process all entries of
-    "project_name": sys.argv[3],
-}
+from pynxtools_apm.examples.oasisb_utils import (
+    APT_MIME_TYPES,
+    CAMECA_ROOT_MIME_TYPES,
+    CSV_HEADER_FOR_HASH_FILE,
+)
 
 
-DEFAULT_LOGGER_NAME = "scidat_nomad_apt_process"
-logger = logging.getLogger(DEFAULT_LOGGER_NAME)
-line_formatting = "%(levelname)s %(asctime)s %(message)s"
-time_formatting = "%Y-%m-%dT%H:%M:%S.%z"  # .%f%z"
-formatter = logging.Formatter(line_formatting, time_formatting)
-
-
-def switch_root_logfile(filename, log_level=logging.DEBUG):
+def switch_root_logfile(
+    file_path: str, formatter, log_level=logging.DEBUG
+) -> logging.FileHandler:
     """Replace the root logger's handler with a new FileHandler."""
     root = logging.getLogger()
     root.setLevel(log_level)
@@ -76,234 +81,233 @@ def switch_root_logfile(filename, log_level=logging.DEBUG):
             h.close()
         except Exception:
             pass
-    # install new one
-    new_handler = logging.FileHandler(filename, mode="a", encoding="utf-8")
+    new_handler = logging.FileHandler(file_path, mode="a", encoding="utf-8")
     new_handler.setFormatter(formatter)
     root.addHandler(new_handler)
     return new_handler
 
 
-tic = datetime.now().timestamp()
+def process_project(
+    project_name: str,
+    config_file: str,
+    bib_file: str,
+    hash_file: str,
+    source_directory: str,
+    target_directory: str,
+    openalex_file: str = "",
+    logger_file_path_suffix: str = "",
+    generate_eln_file: bool = True,
+    generate_nexus_file: bool = True,
+    # time_zone_info: ZoneInfo = ZoneInfo("Europe/Berlin"),
+) -> None:
+    """Run first (if available) optional pynxtools-camecaroot followed by or only pynxtools-apm to generate a NeXus/HDF5 file for each dataset in the project named project_name.
 
-script_log_file_path = f"{config['working_directory']}{os.sep}{DEFAULT_LOGGER_NAME}.log"
-if os.path.exists(script_log_file_path):
-    os.remove(script_log_file_path)
-switch_root_logfile(script_log_file_path)
+    project_name : name of the legacy atom probe project for which this function processes all entries,
+        e.g. "deu_duesseldorf_kuehbach" is a project-specific such name
+    config_file : spreadsheet file (currently ods) that identifies which atom probe files (pos, rrng, ...)
+        from the project should be combined into one entry in one NeXus/HDF5 file
+    bib_file : bibtex bibliography file that resolves project-name-specific CitationKeys like
+        D_DeuDuesseldorfKuehbach or A_DeuDuesseldorfKuehbach to populate NXcitation instances
+    hash_file : csv file which stores the hash and original file name of each file from a project
+    source_directory : location of atom probe files that the parser should convert
+    target_directory : location where generated NeXus/HDF5 and log files should be stored
+    openalex_file : (optional) project-name-specific JSON file, retrieved from OpenAlex
+        to provide additional metadata context to a project, e.g. D_DeuDuesseldorfKuehbach.json
+    logger_file_path_suffix : suffix to add to the name of the log file
+    """
 
-logger.info(f"{tic}")
-for key, value in config.items():
-    logger.info(f"{key} {value}")
+    config: dict[str, str] = {
+        "python_version": f"{sys.version}",
+        "working_directory": f"{os.getcwd()}",
+        "project_name": project_name,
+        "config_file": config_file,
+        "bib_file": bib_file,
+        "source_directory": source_directory,
+        "target_directory": target_directory,
+        "openalex_file": openalex_file,
+        "pynxtools_version": f"{get_pynxtools_version()}",
+        "ifes_apt_tc_data_modeling_version": f"{get_ifes_apt_tc_data_modeling_version()}",
+        "pynxtools_apm_version": f"{get_pynxtools_apm_version()}",
+    }
+    if USE_WORKING_CAMECAROOT_PLUGIN:
+        config["pynxtools_camecaroot_version"] = f"{get_pynxtools_camecaroot_version()}"
+    else:
+        config["pynxtools_camecaroot_version"] = "unknown_version or not available"
 
-nxdl = "NXapm"
-nxdl_root, nxdl_file = get_nxdl_root_and_path(nxdl)
-if not os.path.exists(nxdl_file):
-    logger.warning(f"NXDL file {nxdl_file} for nxdl {nxdl} not found")
-
-# load configuration sheet for the project from the source_directory
-spread_sheet_of_project = pd.read_excel(
-    f"{config['source_directory']}{os.sep}{config['project_name']}.ods",
-    sheet_name=f"{config['project_name']}",
-    engine="odf",
-).fillna("")
-
-# load bibliography to identify the data and eventually paper publication for the project
-with open(f"{config['source_directory']}{os.sep}aaa_legacy_data.bib") as fp:
-    bib = bibtexparser.load(fp).entries_dict
-
-file_to_hash = load_file_to_hash(
-    f"{config['source_directory']}{os.sep}{config['project_name']}.sha256.results.csv"
-)  # TODO
-
-# full path to file as key, byte size as value
-statistics: dict[str, int] = {}
-generate_eln_file: bool = True
-generate_nexus_file: bool = True
-parse: int = 1
-project_name = config["project_name"]
-input_file_path_prefix = f"{config['target_directory']}{os.sep}decompressed"
-output_file_path_prefix = (
-    f"{config['target_directory']}{os.sep}apm_prepare_nomad_v142"  # nexus_hfive"
-)
-
-# NeXus file is composed eventually from multiple files and sources
-# ELN, proprietary AMETEK/Cameca metadata, and open-source files (pos, apt, rrng, etc.)
-for row_idx in range(spread_sheet_of_project.shape[0]):
-    ### DO WE HAVE INPUT AT ALL ?
-    has_input: bool = False
-    for col_idx in range(1, 6):  # ignore str_rraw and comment columns i.e. >=6
-        # col_idx int will resolve to
-        # 0, str_rraw
-        # 1, rhit_hits
-        # 2, root
-        # 3, pos_epos_apt_ato_csv
-        # 4, rng_rrng_fig_env
-        # 5, hdf_xml_nxs_raw_ops
-        value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
-        if value == "":
-            continue
-        has_input = True
-        break
-    if not has_input:
-        continue
-    del col_idx
-
-    ### GENERATE OASIS-SPECIFIC ELN content (remaining metadata not stored in files)
-    eln_file_path = generate_oasis_specific_yaml(
-        project_name,
-        row_idx,  # type: ignore
-        output_file_path_prefix,
-        bib,  # type: ignore
+    master_buffer = io.StringIO()
+    master_handler = logging.StreamHandler(master_buffer)
+    master_handler.setFormatter(
+        ISO8601Formatter(fmt="%(asctime)s;%(levelname)s;%(message)s")
     )
-    print(eln_file_path)
-
-    if eln_file_path == "":
-        continue
-
-    # eln_file_path = f"{output_file_path_prefix}/{project_name}.{row_idx}.oasis.specific.yaml"  # eln_data.yaml"
-    if not os.path.isfile(eln_file_path):
-        continue
-
-    ### DEFINE OUTPUT NAME OF THE NEXUS FILE
-    output_file_path = f"{eln_file_path.replace('.oasis.specific.yaml', '')}.output.nxs"
-    # if not os.path.isfile(output_file_path):
-    #     continue
-
-    # split log one log file for each pair of root and open parsing
-    log_file_path = f"{output_file_path}.log"
-    if os.path.exists(log_file_path):
-        os.remove(log_file_path)
-    switch_root_logfile(log_file_path, logging.INFO)
-    # separating the log messages from the individual parser call
-    # to get one log file per generated NeXus/HDF5 file == per NOMAD entry
+    master_logger = logging.getLogger(project_name)
+    master_logger.setLevel(logging.DEBUG)
+    master_logger.addHandler(master_handler)
     for key, value in config.items():
-        logger.info(f"{key} {value}")
-    del key, value
+        master_logger.info(f"{key} {value}")
 
-    ### DO WE HAVE PROPRIETARY INPUT ?
+    nxdl = "NXapm"
+    nxdl_root, nxdl_file = get_nxdl_root_and_path(nxdl)
+    if not os.path.exists(nxdl_file):
+        master_logger.error(f"Unable to load {nxdl_file}")
+        return
+
     try:
-        # pynxtools-camecaroot is not in the public domain!
-        pynxtools_camecaroot_version = (
-            f"{importlib.metadata.version('pynxtools-camecaroot')}"
-        )
-    except importlib.metadata.PackageNotFoundError:
-        pynxtools_camecaroot_version = "unknown_version"
+        spread_sheet_of_project = pd.read_excel(
+            config_file,
+            sheet_name=f"{config['project_name']}",
+            engine="odf",
+            dtype=str,
+        ).fillna("")
+    except (FileNotFoundError, OSError):
+        master_logger.error(f"Unable to load {config_file}")
+        return
 
-    root_parser_used: bool = False  # relevant to distinguish if we need to run
-    # pynxtools-apm in append mode (if root_parser_used == True) or not (if False)
-    if pynxtools_camecaroot_version != "unknown_version" and root_parser_used:
-        pynx_root_input_files: list[str] = []
-        for col_idx in range(1, 6):  # ignore str_rraw
-            # col_idx int will be 0, str_rraw, 1, rhit_hits, 2, root,
-            # 3, pos_epos_apt_ato_csv, 4, rng_rrng_fig_env, 5, hdf_xml_nxs_raw_ops
+    try:
+        with open(bib_file) as fp:
+            bib = bibtexparser.load(fp).entries_dict
+    except (FileNotFoundError, OSError):
+        master_logger.error(f"Unable to load {bib_file}")
+        return
+
+    openalex = fd.FlatDict({}, delimiter="/")
+    if openalex_file != "":
+        try:
+            with open(openalex_file, encoding="utf-8") as fp:
+                openalex = fd.FlatDict(json.load(fp), delimiter="/")
+        except (FileNotFoundError, json.JSONDecodeError, OSError):
+            master_logger.error(f"Unable to load {openalex_file}")
+
+    try:
+        with open(hash_file) as fp:
+            start = next(
+                idx for idx, line in enumerate(fp) if CSV_HEADER_FOR_HASH_FILE in line
+            )
+            df_hash = pd.read_csv(hash_file, sep=";", skiprows=start)
+            df_hash.columns = ["path", "size", "mtime", "sha256"]
+
+            # get the dictionary of hashes where to identifyto replace original file names with short and clean unique ones
+            file_to_hash: dict[str, str] = {}
+            for line in df_hash.itertuples(index=True):
+                for mime_type_list in [APT_MIME_TYPES, CAMECA_ROOT_MIME_TYPES]:
+                    if line.path.lower().endswith(tuple(mime_type_list)):  # type: ignore
+                        file_to_hash[line.path] = line.sha256  # type: ignore
+    except (FileNotFoundError, OSError):
+        master_logger.error(f"Unable to load {hash_file}")
+        return
+
+    # one NeXus file per row, compositing from at least one atom probe file and eln.yaml
+    for row_idx in range(spread_sheet_of_project.shape[0]):
+        has_input: bool = False
+        for col_idx in range(1, 6):  # resolves to
+            # 0, str_rraw, ignore
+            # 1, rhit_hits
+            # 2, root
+            # 3, pos_epos_apt_ato_csv
+            # 4, rng_rrng_fig_env
+            # 5, hdf_xml_nxs_raw_ops
+            # >= 6, comment columns, ignore
             value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
             if value == "":
                 continue
-            pynx_root_input_files.append(
-                f"{input_file_path_prefix}{os.sep}"
-                f"{project_name}.{row_idx}.{col_idx}."
-                f"{file_to_hash[value]}."  # type: ignore
-                f"{value.rsplit('.', 1)[-1].lower()}"  # type: ignore
-            )
-        del col_idx
+            has_input = True
+            break
+        if not has_input:
+            master_logger.warning(f"No content to parse for row {row_idx}")
+            continue
 
-        if len(pynx_root_input_files) > 0:
-            # RUN DATACONVERTER USING PYNXTOOLS-CAMECAROOT
-            input_files_tuple = tuple(pynx_root_input_files)
-            logger.debug(f"{input_files_tuple}")
-            logger.debug(f"{output_file_path}")
+        # collect all external metadata that is not stored in any atom probe specific file
+        eln_file_path = generate_oasis_specific_yaml(
+            f"{project_name}.{row_idx}.oasis.specific.yaml",  # eln_data.yaml
+            row_idx,  # type: ignore
+            target_directory,
+            bib,  # type: ignore
+            openalex,
+        )
+        if os.path.isfile(eln_file_path):
+            master_logger.debug(eln_file_path)
+        else:
+            continue
 
+        # define the name of the NeXus file
+        output_file_path = f"{project_name}.{row_idx}.nxs"
+
+        root_parser_used: bool = False
+        if USE_WORKING_CAMECAROOT_PLUGIN:
+            # if True, we run pynxtools-camecaroot followed by pynxtools-apm
+            # if False, we just run pynxtools-apm
+            pynx_root_input_files: list[str] = []
+            for col_idx in range(1, 6):  # ignore str_rraw
+                value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
+                if value != "":
+                    pynx_root_input_files.append(
+                        f"{source_directory}{os.sep}"
+                        f"{project_name}.{row_idx}.{col_idx}."
+                        f"{file_to_hash[value]}."  # type: ignore
+                        f"{value.rsplit('.', 1)[1].lower()}"  # type: ignore
+                    )
+
+            if len(pynx_root_input_files) > 0:
+                # master_logger.debug(f"{tuple(pynx_root_input_files)}")
+                # master_logger.debug(f"pynxtools-cameca, {output_file_path}")
+
+                _ = convert(
+                    input_file=tuple(pynx_root_input_files),
+                    reader="camecaroot",
+                    nxdl=nxdl,
+                    append=False,
+                    skip_verify=True,
+                    ignore_undocumented=True,
+                    output=output_file_path,
+                )
+                root_parser_used = True
+
+        pynx_open_input_files: list[str] = []
+        for col_idx in range(3, 6):
+            # col_idx int will be 0, str_rraw, 1, rhit_hits, 2, root,
+            # 3, pos_epos_apt_ato_csv, 4, rng_rrng_fig_env, 5, hdf_xml_nxs_raw_ops
+            value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
+            if value != "":
+                if value in file_to_hash:
+                    pynx_open_input_files.append(
+                        f"{source_directory}{os.sep}"
+                        f"{project_name}.{row_idx}.{col_idx}."
+                        f"{file_to_hash[value]}."  # type: ignore
+                        f"{value.rsplit('.', 1)[-1].lower()}"  # type: ignore
+                    )
+                else:
+                    master_logger.error(f"Unable to find hash for {row_idx}.{col_idx}")
+                    break
+
+        pynx_open_input_files.append(eln_file_path)
+
+        # master_logger.debug(f"{tuple(pynx_open_input_files)}")
+        # master_logger.debug(f"pynxtools-apm, {output_file_path}")
+
+        # in every case ELN content has been added by pynxtools-apm
+        if root_parser_used:
             _ = convert(
-                input_file=input_files_tuple,
-                reader="camecaroot",
+                input_file=tuple(pynx_open_input_files),
+                reader="apm",
+                nxdl=nxdl,
+                append=True,
+                skip_verify=True,  # obsolete as append switches validation off anyway
+                ignore_undocumented=True,
+                output=output_file_path,
+            )
+        else:
+            _ = convert(
+                input_file=tuple(pynx_open_input_files),
+                reader="apm",
                 nxdl=nxdl,
                 append=False,
                 skip_verify=True,
                 ignore_undocumented=True,
                 output=output_file_path,
             )
-            root_parser_used = True
 
-            # release memory and resources associated with previous processing
-            del _, pynx_root_input_files, input_files_tuple
+    with open(
+        f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv", "w"
+    ) as fp:
+        fp.write(master_buffer.getvalue())
 
-    ### DO WE HAVE OPEN-SOURCE INPUT ?
-    pynx_open_input_files: list[str] = []
-    for col_idx in range(3, 6):
-        # col_idx int will be 0, str_rraw, 1, rhit_hits, 2, root,
-        # 3, pos_epos_apt_ato_csv, 4, rng_rrng_fig_env, 5, hdf_xml_nxs_raw_ops
-        value = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
-        if value == "":
-            continue
-        pynx_open_input_files.append(
-            f"{input_file_path_prefix}{os.sep}"
-            f"{project_name}.{row_idx}.{col_idx}."
-            f"{file_to_hash[value]}."  # type: ignore
-            f"{value.rsplit('.', 1)[-1].lower()}"  # type: ignore
-        )
-    del col_idx
-
-    # in every case ELN content is added by pynxtools-apm
-    pynx_open_input_files.append(eln_file_path)
-
-    # RUN DATACONVERTER USING PYNXTOOLS-APM
-    input_files_tuple = tuple(pynx_open_input_files)
-    logger.debug(f"{input_files_tuple}")
-    logger.debug(f"{output_file_path}")
-
-    if root_parser_used:
-        _ = convert(
-            input_file=input_files_tuple,
-            reader="apm",
-            nxdl=nxdl,
-            append=True,
-            skip_verify=True,  # obsolete as append switches validation off anyway
-            ignore_undocumented=True,
-            output=output_file_path,
-        )
-    else:
-        _ = convert(
-            input_file=input_files_tuple,
-            reader="apm",
-            nxdl=nxdl,
-            append=False,
-            skip_verify=True,
-            ignore_undocumented=True,
-            output=output_file_path,
-        )
-
-    # release memory and resources associated with previous processing
-    del _, pynx_open_input_files, input_files_tuple
-    # TODO::there is evidence of that the switch_root_logfile causes a memory
-    # leak as the more its called the more memory does not get freed despite
-    # running the garbage collection, ok for now but should be fixed
-    # for better machine utilization at some point.
-
-    execute: bool = False
-    if execute:
-        input_files_tuple = tuple([eln_file_path])
-        logger.debug(f"{input_files_tuple}")
-        logger.debug(f"{output_file_path}")
-
-        _ = convert(
-            input_file=input_files_tuple,
-            reader="apm",
-            nxdl=nxdl,
-            append=True,
-            skip_verify=True,  # obsolete as append switches validation off anyway
-            ignore_undocumented=True,
-            output=output_file_path,
-        )
-        del _, input_files_tuple
-
-    gc.collect()
-
-    switch_root_logfile(script_log_file_path)
-
-# use case analyze content
-
-# lastly, final report and clean up
-switch_root_logfile(script_log_file_path)
-
-toc = datetime.now().timestamp()
-logger.info(f"{toc}")
-print(f"Batch queue for project {config['project_name']} processed successfully")
+    print(f"Batch queue for project {project_name} processed successfully")

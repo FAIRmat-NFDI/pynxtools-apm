@@ -206,6 +206,8 @@ tests/run_tests.sh
 .virtual_documents
 tests/data
 tests/prod
+examples/oasisb/openalex/
+examples/oasisb/batch_script.sh
 examples/oasisb/old
 !examples/oasisb/05_visualize_nexus_file.ipynb
 
