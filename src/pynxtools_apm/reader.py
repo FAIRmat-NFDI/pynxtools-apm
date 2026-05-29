@@ -23,8 +23,8 @@ from typing import Any
 
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
+from pynxtools_apm import SEPARATOR
 from pynxtools_apm.concepts.nxs_concepts import NxApmAppDef
-from pynxtools_apm.configurations.default_config import SEPARATOR
 
 # from pynxtools_apm.examples.deprecated.usa_madison_cameca_eln import (
 #     NxApmCustomElnCamecaRoot,

@@ -20,12 +20,12 @@
 import numpy as np
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
-from pynxtools_apm import get_pynxtools_apm_version
-from pynxtools_apm.configurations.default_config import (
-    DEFAULT_COMPRESSION_FILTER,
+from pynxtools_apm import (
     DEFAULT_COMPRESSION_LEVEL,
+    FAST_COMPRESSION_FILTER,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
+    get_pynxtools_apm_version,
 )
 from pynxtools_apm.utils.custom_logging import logger
 
@@ -123,30 +123,27 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     #         icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
     #     )
 
-    col = 0
     dims = ["x", "y", "z"]
     axes = []
-    for dim in dims:
+    for col, dim in enumerate(dims):
         axes.append(f"axis_{dim}")
         template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = np.uint32(col)
-        col += 1
     template[f"{trg}@axes"] = axes
 
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the application definition
     template[f"{trg}intensity"] = {
         "compress": np.asarray(hist3d[0], np.uint32),
-        "filter": DEFAULT_COMPRESSION_FILTER,
+        "filter": FAST_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(hist3d[0], np.uint32), (0, 1, 2)
         ),
     }
-    col = 0
-    for dim in dims:
+    for col, dim in enumerate(dims):
         template[f"{trg}AXISNAME[axis_{dim}]"] = {
             "compress": np.asarray(hist3d[1][col][1::], np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(hist3d[1][col][1::], np.float32), (0,)
@@ -154,7 +151,6 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         }
         template[f"{trg}AXISNAME[axis_{dim}]/@units"] = "nm"
         template[f"{trg}AXISNAME[axis_{dim}]/@long_name"] = f"{dim} (nm)"
-        col += 1
     logger.debug(
         f"Default plot naive discretization 3D ({NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}) ** 3."
     )
@@ -224,7 +220,7 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}DATA[intensity]/@long_name"] = "Intensity (1)"  # Counts (1)"
     template[f"{trg}AXISNAME[axis_mass_to_charge]"] = {
         "compress": np.asarray(hist1d[1][1::], np.float32),
-        "filter": DEFAULT_COMPRESSION_FILTER,
+        "filter": FAST_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(hist1d[1][1::], np.float32), (0,)

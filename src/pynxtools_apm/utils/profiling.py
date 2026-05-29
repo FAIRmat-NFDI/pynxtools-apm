@@ -23,7 +23,6 @@ import numpy as np
 from pynxtools.dataconverter.chunk import BLOSC_NTHREADS
 
 from pynxtools_apm import get_pynxtools_apm_version
-from pynxtools_apm.configurations.default_config import DEFAULT_COMPRESSION_FILTER
 
 # try:
 #     from cpuinfo import get_cpu_info
@@ -54,9 +53,7 @@ def simple_profiling(
     )
     template[f"{trg}/max_processes"] = np.uint32(1)
     template[f"{trg}/max_threads"] = (
-        np.uint32(BLOSC_NTHREADS)
-        if DEFAULT_COMPRESSION_FILTER == "blosc"
-        else np.uint32(1)
+        np.uint32(BLOSC_NTHREADS) if BLOSC_NTHREADS >= 1 else np.uint32(1)
     )
     template[f"{trg}/max_gpus"] = np.uint32(0)
     template[f"{trg}/template_filling_elapsed_time"] = np.float64((toc - tic) / 1.0e9)

@@ -39,11 +39,7 @@ from ifes_apt_tc_data_modeling.stuttgart.raw_reader import (
 )
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
-from pynxtools_apm.configurations.default_config import (
-    DEFAULT_COMPRESSION_FILTER,
-    DEFAULT_COMPRESSION_LEVEL,
-    SEPARATOR,
-)
+from pynxtools_apm import DEFAULT_COMPRESSION_LEVEL, FAST_COMPRESSION_FILTER, SEPARATOR
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
 
@@ -58,7 +54,7 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)
@@ -74,7 +70,7 @@ def extract_data_from_pos_file(file_path: str, prefix: str, template: dict) -> d
     if m_z is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(m_z.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(m_z.magnitude, np.float32), (0,)
@@ -97,7 +93,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)
@@ -113,7 +109,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if m_z is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(m_z.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(m_z.magnitude, np.float32), (0,)
@@ -129,7 +125,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if standing_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(standing_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(standing_voltage.magnitude, np.float32), (0,)
@@ -145,7 +141,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if pulse_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(pulse_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(pulse_voltage.magnitude, np.float32), (0,)
@@ -161,7 +157,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if raw_time_of_flight is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
@@ -177,7 +173,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if hit_positions is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(hit_positions.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(hit_positions.magnitude, np.float32), (0, 1)
@@ -193,7 +189,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if ions_per_pulse is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(ions_per_pulse.magnitude, np.uint32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(ions_per_pulse.magnitude, np.uint32), (0,)
@@ -208,7 +204,7 @@ def extract_data_from_epos_file(file_path: str, prefix: str, template: dict) -> 
     if number_of_pulses is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(number_of_pulses.magnitude, np.uint32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(number_of_pulses.magnitude, np.uint32), (0,)
@@ -246,7 +242,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)
@@ -262,7 +258,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     if m_z is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(m_z.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(m_z.magnitude, np.float32), (0,)
@@ -282,7 +278,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     if standing_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(standing_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(standing_voltage.magnitude, np.float32), (0,)
@@ -299,7 +295,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         if voltage is not None:
             template[f"{trg}"] = {
                 "compress": np.asarray(voltage.magnitude, np.float32),
-                "filter": DEFAULT_COMPRESSION_FILTER,
+                "filter": FAST_COMPRESSION_FILTER,
                 "strength": DEFAULT_COMPRESSION_LEVEL,
                 "chunks": prioritized_axes_heuristic(
                     np.asarray(voltage.magnitude, np.float32), (0,)
@@ -321,7 +317,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     if pulse_frequency is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(pulse_frequency.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(pulse_frequency.magnitude, np.float32), (0,)
@@ -337,7 +333,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     if reflectron_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(reflectron_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(reflectron_voltage.magnitude, np.float32), (0,)
@@ -361,7 +357,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
             values[:, 1] = dety.magnitude
             template[f"{trg}"] = {
                 "compress": np.asarray(values, np.float32),
-                "filter": DEFAULT_COMPRESSION_FILTER,
+                "filter": FAST_COMPRESSION_FILTER,
                 "strength": DEFAULT_COMPRESSION_LEVEL,
                 "chunks": prioritized_axes_heuristic(
                     np.asarray(values, np.float32), (0, 1)
@@ -379,7 +375,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     if erate is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(erate.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(erate.magnitude, np.float32),
@@ -409,7 +405,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         )
         template[f"{trg}AXISNAME[axis_id]"] = {
             "compress": ids,
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(ids, (0,)),
         }
@@ -425,7 +421,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
     if laser_power is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(laser_power.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(laser_power.magnitude, np.float32), (0,)
@@ -442,7 +438,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         template[f"{trg}/measurement"] = f"temperature"
         template[f"{trg}/value"] = {
             "compress": np.asarray(temperature.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(temperature.magnitude, np.float32), (0,)
@@ -459,7 +455,7 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         template[f"{trg}/measurement"] = "pressure"
         template[f"{trg}/value"] = {
             "compress": np.asarray(pressure.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(pressure.magnitude, np.float32), (0,)
@@ -485,7 +481,7 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)
@@ -501,7 +497,7 @@ def extract_data_from_ato_file(file_path: str, prefix: str, template: dict) -> d
     if m_z is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(m_z.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(m_z.magnitude, np.float32), (0,)
@@ -527,7 +523,7 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)
@@ -543,7 +539,7 @@ def extract_data_from_csv_file(file_path: str, prefix: str, template: dict) -> d
     if m_z is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(m_z.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(m_z.magnitude, np.float32), (0,)
@@ -567,7 +563,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)
@@ -583,7 +579,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     if m_z is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(m_z.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(m_z.magnitude, np.float32), (0,)
@@ -599,7 +595,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     if raw_time_of_flight is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
@@ -615,7 +611,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     if calibrated_time_of_flight is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(calibrated_time_of_flight.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(calibrated_time_of_flight.magnitude, np.float32), (0,)
@@ -631,7 +627,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     if standing_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(standing_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(standing_voltage.magnitude, np.float32), (0,)
@@ -647,7 +643,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     if pulse_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(pulse_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(pulse_voltage.magnitude, np.float32), (0,)
@@ -663,7 +659,7 @@ def extract_data_from_pyc_file(file_path: str, prefix: str, template: dict) -> d
     if hit_positions is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(hit_positions.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(hit_positions.magnitude, np.float32), (0, 1)
@@ -691,7 +687,7 @@ def extract_data_from_cameca_hfive_file(
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)
@@ -707,7 +703,7 @@ def extract_data_from_cameca_hfive_file(
     if m_z is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(m_z.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(m_z.magnitude, np.float32), (0,)
@@ -770,7 +766,7 @@ def extract_data_from_ops_file(file_path: str, prefix: str, template: dict) -> d
     template[f"{trg}@AXISNAME_indices[@axis_evaporation_id_indices]"] = np.uint32(0)
     template[f"{trg}DATA[voltage]"] = {
         "compress": np.asarray(voltage, np.float32),
-        "filter": DEFAULT_COMPRESSION_FILTER,
+        "filter": FAST_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(voltage, np.float32),
@@ -788,7 +784,7 @@ def extract_data_from_ops_file(file_path: str, prefix: str, template: dict) -> d
             ops_file.voltages["next_hit_group_offset"].magnitude,
             np.uint32,
         ),
-        "filter": DEFAULT_COMPRESSION_FILTER,
+        "filter": FAST_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(
@@ -817,7 +813,7 @@ def extract_data_from_stuttgart_apyt_raw_file(
     if standing_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(standing_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(standing_voltage.magnitude, np.float32), (0,)
@@ -833,7 +829,7 @@ def extract_data_from_stuttgart_apyt_raw_file(
     if pulse_voltage is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(pulse_voltage.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(pulse_voltage.magnitude, np.float32), (0,)
@@ -849,7 +845,7 @@ def extract_data_from_stuttgart_apyt_raw_file(
     if raw_time_of_flight is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(raw_time_of_flight.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(raw_time_of_flight.magnitude, np.float32), (0,)
@@ -897,7 +893,7 @@ def extract_data_from_stuttgart_apyt_mass_spectrum_file(
     template[f"{trg}@AXISNAME_indices[@axis_mass_to_charge_indices]"] = np.uint32(0)
     template[f"{trg}DATA[intensity]"] = {
         "compress": np.asarray(m_z[1].magnitude, np.uint32),
-        "filter": DEFAULT_COMPRESSION_FILTER,
+        "filter": FAST_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(m_z[1].magnitude, np.uint32), (0,)
@@ -906,7 +902,7 @@ def extract_data_from_stuttgart_apyt_mass_spectrum_file(
     template[f"{trg}DATA[intensity]/@long_name"] = "Intensity (1)"  # Counts (1)"
     template[f"{trg}AXISNAME[axis_mass_to_charge]"] = {
         "compress": np.asarray(m_z[0].magnitude, np.float32),
-        "filter": DEFAULT_COMPRESSION_FILTER,
+        "filter": FAST_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(m_z[0].magnitude, np.float32), (0,)
@@ -934,7 +930,7 @@ def extract_data_from_stuttgart_apyt_recon_file(
     if xyz is not None:
         template[f"{trg}"] = {
             "compress": np.asarray(xyz.magnitude, np.float32),
-            "filter": DEFAULT_COMPRESSION_FILTER,
+            "filter": FAST_COMPRESSION_FILTER,
             "strength": DEFAULT_COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(xyz.magnitude, np.float32), (0, 1)

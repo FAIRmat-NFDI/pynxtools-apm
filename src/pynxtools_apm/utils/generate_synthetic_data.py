@@ -39,10 +39,10 @@ from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 # do not use ase directly any longer for NIST isotopes, instead this syntactic equivalent
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
-from pynxtools_apm import get_pynxtools_apm_version
-from pynxtools_apm.configurations.default_config import (
+from pynxtools_apm import (
     DEFAULT_COMPRESSION_FILTER,
     DEFAULT_COMPRESSION_LEVEL,
+    get_pynxtools_apm_version,
 )
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.load_ranging import add_unknown_iontype
