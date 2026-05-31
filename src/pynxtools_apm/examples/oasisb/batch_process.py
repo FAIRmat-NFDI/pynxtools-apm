@@ -23,8 +23,6 @@ import json
 import logging
 import os
 import sys
-from datetime import datetime
-from zoneinfo import ZoneInfo
 
 import bibtexparser
 import flatdict as fd
@@ -37,16 +35,7 @@ from pynxtools.dataconverter.helpers import (
 )
 
 from pynxtools_apm import get_pynxtools_apm_version
-
-
-class ISO8601Formatter(logging.Formatter):
-    def formatTime(self, record, datefmt=None):
-        dt = datetime.fromtimestamp(
-            record.created,
-            tz=ZoneInfo("Europe/Berlin"),
-        )
-        return dt.isoformat()
-
+from pynxtools_apm.utils.custom_logging import ISO8601Formatter
 
 try:
     # pynxtools-camecaroot is not in the public domain!
@@ -121,7 +110,7 @@ def process_project(
     logger.setLevel(logging.DEBUG)
     logger.addHandler(handler)
     for key, original_path in config.items():
-        print(f"INFO {key};{original_path}")
+        logger.info(f"{key};{original_path}")
 
     nxdl = "NXapm"
     nxdl_root, nxdl_file = get_nxdl_root_and_path(nxdl)
