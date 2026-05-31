@@ -157,12 +157,10 @@ class ApmUseCaseSelector:
                 self.eln += [entry]
         for suffix in VALID_FILE_NAME_SUFFIX_CAMECA:
             self.apsuite += self.case[suffix]
-        logger.info(
-            f"Reconstruction: {self.reconstruction}\n"
-            f"Ranging definitions: {self.ranging}\n"
-            f"Oasis ELN: {self.eln}\n"
-            f"Oasis local config: {self.cfg}\n"
-        )
+        logger.info(f"Reconstruction: {self.reconstruction}")
+        logger.info(f"Ranging definitions: {self.ranging}")
+        logger.info(f"Oasis ELN: {self.eln}")
+        logger.info(f"Oasis local config: {self.cfg}")
         if len(self.apsuite) > 0:
             logger.info(f"IVAS/AP Suite: {self.apsuite}\n")
 

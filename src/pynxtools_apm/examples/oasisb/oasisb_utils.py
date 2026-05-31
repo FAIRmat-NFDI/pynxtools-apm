@@ -49,10 +49,6 @@ def snake_case_to_camel_case(snake_case: str) -> str:
     return camel_case
 
 
-# print(snake_case_to_camel_case("usa_portland_wang"))
-# print(snake_case_to_camel_case("usa_idaho_boise01"))
-
-
 def export_to_yaml(fpath: str, lookup_dict: dict):
     """Write content of lookup_dict to yaml file."""
     with open(fpath, "w") as fp:

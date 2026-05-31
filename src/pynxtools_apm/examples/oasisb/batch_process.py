@@ -103,21 +103,8 @@ def process_project(
         config["pynxtools_camecaroot_version"] = "unknown_version or not_available"
 
     # buffer = io.StringIO()
-    """
-    handler = logging.StreamHandler()  # sys.stdout
-    handler.setFormatter(ISO8601Formatter(fmt="%(asctime)s;%(levelname)s;%(message)s"))
-    logging.basicConfig(
-        level=logging.INFO,
-        handlers=[
-            logging.StreamHandler(sys.stdout),
-            logging.FileHandler(f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv", mode="w"),  # "a", append
-        ],
-        force=True,
-    )
-    """
-
     custom_formatter = ISO8601Formatter(
-        "%(asctime)s;%(levelname)s;%(name)s;%(message)s"
+        "%(asctime)s;%(name)s;%(levelname)s;%(message)s"
     )
     console = logging.StreamHandler(sys.stdout)
     console.setFormatter(custom_formatter)
@@ -129,12 +116,10 @@ def process_project(
     logging.basicConfig(
         level=logging.INFO,
         handlers=[console, file],
-        force=True,
+        force=True,  # to display also for jupyter notebooks
     )
 
     logger = logging.getLogger(project_name)
-    # logger.setLevel(logging.DEBUG)
-    # logger.addHandler(handler)
     for key, original_path in config.items():
         logger.info(f"{key};{original_path}")
 
@@ -247,13 +232,55 @@ def process_project(
 
         # file path aliasing
         alias_to_original: dict[str, str] = {}
+        ranging_from_root: bool = False
+        for col_idx in range(1, 6):  # ignore str_rraw
+            if col_idx < 3 and not USE_WORKING_CAMECAROOT_PLUGIN:
+                continue
+            original_path = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
+            if original_path != "":
+                if original_path in file_to_hash:
+                    alias_path = (
+                        f"{source_directory}{os.sep}"
+                        f"{project_name}.{row_idx}.{col_idx}."
+                        f"{file_to_hash[original_path]}."  # type: ignore
+                        f"{original_path.rsplit('.', 1)[1].lower()}"  # type: ignore
+                    )
+                    if col_idx == 2:  # ranging definitions from root take precedence
+                        ranging_from_root = True
+                    elif col_idx == 4 and ranging_from_root:
+                        # ranging definitions from root take precedence, so
+                        # no rrng, rng, etc. files will be parsed but the root file
+                        continue
+                    alias_to_original[alias_path] = original_path
 
-        root_parser_used: bool = False
+        logger.info(
+            f"File name aliasing is switched off, alias_to_original has {len(alias_to_original)} entries"
+        )
+        if len(alias_to_original) == 0:
+            continue
+
+        # okay, there is at least some content that we wish to parse for the row
+        # collect all external metadata that is not stored in any atom probe specific file
+        eln_file_path = generate_oasis_specific_yaml(
+            target_directory,
+            project_name,
+            row_idx,  # type: ignore
+            bib,  # type: ignore
+            alias_to_original,
+            write_yaml_file=True,
+            # openalex,
+        )
+        if not os.path.isfile(eln_file_path):
+            logger.error(
+                f"Unable to generate {eln_file_path} whereby to get references to original authors' work"
+            )
+            continue
+
+        pynx_root_input_files: list[str] = []
         if USE_WORKING_CAMECAROOT_PLUGIN:
             # if True, first run pynxtools-camecaroot generating the NeXus file
             # secondly, run pynxtools-apm appending if something to parse remains
             # if False, just run pynxtools-apm generating the NeXus file
-            pynx_root_input_files: list[str] = []
             for col_idx in range(1, 3):  # ignore str_rraw and open formats
                 original_path = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
                 if original_path != "":
@@ -265,7 +292,6 @@ def process_project(
                             f"{original_path.rsplit('.', 1)[1].lower()}"  # type: ignore
                         )
                         pynx_root_input_files.append(alias_path)
-                        alias_to_original[alias_path] = original_path
                     else:
                         logger.error(f"Unable to find hash for {row_idx}.{col_idx}")
                         pynx_root_input_files = []
@@ -285,6 +311,13 @@ def process_project(
 
         pynx_open_input_files: list[str] = []
         for col_idx in range(3, 6):  # only the open formats
+            if col_idx == 4 and any(
+                input_file_name.endswith(".root")
+                for input_file_name in pynx_root_input_files
+            ):
+                # when in doubt ranging information from the .root file takes preference!
+                # in this case no relevant open file is considered
+                continue
             original_path = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
             if original_path != "":
                 if original_path in file_to_hash:
@@ -295,7 +328,6 @@ def process_project(
                         f"{original_path.rsplit('.', 1)[-1].lower()}"  # type: ignore
                     )
                     pynx_open_input_files.append(alias_path)
-                    alias_to_original[alias_path] = original_path
                     # note that original path does not resolve absolute but relative
                     # locations to not resolve secrets like on which computer the
                     # data were processed, e.g. if the file in practice is stored in
@@ -310,23 +342,6 @@ def process_project(
                     f"Not generating a NeXus file that would solely include ELN YAML metadata"
                 )
                 continue
-
-        # okay, there is at least some content that we wish to parse for the row
-        # collect all external metadata that is not stored in any atom probe specific file
-        eln_file_path = generate_oasis_specific_yaml(
-            target_directory,
-            project_name,
-            row_idx,  # type: ignore
-            bib,  # type: ignore
-            alias_to_original,
-            write_yaml_file=True,
-            # openalex,
-        )
-        if not os.path.isfile(eln_file_path):
-            logger.error(
-                f"Unable to generate {eln_file_path} whereby to get references to original authors' work"
-            )
-            continue
 
         pynx_open_input_files.append(eln_file_path)
         logger.info(f"pynxtools-apm {pynx_open_input_files}")
@@ -353,11 +368,15 @@ def process_project(
             )
         logger.info(f"{output_file_path} generated")
 
-    """
-    with open(
-        f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv", "w"
-    ) as fp:
-        fp.write(buffer.getvalue())
-    """
+    # with open(
+    #     f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv", "w"
+    # ) as fp:
+    #     fp.write(buffer.getvalue())
 
-    print(f"Batch queue for project {project_name} processed successfully")
+    logger.info(f"Batch queue for project {project_name} processed successfully")
+    logger.info(f"Listing all instantiated loggers")
+    for name, object in logging.root.manager.loggerDict.items():
+        if isinstance(object, logging.Logger):
+            logger.info(
+                f"{name}, level {logging.getLevelName(object.level)}, effective level {logging.getLevelName(logger.getEffectiveLevel())}, handlers {object.handlers}, propagate {object.propagate}"
+            )

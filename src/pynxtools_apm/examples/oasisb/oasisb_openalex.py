@@ -17,6 +17,7 @@
 #
 
 import json
+import logging
 import os
 
 import requests
@@ -24,11 +25,12 @@ from requests.exceptions import HTTPError
 
 from pynxtools_apm.examples.oasisb.oasisb_bibliography import is_valid_doi
 
+logger = logging.getLogger("pynxtools-apm")
+
 
 def get_data_for_doi_from_openalex(bib: dict, bib_keys: str) -> int:
     """Query OpenAlex for a data source and article (if the latter is available) expect data source to exist always."""
     n_queries: int = 0
-    # print(bib_keys)
     for idx, typ in enumerate([("D", "data"), ("A", "paper")]):
         prefix, cls = typ
         if bib_keys[idx] in bib:
@@ -45,22 +47,22 @@ def get_data_for_doi_from_openalex(bib: dict, bib_keys: str) -> int:
                             response.raise_for_status()
                             n_queries += 1
                         except HTTPError as http_err:
-                            print(f"ERROR::HTTP error occurred: {http_err}")
+                            logger.error(f"ERROR::HTTP error occurred: {http_err}")
                             continue
 
                         data = response.json()
 
                         with open(file_path, "w", encoding="utf-8") as fp:
                             json.dump(data, fp, indent=4, ensure_ascii=False)
-                        print(f"{file_path} written")
+                        logger.info(f"{file_path} written")
                     # else:
-                    #     print(f"INFO::{file_path} already exists")
+                    #     logger.info(f"{file_path} already exists")
                 else:
-                    print(f"WARNING::{bib_keys[idx]} has an invalid DOI")
+                    logger.warning(f"{bib_keys[idx]} has an invalid DOI")
             else:
-                print(f"WARNING::{bib_keys[idx]} has no DOI")
+                logger.warning(f"{bib_keys[idx]} has no DOI")
         # else:
-        #     print(f"INFO::{bib_keys[idx]} not in the bibliography")
+        #     logger.info(f"{bib_keys[idx]} not in the bibliography")
     return n_queries
 
 
