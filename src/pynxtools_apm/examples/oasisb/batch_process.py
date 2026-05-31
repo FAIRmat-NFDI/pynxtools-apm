@@ -376,7 +376,7 @@ def process_project(
     logger.info(f"Batch queue for project {project_name} processed successfully")
     logger.info(f"Listing all instantiated loggers")
     for name, object in logging.root.manager.loggerDict.items():
-        if isinstance(object, logging.Logger):
+        if isinstance(object, logging.Logger) and name.startswith("pynxtools"):
             logger.info(
                 f"{name}, level {logging.getLevelName(object.level)}, effective level {logging.getLevelName(logger.getEffectiveLevel())}, handlers {object.handlers}, propagate {object.propagate}"
             )
