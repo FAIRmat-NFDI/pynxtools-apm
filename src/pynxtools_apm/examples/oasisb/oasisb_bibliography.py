@@ -16,9 +16,12 @@
 # limitations under the License.
 #
 
+import logging
 import re
 
 from pynxtools_apm.examples.oasisb.oasisb_utils import snake_case_to_camel_case
+
+logger = logging.getLogger("pynxtools-apm")
 
 
 def is_valid_doi(token: str) -> bool:
@@ -46,14 +49,19 @@ def get_bibliographical_metadata(
     ]:
         if len(matching[cls]) == 0:
             if verbose:
-                print(
-                    f"{'ERROR' if cls == 'data' else 'WARNING'}, {snake_case_project_name} has no reference for {entry_type}"
-                )
-                # print(f"@Misc{{D_{camel_case_project_name}}},\n  author={{}},\n note = {{personal communication}},\n year = {{2024}},\n}},")
+                if cls == "data":
+                    logger.error(
+                        f"{snake_case_project_name} has no reference for {entry_type}"
+                    )
+                else:
+                    logger.warning(
+                        f"{snake_case_project_name} has no reference for {entry_type}"
+                    )
+                # logger.info(f"@Misc{{D_{camel_case_project_name}}},\n  author={{}},\n note = {{personal communication}},\n year = {{2024}},\n}},")
         elif len(matching[cls]) > 1:
             if verbose:
-                print(
-                    f"WARNING, {snake_case_project_name} has more than one reference for {entry_type}"
+                logger.warning(
+                    f"{snake_case_project_name} has more than one reference for {entry_type}"
                 )
         else:
             data_article[idx] = matching[cls][0]

@@ -28,7 +28,7 @@ from pynxtools_apm.examples.oasisb.oasisb_bibliography import is_valid_doi
 def get_data_for_doi_from_openalex(bib: dict, bib_keys: str) -> int:
     """Query OpenAlex for a data source and article (if the latter is available) expect data source to exist always."""
     n_queries: int = 0
-    print(bib_keys)
+    # print(bib_keys)
     for idx, typ in enumerate([("D", "data"), ("A", "paper")]):
         prefix, cls = typ
         if bib_keys[idx] in bib:

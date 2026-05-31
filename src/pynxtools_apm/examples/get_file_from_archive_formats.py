@@ -29,6 +29,10 @@ import rarfile
 
 BUFFER_SIZE = 1024 * 1024
 
+import logging
+
+logger = logging.getLogger("pynxtools-apm")
+
 
 def get_file_from_zip(
     zip_file_path: str,
@@ -50,7 +54,7 @@ def get_file_from_zip(
                     shutil.copyfileobj(src, dst)
             return os.path.isfile(target_file)
     except (FileNotFoundError, KeyError, zipfile.BadZipFile) as exception:
-        print(f"Error extracting file from zip: {exception}")
+        logger.error(f"Extracting file from zip: {exception}")
     return False
 
 
@@ -81,7 +85,7 @@ def get_file_from_tar(
         tarfile.TarError,  # corrupt / unsupported tar
         ValueError,  # not a regular file
     ) as exception:
-        print(f"Error extracting file from tar: {exception}")
+        logger.error(f"Extracting file from tar: {exception}")
     return False
 
 
@@ -112,7 +116,7 @@ def get_file_from_rar(
         rarfile.Error,
         ValueError,
     ) as exception:
-        print(f"Error extracting file from rar: {exception}")
+        logger.error(f"Extracting file from rar: {exception}")
     return False
 
 
@@ -148,5 +152,5 @@ def get_file_from_sevenzip(
         py7zr.exceptions.UnsupportedCompressionMethodError,
         ValueError,
     ) as exception:
-        print(f"Error extracting file from 7z: {exception}")
+        logger.error(f"Extracting file from 7z: {exception}")
     return False
