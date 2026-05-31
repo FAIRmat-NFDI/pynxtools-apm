@@ -115,13 +115,11 @@ def process_project(
         config["pynxtools_camecaroot_version"] = "unknown_version or not_available"
 
     buffer = io.StringIO()
-    master_handler = logging.StreamHandler(buffer)
-    master_handler.setFormatter(
-        ISO8601Formatter(fmt="%(asctime)s;%(levelname)s;%(message)s")
-    )
+    handler = logging.StreamHandler(buffer)
+    handler.setFormatter(ISO8601Formatter(fmt="%(asctime)s;%(levelname)s;%(message)s"))
     logger = logging.getLogger(project_name)
     logger.setLevel(logging.DEBUG)
-    logger.addHandler(master_handler)
+    logger.addHandler(handler)
     for key, original_path in config.items():
         print(f"INFO {key};{original_path}")
 
