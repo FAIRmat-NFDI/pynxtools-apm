@@ -21,6 +21,7 @@ import os
 from time import perf_counter_ns
 from typing import Any
 
+import flatdict as fd
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 from pynxtools_apm import SEPARATOR
@@ -75,10 +76,6 @@ class APMReader(BaseReader):
             )
             return {}
 
-        # execute = True
-        # if execute:
-        case.report_workflow(template, entry_id)
-
         if len(case.cfg) == 1:
             logger.debug("Parse (meta)data coming from a custom NOMAD OASIS RDM...")
             nx_apm_cfg = NxApmNomadOasisConfigParser(case.cfg[0], entry_id, False)
@@ -88,6 +85,12 @@ class APMReader(BaseReader):
             logger.debug("Parse (meta)data coming from an ELN exemplified for NOMAD")
             nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
             nx_apm_eln.parse(template)
+
+        case.report_workflow(
+            template,
+            entry_id,
+            nx_apm_cfg.flat_metadata if nx_apm_cfg else fd.FlatDict({}, "/"),
+        )
 
         logger.debug("Parse NeXus application definition-specific content...")
         nxs = NxApmAppDef(entry_id)

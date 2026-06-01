@@ -947,7 +947,11 @@ def extract_data_from_stuttgart_apyt_recon_file(
 class IfesReconstructionParser:
     """Wrapper for multiple parsers for vendor specific files."""
 
-    def __init__(self, file_path: str, entry_id: int):
+    def __init__(
+        self,
+        file_path: str,
+        entry_id: int,
+    ):
         self.supported = False
         self.meta: dict[str, Any] = {
             "file_format": None,

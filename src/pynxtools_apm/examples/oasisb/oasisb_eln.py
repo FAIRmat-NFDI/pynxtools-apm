@@ -18,6 +18,7 @@
 
 import os
 
+import flatdict as fd
 import yaml
 
 from pynxtools_apm.examples.oasisb.oasisb_bibliography import (
@@ -31,8 +32,8 @@ def generate_oasis_specific_yaml(
     row_idx: str,
     bibliography: dict,
     alias_to_original: dict[str, str] = {},
+    openalex: fd.FlatDict = fd.FlatDict({}, "/"),
     write_yaml_file: bool = True,
-    # openalex_metadata: fd.FlatDict = fd.FlatDict({}, delimiter="/"),
 ) -> str:
     eln_file_path = (
         f"{target_directory}{os.sep}{project_name}.{row_idx}.oasis.specific.yaml"
@@ -74,7 +75,20 @@ def generate_oasis_specific_yaml(
             # to resolve broken content, or to resolve naming ambiguities
             eln_data["file_path_aliasing"].append({"src": alias, "trg": original})
 
+    # user, for the oasisb legacy data ingestion study, the scidat_nomad_apt work,
+    # we do not set the original authors as authors in NOMAD as this is publishing
+    # within their name possibly without their consent, given that we anyway do only
+    # work with CC-BY-4.0 and CC0-1.0 license content we create a de facto derived
+    # dataset, for this dataset it is okay to have a NOMAD Author because we also
+    # with the dataset populate NXcitation instances which list the original authors,
+    # the original location from where the datasets where downloaded, and if present
+    # associated publications
+    eln_data["user"] = []
+    eln_data["user"].append({"name": "Markus Kühbach"})
+
     # TODO openalex
+    if "publication_date" in openalex:
+        eln_data["start_time"] = openalex["publication_date"].strip()
 
     if write_yaml_file:
         with open(eln_file_path, "w") as fp:

@@ -2,6 +2,7 @@
 AXISNAME
 Apyt
 Brockhauser
+CAMECAROOT
 CSYS
 Cameca
 Carola
@@ -67,7 +68,11 @@ apsuite
 apt
 apyt
 ato
+autorecover
+bibtexparser
+bilal
 blosc
+camecaroot
 cand
 caplog
 creationtime
@@ -134,6 +139,7 @@ reflectron
 reimplementation
 rosettasciio
 rsciio
+scidat
 sevenz
 sevenzip
 signedinteger
@@ -154,8 +160,3 @@ zedge
 zenodo
 zmax
 zmin
-bibtexparser
-camecaroot
-CAMECAROOT
-bilal
-autorecover

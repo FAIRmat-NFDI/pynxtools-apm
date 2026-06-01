@@ -63,7 +63,7 @@ def process_project(
     source_directory: str,
     target_directory: str,
     openalex_file: str = "",
-    logger_file_path_suffix: str = "",
+    # logger_file_path_suffix: str = "",
     # generate_eln_file: bool = True,
     # generate_nexus_file: bool = True,
     # time_zone_info: ZoneInfo = ZoneInfo("Europe/Berlin"),
@@ -109,7 +109,7 @@ def process_project(
     console = logging.StreamHandler(sys.stdout)
     console.setFormatter(custom_formatter)
     file = logging.FileHandler(
-        f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv",
+        f"{target_directory}{os.sep}{project_name}.csv",  # {logger_file_path_suffix}.csv",
         mode="w",
     )
     file.setFormatter(custom_formatter)
@@ -147,20 +147,22 @@ def process_project(
         logger.error(f"Unable to load {bib_file}")
         return
 
-    # compute hashes for each file when processing legacy data serves two purposes
-    # assure as best as possible disjoint file names
-    # enable to filter out duplicates
-    # using hashes can be perceived though as cryptic if these appear
-    # in the user interface of a research data management system
-    # here we therefore wish to explore a mechanism of defining an alias for a file name
-    # the files that get parsed follow the convention
+    # compute hashes for each file when processing legacy data instead of using the original
+    # file names i) assures as best as possible disjoint file names, ii) enables as best as
+    # possible to filter out duplicates
+    # using file names with hashes in the UI of an RDM can be perceived though as cryptic
+    # here we explore a mechanism of defining an alias for a file name
+    # the files that get parsed follow the convention that replaces the content in the NeXus
+    # HDF5 files with the original file name, i.e. given a file name made unique e.g.
     # f"{project_name}.{row_idx}.{col_idx}.{sha256sum}.{type.lower()}"
-    # e.g.
-    # "aus_sydney_bilal.0.3.2587bed623f3ec6399acadf3c92c8887e4977dfc220e66e8676f2f518a306eba.pos"
-    # now we define a mapping which assigns this file again its original file name
+    # "aus_sydney_bilal.0.3.2587bed623f3ec6399acadf3c92c8887e4977dfc220e66e8676f2f518a306eba.pos",
+    # we define a mapping which assigns this file again its original file name
     # "aus_sydney_bilal.zip:R18_60075-v01.pos"
     # the keys in file_to_hash end on the alias name
     # the values in file_to_hash end on the file with the hash, respectively
+    # note that legacy data is often archived, colon is used to separate archive
+    # relative path (aus_sydney_bilal.zip) from absolute path of the file
+    # in the archive (R18_600075-v01.pos)
     try:
         with open(hash_file) as fp:
             start = next(
@@ -185,11 +187,13 @@ def process_project(
     # given that this is often though not the case and given that combining
     # orcid and author name is legally an issue in Germany, we currently do not
     # autorecover the authors' orcid
-    openalex = fd.FlatDict({}, delimiter="/")
+    openalex = fd.FlatDict({}, "/")
     if openalex_file != "":
         try:
             with open(openalex_file, encoding="utf-8") as fp:
-                openalex = fd.FlatDict(json.load(fp), delimiter="/")
+                openalex = fd.FlatDict(json.load(fp), "/")
+                # for key, value in openalex.items():
+                #     logger.info(f"openalex, {key}, {value}")
         except (FileNotFoundError, json.JSONDecodeError, OSError):
             logger.error(f"Unable to load {openalex_file}")
 
@@ -249,7 +253,8 @@ def process_project(
                         ranging_from_root = True
                     elif col_idx == 4 and ranging_from_root:
                         # ranging definitions from root take precedence, so
-                        # no rrng, rng, etc. files will be parsed but the root file
+                        # no ".rrng", ".rng", etc. files will be parsed if a ".root" file
+                        # is present
                         continue
                     alias_to_original[alias_path] = original_path
 
@@ -267,8 +272,8 @@ def process_project(
             row_idx,  # type: ignore
             bib,  # type: ignore
             alias_to_original,
+            openalex,
             write_yaml_file=True,
-            # openalex,
         )
         if not os.path.isfile(eln_file_path):
             logger.error(
