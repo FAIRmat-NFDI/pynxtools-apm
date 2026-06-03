@@ -302,6 +302,8 @@ def process_project(
                         pynx_root_input_files = []
 
             if len(pynx_root_input_files) > 0:
+                pynx_root_input_files.append(eln_file_path)
+
                 logger.info(f"pynxtools-cameca {pynx_root_input_files}")
 
                 _ = convert(
