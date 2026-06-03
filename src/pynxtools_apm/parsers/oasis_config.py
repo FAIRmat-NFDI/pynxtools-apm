@@ -133,6 +133,8 @@ class NxApmNomadOasisConfigParser:
                                 composed_description.append(
                                     f"{cite_dict[field_name]}, "
                                 )
+                        break  # assume first reference is always to the dataset
+                        # do not add further references
 
         identifier = [self.entry_id]
         for cfg in [OASISCFG_APM_PROJECT_TO_NEXUS]:
@@ -147,9 +149,9 @@ class NxApmNomadOasisConfigParser:
             user_id = 1
             for user_dict in self.flat_metadata["user"]:
                 if "name" in user_dict:
-                    template[f"/ENTRY[entry{self.entry_id}]/userID[user]/name"] = (
-                        user_dict["name"]
-                    )
+                    template[
+                        f"/ENTRY[entry{self.entry_id}]/userID[user{user_id}]/name"
+                    ] = user_dict["name"]
                     user_id += 1
 
         # content from OpenAlex, a simple example
