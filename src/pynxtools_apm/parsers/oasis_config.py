@@ -128,7 +128,11 @@ class NxApmNomadOasisConfigParser:
                         )
                         cite_id += 1
 
-                        for field_name in ["title", "author", "doi", "description"]:
+                        for field_name in [
+                            "title",
+                            "author",
+                            "doi",
+                        ]:  # , "description"]:
                             if field_name in cite_dict:
                                 composed_description.append(
                                     f"{cite_dict[field_name]}, "
@@ -141,8 +145,9 @@ class NxApmNomadOasisConfigParser:
             add_specific_metadata_pint(cfg, self.flat_metadata, identifier, template)
 
         if len(composed_description) > 0:
+            message = "\n".join(composed_description).strip()
             template[f"/ENTRY[entry{self.entry_id}]/experiment_description"] = (
-                "\n".join(composed_description)
+                message[:-1] if message.endswith(",") else message
             )
 
         if "user" in self.flat_metadata:
