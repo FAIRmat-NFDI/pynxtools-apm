@@ -206,7 +206,7 @@ def process_project(
 
     # we opted for a spreadsheet-based approach as this would also allow
     # to inject further metadata although we do not currently take advantage of it
-    for row_idx in range(spread_sheet_of_project.shape[0]):
+    for row_idx in range(0, spread_sheet_of_project.shape[0]):
         has_input: bool = False
         for col_idx in range(1, 6):
             # resolves to one of these
@@ -306,15 +306,20 @@ def process_project(
 
                 logger.info(f"pynxtools-cameca {pynx_root_input_files}")
 
-                _ = convert(
-                    input_file=tuple(pynx_root_input_files),
-                    reader="camecaroot",
-                    nxdl=nxdl,
-                    append=False,
-                    skip_verify=True,
-                    ignore_undocumented=True,
-                    output=output_file_path,
-                )
+                try:
+                    _ = convert(
+                        input_file=tuple(pynx_root_input_files),
+                        reader="camecaroot",
+                        nxdl=nxdl,
+                        append=False,
+                        skip_verify=True,
+                        ignore_undocumented=True,
+                        output=output_file_path,
+                    )
+                except Exception:
+                    logger.exception(
+                        f"pynxtools-cameca {output_file_path} failed", exc_info=True
+                    )
 
         pynx_open_input_files: list[str] = []
         for col_idx in range(3, 6):  # only the open formats
@@ -353,27 +358,30 @@ def process_project(
         pynx_open_input_files.append(eln_file_path)
         logger.info(f"pynxtools-apm {pynx_open_input_files}")
         # in every case ELN content has been added by pynxtools-apm
-        if os.path.isfile(output_file_path):
-            _ = convert(
-                input_file=tuple(pynx_open_input_files),
-                reader="apm",
-                nxdl=nxdl,
-                append=True,
-                skip_verify=True,  # obsolete as append switches validation off anyway
-                ignore_undocumented=True,
-                output=output_file_path,
-            )
-        else:
-            _ = convert(
-                input_file=tuple(pynx_open_input_files),
-                reader="apm",
-                nxdl=nxdl,
-                append=False,
-                skip_verify=True,
-                ignore_undocumented=True,
-                output=output_file_path,
-            )
-        logger.info(f"{output_file_path} generated")
+        try:
+            if os.path.isfile(output_file_path):
+                _ = convert(
+                    input_file=tuple(pynx_open_input_files),
+                    reader="apm",
+                    nxdl=nxdl,
+                    append=True,
+                    skip_verify=True,  # obsolete as append switches validation off anyway
+                    ignore_undocumented=True,
+                    output=output_file_path,
+                )
+            else:
+                _ = convert(
+                    input_file=tuple(pynx_open_input_files),
+                    reader="apm",
+                    nxdl=nxdl,
+                    append=False,
+                    skip_verify=True,
+                    ignore_undocumented=True,
+                    output=output_file_path,
+                )
+            logger.info(f"pynxtools-apm {output_file_path} success")
+        except Exception:
+            logger.exception(f"pynxtools-apm {output_file_path} failed", exc_info=True)
 
     # with open(
     #     f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv", "w"

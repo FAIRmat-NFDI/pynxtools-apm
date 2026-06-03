@@ -142,6 +142,7 @@ def prepare_parsing(
     trg_directory: str,
     report: bool,
     write: bool,
+    logger_file_path_suffix: str,
 ) -> dict[str, dict[str, int]]:
     """
     Load EBSD files from a configuration file, identify MTex-processable files,
@@ -174,7 +175,7 @@ def prepare_parsing(
 
     if report:
         log_buffer = io.StringIO()
-        log_path = f"{trg_directory}{os.sep}{project_name}.decompressed.csv"
+        log_path = f"{trg_directory}{os.sep}{project_name}.decompressed.{logger_file_path_suffix}.csv"
         logger = logging.getLogger(project_name)
         logger.setLevel(logging.DEBUG)
         log_handler = logging.StreamHandler(log_buffer)
@@ -220,7 +221,7 @@ def prepare_parsing(
     # selection the scientist wish to process
 
     # generate a list of files to finally consider, compose target filenames with hashes
-    decompressed: dict[str, str] = {}  # src file as key, trg file name as value
+    decompressed: list[tuple[str, str]] = []  # src file as key, trg file name as value
 
     spread_sheet_of_project = pd.read_excel(
         config_file_path,
@@ -234,8 +235,8 @@ def prepare_parsing(
             # TODO !!  df.shape[1]), for deu_stuttgart_eich_tap processed further columns
             # if their CSV_HEADER_FOR_HASH_FILE not startswith("ignore")
             path = spread_sheet_of_project.iat[row_idx, col_idx]
-            if path == "":
-                continue
+            # if path == "":
+            #     continue
 
             # spread_sheet_for_project/config file is written by the scientists
             # documenting which raw data, reconstruction, and ranging if present to combine,
@@ -250,18 +251,18 @@ def prepare_parsing(
                 src = f"{src_directory}{os.sep}{project_name}{os.sep}"
                 trg = f"{trg_directory}{os.sep}"
                 main = f"{src}{path}"
-                if main not in decompressed:
-                    hash = path_to_hash[path]
-                    size = path_to_size[path]
-                    typ = path.rsplit(".", 1)[1].lower()
-                    decompressed[main] = (
-                        f"{trg}{project_name}.{row_idx}.{col_idx}.{hash}.{typ}"
-                    )
-                    if typ not in status:
-                        status[typ] = {"n": 1, "bytes": size}
-                    else:
-                        status[typ]["n"] += 1
-                        status[typ]["bytes"] += size
+                # if main not in decompressed:
+                hash = path_to_hash[path]
+                size = path_to_size[path]
+                typ = path.rsplit(".", 1)[1].lower()
+                decompressed.append(
+                    (main, f"{trg}{project_name}.{row_idx}.{col_idx}.{hash}.{typ}")
+                )
+                if typ not in status:
+                    status[typ] = {"n": 1, "bytes": size}
+                else:
+                    status[typ]["n"] += 1
+                    status[typ]["bytes"] += size
 
     if write:
         archive_handlers = {
@@ -271,7 +272,7 @@ def prepare_parsing(
             get_file_from_sevenzip: (".7z"),
         }
 
-        for src, trg in decompressed.items():
+        for src, trg in decompressed:
             if src.count(":") == 1:
                 archive_file_path, file_path = src.split(":")
                 trg_directory, trg_file_name = trg.rsplit(os.sep, 1)
@@ -299,13 +300,13 @@ def prepare_parsing(
                     logger.error(f"{src};;{trg}")
     else:
         if report:
-            for src, trg in decompressed.items():
+            for src, trg in decompressed:
                 logger.info(f"{src};;{trg}")
 
     if report:
         # pro: allows writing log files only when these have content
         # con: requires main memory for caching
-        if len(decompressed.keys()) > 0:
+        if len(decompressed) > 0:
             with open(log_path, "w") as fp:
                 fp.write(log_buffer.getvalue())
 

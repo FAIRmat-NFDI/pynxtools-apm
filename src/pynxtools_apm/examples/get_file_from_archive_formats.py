@@ -53,6 +53,8 @@ def get_file_from_zip(
                 ):
                     shutil.copyfileobj(src, dst)
             return os.path.isfile(target_file)
+        else:
+            return True
     except (FileNotFoundError, KeyError, zipfile.BadZipFile) as exception:
         logger.error(f"Extracting file from zip: {exception}")
     return False
@@ -79,6 +81,8 @@ def get_file_from_tar(
                 ):
                     shutil.copyfileobj(src, dst)
             return os.path.isfile(target_file)
+        else:
+            return True
     except (
         FileNotFoundError,  # tar file missing or target path invalid
         KeyError,  # member not found in archive
@@ -110,6 +114,8 @@ def get_file_from_rar(
                 ):
                     shutil.copyfileobj(src, dst)
             return os.path.isfile(target_file)
+        else:
+            return True
     except (
         FileNotFoundError,
         KeyError,
@@ -144,6 +150,8 @@ def get_file_from_sevenzip(
                 with open(target_file, "wb", buffering=BUFFER_SIZE) as dst:  # streaming
                     shutil.copyfileobj(src, dst, length=BUFFER_SIZE)
             return os.path.isfile(target_file)
+        else:
+            return True
     except (
         FileNotFoundError,
         KeyError,
