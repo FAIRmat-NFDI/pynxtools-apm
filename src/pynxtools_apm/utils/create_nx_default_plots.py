@@ -24,6 +24,7 @@ from pynxtools_apm import (
     DEFAULT_COMPRESSION_LEVEL,
     FAST_COMPRESSION_FILTER,
     MASS_SPECTRUM_DEFAULT_BINNING,
+    NAIVE_GRID_DEFAULT_MAX_SIZE,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
     get_pynxtools_apm_version,
 )
@@ -84,6 +85,19 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
         aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
         col += 1
+
+    # the aabb[f"{dim}edge"] works directly on reconstructed position data if these
+    # proper very vast edges the resulting grid may end up with too many support points
+    # here we check to guard against the resulting excessive memory usage
+    # we can go out in such case because that points to typically malformed position data
+    nxyz: int = 1
+    for dim in ["x", "y", "z"]:
+        nxyz *= len(aabb[f"{dim}edge"])
+    if nxyz * np.dtype(np.uint32).itemsize >= NAIVE_GRID_DEFAULT_MAX_SIZE:
+        logger.warning(
+            f"Reconstructed position data demands a naive grid with {nxyz} voxels; aborting now as this exceeds current maximum {NAIVE_GRID_DEFAULT_MAX_SIZE / np.dtype(np.uint32).itemsize}."
+        )
+        return template
 
     hist3d = np.histogramdd(
         (xyz[:, 0], xyz[:, 1], xyz[:, 2]),

@@ -28,21 +28,24 @@ from pynxtools_apm.examples.oasisb.oasisb_bibliography import (
 
 def generate_oasis_specific_yaml(
     target_directory: str,
+    project_id: str,
     project_name: str,
     row_idx: str,
     bibliography: dict,
     alias_to_original: dict[str, str] = {},
     openalex: fd.FlatDict = fd.FlatDict({}, "/"),
+    nomad_project_name: str = "",
     write_yaml_file: bool = True,
 ) -> str:
-    eln_file_path = (
-        f"{target_directory}{os.sep}{project_name}.{row_idx}.oasis.specific.yaml"
-    )
+    eln_file_path = f"{target_directory}{os.sep}{project_id}.{project_name}.{row_idx}.oasis.specific.yaml"
     eln_data: dict = {}
 
     # eln_data["entry"] = {}
     eln_data["project"] = {}
-    eln_data["project"]["name"] = project_name
+    if nomad_project_name != "":
+        eln_data["project"]["name"] = nomad_project_name
+    else:
+        eln_data["project"]["name"] = f"{project_id}.{project_name}"
 
     eln_data["citation"] = []
     data, article = get_bibliographical_metadata(bibliography, project_name)

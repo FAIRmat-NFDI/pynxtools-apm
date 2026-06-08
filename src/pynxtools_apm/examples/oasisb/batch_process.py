@@ -56,6 +56,7 @@ from pynxtools_apm.examples.oasisb.oasisb_utils import (
 
 
 def process_project(
+    project_id: str,
     project_name: str,
     config_file: str,
     bib_file: str,
@@ -63,13 +64,15 @@ def process_project(
     source_directory: str,
     target_directory: str,
     openalex_file: str = "",
-    # logger_file_path_suffix: str = "",
+    logger_file_path_suffix: str = "",
+    nomad_project_name: str = "",
     # generate_eln_file: bool = True,
     # generate_nexus_file: bool = True,
     # time_zone_info: ZoneInfo = ZoneInfo("Europe/Berlin"),
 ) -> None:
     """Run first (if available) optional pynxtools-camecaroot followed by or only pynxtools-apm to generate a NeXus/HDF5 file for each dataset in the project named project_name.
 
+    project_id : integer (prefixed with 0)
     project_name : name of the legacy atom probe project for which this function processes all entries,
         e.g. "deu_duesseldorf_kuehbach" is a project-specific such name
     config_file : spreadsheet file (currently ods) that identifies which atom probe files (pos, rrng, ...)
@@ -108,10 +111,12 @@ def process_project(
     )
     console = logging.StreamHandler(sys.stdout)
     console.setFormatter(custom_formatter)
-    file = logging.FileHandler(
-        f"{target_directory}{os.sep}{project_name}.csv",  # {logger_file_path_suffix}.csv",
-        mode="w",
-    )
+    if logger_file_path_suffix != "":
+        logger_file_path: str = f"{target_directory}{os.sep}{project_id}.{project_name}.{logger_file_path_suffix}.csv"
+    else:
+        logger_file_path = f"{target_directory}{os.sep}{project_id}.{project_name}.csv"
+
+    file = logging.FileHandler(logger_file_path, mode="w")
     file.setFormatter(custom_formatter)
     logging.basicConfig(
         level=logging.INFO,
@@ -194,7 +199,7 @@ def process_project(
                 openalex = fd.FlatDict(json.load(fp), "/")
                 # for key, value in openalex.items():
                 #     logger.info(f"openalex, {key}, {value}")
-        except (FileNotFoundError, json.JSONDecodeError, OSError):
+        except (FileNotFoundError, json.JSONDecodeError, OSError, TypeError):
             logger.error(f"Unable to load {openalex_file}")
 
     # one NeXus file per row, compositing from at least one atom probe file surplus
@@ -228,7 +233,9 @@ def process_project(
             continue
 
         # define the name of the NeXus file
-        output_file_path = f"{target_directory}{os.sep}{project_name}.{row_idx}.nxs"
+        output_file_path = (
+            f"{target_directory}{os.sep}{project_id}.{project_name}.{row_idx}.nxs"
+        )
         if os.path.isfile(output_file_path):
             logger.warning(f"Deleting older version of {output_file_path}")
             os.remove(output_file_path)
@@ -268,11 +275,13 @@ def process_project(
         # collect all external metadata that is not stored in any atom probe specific file
         eln_file_path = generate_oasis_specific_yaml(
             target_directory,
+            project_id,
             project_name,
             row_idx,  # type: ignore
             bib,  # type: ignore
             alias_to_original,
             openalex,
+            nomad_project_name,
             write_yaml_file=True,
         )
         if not os.path.isfile(eln_file_path):
@@ -384,7 +393,7 @@ def process_project(
             logger.exception(f"pynxtools-apm {output_file_path} failed", exc_info=True)
 
     # with open(
-    #     f"{target_directory}{os.sep}{project_name}.{logger_file_path_suffix}.csv", "w"
+    #     f"{target_directory}{os.sep}{project_id}.{project_name}.{logger_file_path_suffix}.csv", "w"
     # ) as fp:
     #     fp.write(buffer.getvalue())
 
