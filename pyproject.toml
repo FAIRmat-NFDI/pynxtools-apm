@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
     "pynxtools>=0.14",
-    "ifes_apt_tc_data_modeling>=0.4.1",
+    "ifes_apt_tc_data_modeling>=0.4.2",
     "pytz",
 ]
 
