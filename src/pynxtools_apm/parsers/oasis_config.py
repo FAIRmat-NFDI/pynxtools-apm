@@ -77,11 +77,6 @@ class NxApmNomadOasisConfigParser:
             )
             self.parse_reference_frames(template)
             self.parse_example(template)
-            identifier = [self.entry_id]
-            for cfg in [OASISCFG_APM_PROJECT_TO_NEXUS]:
-                add_specific_metadata_pint(
-                    cfg, self.flat_metadata, identifier, template
-                )
         return template
 
     def parse_reference_frames(self, template: dict) -> dict:
@@ -107,6 +102,11 @@ class NxApmNomadOasisConfigParser:
 
     def parse_example(self, template: dict) -> dict:
         """Copy data from example-specific section into template."""
+        # customized entryID/experiment_description field
+        composed_description: list[
+            str
+        ] = []  # TODO other cases possible, e.g. AI summaries
+
         src = "citation"
         if src in self.flat_metadata:
             if isinstance(self.flat_metadata[src], list):
@@ -114,8 +114,8 @@ class NxApmNomadOasisConfigParser:
                     all(isinstance(entry, dict) for entry in self.flat_metadata[src])
                     is True
                 ):
-                    cite_id = 1
                     # custom schema delivers a list of dictionaries...
+                    cite_id = 1
                     for cite_dict in self.flat_metadata[src]:
                         if len(cite_dict) == 0:
                             continue
@@ -127,4 +127,44 @@ class NxApmNomadOasisConfigParser:
                             template,
                         )
                         cite_id += 1
+
+                        for field_name in [
+                            "title",
+                            "author",
+                            "doi",
+                        ]:  # , "description"]:
+                            if field_name in cite_dict:
+                                composed_description.append(
+                                    f"{cite_dict[field_name]}, "
+                                )
+                        break  # assume first reference is always to the dataset
+                        # do not add further references
+
+        identifier = [self.entry_id]
+        for cfg in [OASISCFG_APM_PROJECT_TO_NEXUS]:
+            add_specific_metadata_pint(cfg, self.flat_metadata, identifier, template)
+
+        if len(composed_description) > 0:
+            message = "\n".join(composed_description).strip()
+            template[f"/ENTRY[entry{self.entry_id}]/experiment_description"] = (
+                message[:-1] if message.endswith(",") else message
+            )
+
+        if "user" in self.flat_metadata:
+            user_id = 1
+            for user_dict in self.flat_metadata["user"]:
+                if "name" in user_dict:
+                    template[
+                        f"/ENTRY[entry{self.entry_id}]/userID[user{user_id}]/name"
+                    ] = user_dict["name"]
+                    user_id += 1
+
+        # content from OpenAlex, a simple example
+        # e.g. publication date as start_time when no other qualified pieces of information are available
+        if "start_time" in self.flat_metadata:
+            if self.flat_metadata["start_time"] != "":
+                template[f"/ENTRY[entry{self.entry_id}]/start_time"] = (
+                    self.flat_metadata["start_time"]
+                )
+
         return template

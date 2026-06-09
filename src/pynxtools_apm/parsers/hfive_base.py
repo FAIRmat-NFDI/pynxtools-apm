@@ -19,6 +19,8 @@
 
 # taken from pynxtools-em, eventually should be made a part of pynxtools like hfive_utils
 
+import logging
+
 import h5py
 import numpy as np
 import yaml
@@ -53,6 +55,8 @@ from pynxtools_apm.utils.hfive_concepts import Concept
 # to the best of my knowledge hence comparing two versions of HDF5 files
 # with h5diff is useful but if done in unit testing typically generate
 # two long text outputs via stdout that are maybe more difficult to
+
+logger = logging.getLogger("pynxtools-apm")
 
 
 def only_finite_payload(obj, payload) -> str:
@@ -159,7 +163,7 @@ class HdfFiveBaseParser:
         if isinstance(h5obj, h5py.Dataset):
             if node_name not in self.datasets:
                 if self.verbose:
-                    print(node_name)
+                    logger.debug(node_name)
                 if hasattr(h5obj, "dtype"):
                     if hasattr(h5obj.dtype, "fields") and hasattr(h5obj.dtype, "names"):
                         if h5obj.dtype.names is not None:

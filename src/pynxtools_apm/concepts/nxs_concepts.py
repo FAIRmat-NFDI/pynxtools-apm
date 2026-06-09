@@ -20,9 +20,7 @@
 from typing import Any
 
 import flatdict as fd
-from ifes_apt_tc_data_modeling.utils.versioning import (
-    get_ifes_apt_tc_data_modeling_version,
-)
+from ifes_apt_tc_data_modeling import get_ifes_apt_tc_data_modeling_version
 from pynxtools.dataconverter.helpers import get_pynxtools_version
 
 from pynxtools_apm import get_pynxtools_apm_version

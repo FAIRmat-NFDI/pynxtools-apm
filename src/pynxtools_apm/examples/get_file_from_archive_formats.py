@@ -29,6 +29,10 @@ import rarfile
 
 BUFFER_SIZE = 1024 * 1024
 
+import logging
+
+logger = logging.getLogger("pynxtools-apm")
+
 
 def get_file_from_zip(
     zip_file_path: str,
@@ -40,16 +44,19 @@ def get_file_from_zip(
         target_dir = Path(target_directory)
         target_dir.mkdir(parents=True, exist_ok=True)
         target_file = target_dir / target_file_name
-        with zipfile.ZipFile(zip_file_path, "r") as zf:
-            # target_file.write_bytes(zf.read(file_in_zip_path))
-            with (
-                zf.open(file_in_zip_path) as src,
-                open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
-            ):
-                shutil.copyfileobj(src, dst)
-        return os.path.isfile(target_file)
+        if not os.path.isfile(target_file):
+            with zipfile.ZipFile(zip_file_path, "r") as zf:
+                # target_file.write_bytes(zf.read(file_in_zip_path))
+                with (
+                    zf.open(file_in_zip_path) as src,
+                    open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
+                ):
+                    shutil.copyfileobj(src, dst)
+            return os.path.isfile(target_file)
+        else:
+            return True
     except (FileNotFoundError, KeyError, zipfile.BadZipFile) as exception:
-        print(f"Error extracting file from zip: {exception}")
+        logger.error(f"Extracting file from zip: {exception}")
     return False
 
 
@@ -63,23 +70,26 @@ def get_file_from_tar(
         target_dir = Path(target_directory)
         target_dir.mkdir(parents=True, exist_ok=True)
         target_file = target_dir / target_file_name
-        with tarfile.open(tar_file_path, mode="r:*") as tf:
-            member = tf.getmember(file_in_tar_path)
-            if not member.isfile():
-                raise ValueError(f"{file_in_tar_path} is not a regular file")
-            with (
-                tf.extractfile(member) as src,
-                open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
-            ):
-                shutil.copyfileobj(src, dst)
-        return os.path.isfile(target_file)
+        if not os.path.isfile(target_file):
+            with tarfile.open(tar_file_path, mode="r:*") as tf:
+                member = tf.getmember(file_in_tar_path)
+                if not member.isfile():
+                    raise ValueError(f"{file_in_tar_path} is not a regular file")
+                with (
+                    tf.extractfile(member) as src,
+                    open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
+                ):
+                    shutil.copyfileobj(src, dst)
+            return os.path.isfile(target_file)
+        else:
+            return True
     except (
         FileNotFoundError,  # tar file missing or target path invalid
         KeyError,  # member not found in archive
         tarfile.TarError,  # corrupt / unsupported tar
         ValueError,  # not a regular file
     ) as exception:
-        print(f"Error extracting file from tar: {exception}")
+        logger.error(f"Extracting file from tar: {exception}")
     return False
 
 
@@ -93,23 +103,26 @@ def get_file_from_rar(
         target_dir = Path(target_directory)
         target_dir.mkdir(parents=True, exist_ok=True)
         target_file = target_dir / target_file_name
-        with rarfile.RarFile(rar_file_path) as rf:
-            info = rf.getinfo(file_in_rar_path)
-            if info.isdir():
-                raise ValueError(f"{file_in_rar_path} is a directory")
-            with (
-                rf.open(info) as src,
-                open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
-            ):
-                shutil.copyfileobj(src, dst)
-        return os.path.isfile(target_file)
+        if not os.path.isfile(target_file):
+            with rarfile.RarFile(rar_file_path) as rf:
+                info = rf.getinfo(file_in_rar_path)
+                if info.isdir():
+                    raise ValueError(f"{file_in_rar_path} is a directory")
+                with (
+                    rf.open(info) as src,
+                    open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
+                ):
+                    shutil.copyfileobj(src, dst)
+            return os.path.isfile(target_file)
+        else:
+            return True
     except (
         FileNotFoundError,
         KeyError,
         rarfile.Error,
         ValueError,
     ) as exception:
-        print(f"Error extracting file from rar: {exception}")
+        logger.error(f"Extracting file from rar: {exception}")
     return False
 
 
@@ -123,14 +136,22 @@ def get_file_from_sevenzip(
         target_dir = Path(target_directory)
         target_dir.mkdir(parents=True, exist_ok=True)
         target_file = target_dir / target_file_name
-        with py7zr.SevenZipFile(sevenz_file_path, mode="r") as z:
-            # get a file-like object for streaming
-            with (
-                z.open(file_in_sevenz_path) as src,
-                open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
-            ):
-                shutil.copyfileobj(src, dst)
-        return os.path.isfile(target_file)
+        if not os.path.isfile(target_file):
+            with py7zr.SevenZipFile(sevenz_file_path, mode="r") as z:
+                # get a file-like object for streaming
+                # with (
+                #     z.open(file_in_sevenz_path) as src,
+                #     open(target_file, "wb", buffering=BUFFER_SIZE) as dst,
+                # ):
+                #     shutil.copyfileobj(src, dst)
+                # in memory extraction
+                extracted = z.read([file_in_sevenz_path])
+                src = extracted[file_in_sevenz_path]  # BytesIO object
+                with open(target_file, "wb", buffering=BUFFER_SIZE) as dst:  # streaming
+                    shutil.copyfileobj(src, dst, length=BUFFER_SIZE)
+            return os.path.isfile(target_file)
+        else:
+            return True
     except (
         FileNotFoundError,
         KeyError,
@@ -139,5 +160,5 @@ def get_file_from_sevenzip(
         py7zr.exceptions.UnsupportedCompressionMethodError,
         ValueError,
     ) as exception:
-        print(f"Error extracting file from 7z: {exception}")
+        logger.error(f"Extracting file from 7z: {exception}")
     return False
