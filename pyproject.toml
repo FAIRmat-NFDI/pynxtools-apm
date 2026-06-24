@@ -22,8 +22,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools>=0.14",
-    "ifes_apt_tc_data_modeling>=0.4.2",
+    "pynxtools>=0.14.1",
+    "ifes_apt_tc_data_modeling>=0.4.3",
     "pytz",
 ]
 
@@ -54,7 +54,7 @@ nomad = ["nomad-lab[infrastructure]>=1.4.2"]
 ipynb = [
     "jupyter",
     "jupyterlab",
-    "jupyterlab_h5web"
+    "jupyterlab_h5web",
 ]
 batch = [
     "odfpy",

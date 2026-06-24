@@ -21,6 +21,7 @@ import logging
 import os
 import shutil
 import sys
+from typing import cast
 
 import pandas as pd
 import yaml
@@ -200,7 +201,7 @@ def prepare_parsing(
             idx for idx, line in enumerate(fp) if CSV_HEADER_FOR_HASH_FILE in line
         )
 
-    df_hash = pd.read_csv(hash_file_path, sep=";", skiprows=start)
+    df_hash = pd.read_csv(hash_file_path, sep=";", skiprows=start, dtype=str).fillna("")
     df_hash.columns = ["path", "size", "mtime", "sha256"]
 
     # build dictionary of hashes to replace original file names with short and clean unique ones
@@ -210,11 +211,11 @@ def prepare_parsing(
         # no ignores at this stage
         # inspecting only the file name ending is not a guarantee that the file is of
         # the expected format, checking for these details is the duty of the pynx plugin
-        path_to_hash[line.path] = line.sha256  # type: ignore
+        path_to_hash[f"{line.path}"] = f"{line.sha256}"
         # no duplicates possible inside an individual (sub)directory,
         # irrespective if that content is compressed or not cuz for each project
         # line.path encodes file paths
-        path_to_size[line.path] = line.size
+        path_to_size[f"{line.path}"] = cast(int, line.size)
     del df_hash
 
     # no ignoring of duplicates for NOMAD as config_file_path contains already the
@@ -252,9 +253,9 @@ def prepare_parsing(
                 trg = f"{trg_directory}{os.sep}"
                 main = f"{src}{path}"
                 # if main not in decompressed:
-                hash = path_to_hash[path]
-                size = path_to_size[path]
-                typ = path.rsplit(".", 1)[1].lower()
+                hash = path_to_hash[f"{path}"]
+                size = path_to_size[f"{path}"]
+                typ = f"{path}".rsplit(".", 1)[1].lower()
                 decompressed.append(
                     (main, f"{trg}{project_name}.{row_idx}.{col_idx}.{hash}.{typ}")
                 )
