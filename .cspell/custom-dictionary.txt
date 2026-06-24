@@ -2,6 +2,7 @@
 AXISNAME
 Apyt
 Brockhauser
+CAMECAROOT
 CSYS
 Cameca
 Carola
@@ -52,6 +53,7 @@ Sandor
 Schmitz
 Sherjeel
 TAPHR
+Tarda
 Templatized
 UNITLESS
 Universität
@@ -66,7 +68,11 @@ apsuite
 apt
 apyt
 ato
+autorecover
+bibtexparser
+bilal
 blosc
+camecaroot
 cand
 caplog
 creationtime
@@ -76,6 +82,8 @@ deconvolution
 detx
 dety
 diátaxis
+duesseldorf
+eich
 endianness
 epos
 erate
@@ -102,6 +110,7 @@ issubdtype
 itemsize
 iufc
 kfactor
+kuehbach
 laserpower
 latticeconstant
 libatomprobe
@@ -113,6 +122,7 @@ nuclides
 nxdl
 nxdls
 oasisb
+openalex
 orcid
 paraprobe
 plottable
@@ -129,6 +139,7 @@ reflectron
 reimplementation
 rosettasciio
 rsciio
+scidat
 sevenz
 sevenzip
 signedinteger

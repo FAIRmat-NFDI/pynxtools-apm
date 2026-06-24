@@ -48,13 +48,15 @@ VALID_FILE_NAME_SUFFIX_RANGE: list[str] = [
 ]
 VALID_FILE_NAME_SUFFIX_CONFIG: list[str] = [".yaml", ".yml", "db.yaml"]
 VALID_FILE_NAME_SUFFIX_CAMECA: list[str] = [
-    ".cameca",
+    # ".cameca",  # deprecated
     ".str",
     ".rraw",
     ".rhit",
     ".hits",
     ".root",
 ]
+import flatdict as fd
+
 from pynxtools_apm.utils.custom_logging import logger
 
 
@@ -157,16 +159,24 @@ class ApmUseCaseSelector:
                 self.eln += [entry]
         for suffix in VALID_FILE_NAME_SUFFIX_CAMECA:
             self.apsuite += self.case[suffix]
-        logger.info(
-            f"Reconstruction: {self.reconstruction}\n"
-            f"Ranging definitions: {self.ranging}\n"
-            f"Oasis ELN: {self.eln}\n"
-            f"Oasis local config: {self.cfg}\n"
-        )
+        logger.info(f"Reconstruction: {self.reconstruction}")
+        logger.info(f"Ranging definitions: {self.ranging}")
+        logger.info(f"Oasis ELN: {self.eln}")
+        logger.info(f"Oasis local config: {self.cfg}")
         if len(self.apsuite) > 0:
             logger.info(f"IVAS/AP Suite: {self.apsuite}\n")
 
-    def report_workflow(self, template: dict, entry_id: int) -> dict:
+    def get_file_path_alias(self, fpath: str, tweaks: fd.FlatDict) -> str:
+        """Identify if an alias for the file with fpath exists, return empty string if not."""
+        if "file_path_aliasing" in tweaks:
+            for entry in tweaks["file_path_aliasing"]:
+                if isinstance(entry, dict):
+                    if "src" in entry and "trg" in entry:
+                        if entry["src"] == fpath and entry["trg"] != "":
+                            return entry["trg"]
+        return ""
+
+    def report_workflow(self, template: dict, entry_id: int, oasis_specific) -> dict:
         """Initialize the reporting of the workflow."""
         identifier = [entry_id]
         # populate automatically input-files used
@@ -178,7 +188,8 @@ class ApmUseCaseSelector:
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
-                template[f"{prfx}/file_name"] = f"{fpath}"
+                alias = self.get_file_path_alias(fpath, oasis_specific)
+                template[f"{prfx}/file_name"] = alias if alias != "" else fpath
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         for fpath in self.ranging:
             prfx = var_path_to_specific_path(
@@ -187,7 +198,8 @@ class ApmUseCaseSelector:
             )
             with open(fpath, "rb") as fp:
                 template[f"{prfx}/checksum"] = get_sha256_of_file_content(fp)
-                template[f"{prfx}/file_name"] = f"{fpath}"
+                alias = self.get_file_path_alias(fpath, oasis_specific)
+                template[f"{prfx}/file_name"] = alias if alias != "" else fpath
                 template[f"{prfx}/algorithm"] = DEFAULT_CHECKSUM_ALGORITHM
         # FAU/Erlangen's pyccapt control and calibration file have not functional
         # distinction which makes it non-trivial to decide if a given HDF5 qualifies
