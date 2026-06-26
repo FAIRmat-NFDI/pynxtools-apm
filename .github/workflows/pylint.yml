@@ -10,19 +10,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.2
-      - name: Install uv and set the python version to ${{ env.python-version }}
+      - name: Install uv and Python ${{ env.python-version }}
         uses: astral-sh/setup-uv@v8.2.0
         with:
           python-version: ${{ env.python-version }}
-      - name: Install package and dev dependencies
+      - name: Install dependencies
         run: |
-          uv pip install ".[dev]"
+          uv sync --dev
       - name: ruff check
         run: |
-          ruff check src/pynxtools_apm tests
+          uv run ruff check src/pynxtools_apm tests
       - name: ruff format
         run: |
-          ruff format --check src/pynxtools_apm tests
+          uv run ruff format --check src/pynxtools_apm tests
       - name: mypy
         run: |
-          mypy src/pynxtools_apm tests
+          uv run mypy src/pynxtools_apm tests
