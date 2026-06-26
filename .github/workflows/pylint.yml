@@ -16,7 +16,7 @@ jobs:
           python-version: ${{ env.python-version }}
       - name: Install dependencies
         run: |
-          uv sync --dev
+          uv sync --extra dev
       - name: ruff check
         run: |
           uv run ruff check src/pynxtools_apm tests
