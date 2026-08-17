@@ -204,7 +204,11 @@ debug/
 dbg/
 tests/run_tests.sh
 .virtual_documents
-tests/data
+!tests
+!tests/data
+!tests/data/env
+!tests/data/env/nor_trondheim_hatzeglou
+!tests/data/env/nor_trondheim_hatzeglou/nor_trondheim_hatzeglou.0.4.dee6cee52f7e8510fa88b5bcd82754a3e151e3ef45248d1336b562c3d42f43f2.env
 tests/prod
 examples/oasisb/openalex/
 examples/oasisb/batch_script.sh
