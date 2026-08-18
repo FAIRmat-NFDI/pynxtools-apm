@@ -40,6 +40,7 @@ dev = [
     "types-requests",
     "pre-commit",
     "cruft",
+    "requests",
     # "py-cpuinfo",
 ]
 docs = [
@@ -63,7 +64,7 @@ batch = [
     "pycountry",
     "rarfile",
     "py7zr<1.0.0",
-    "requests"
+    "requests",
 ]
 
 [project.urls]
