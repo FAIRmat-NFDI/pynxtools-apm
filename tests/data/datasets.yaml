@@ -47,10 +47,10 @@ imago:
   #   url: https://data.materialsdatafacility.org/published/publication_371/data/Reconstructions/recon-v01/default/default.analysis
   #   spdx: MPL Globus
 ops:
-  gbr_cambridge_bhadeshia:
-    name: gbr_cambridge_bhadesia.20f8cc345b61216180dc45910a935f2e3c30f7252f380513cdfa1fda1f1fc224.ops
-    url: https://www.repository.cam.ac.uk/bitstreams/341b677d-2d46-483e-85c1-049019c2830d/download:2017-ATOMPROBE-data/PoSAP-data/wu5f.dat.ops
-    spdx: CC-BY-4.0
+  # gbr_cambridge_bhadeshia:
+  #   name: gbr_cambridge_bhadesia.20f8cc345b61216180dc45910a935f2e3c30f7252f380513cdfa1fda1f1fc224.ops
+  #   url: https://www.repository.cam.ac.uk/bitstreams/341b677d-2d46-483e-85c1-049019c2830d/download:2017-ATOMPROBE-data/PoSAP-data/wu5f.dat.ops
+  #   spdx: CC-BY-4.0
 pos:
   deu_duesseldorf_lilensten:
     name: deu_duesseldorf_lilensten.7f260eec83013a021497f8189407a892729d3e92431e706114216442ecc39b43.pos
