@@ -204,6 +204,8 @@ debug/
 dbg/
 tests/run_tests.sh
 .virtual_documents
+tests/*.analysisset
+tests/*.env
 tests/*.csv
 tests/*.pos
 tests/*.h5
@@ -211,6 +213,10 @@ tests/*.ato
 tests/*.hdf5
 tests/*.apt
 tests/*.analysis
+tests/*.ops
+tests/*.rng
+tests/*.rrng
+tests/*.raw
 # !tests
 # !tests/data
 !tests/data/env
