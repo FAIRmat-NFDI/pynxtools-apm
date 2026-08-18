@@ -192,7 +192,7 @@ cython_debug/
 
 
 # Custom settings
-
+*.nxs
 .mypy_cache/
 .pyenv
 *.pyc

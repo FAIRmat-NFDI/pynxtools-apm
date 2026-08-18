@@ -253,7 +253,7 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
     # for convenience dropped already where one would overwrite
     # here make it the reference
     # use this block to overwrite a reference from the tmp_path to the tests/reference
-    # TODO in normal operation mode this block needs to be commented out !
+    # TODO IN PRODUCTION THIS BLOCK NEEDS TO BE COMMENTED OUT BEGINNING HERE
     """
     shutil.copy(
         f"{output_path}.nxs.sha256.test.yaml",
@@ -265,8 +265,8 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
             ]
         ),
     )
-    # TODO end of the TODO
     """
+    # TODO ... ENDING HERE
 
     # assert against reference YAML artifact
     test_artifact_file_path = f"{output_path}.nxs.sha256.test.yaml"

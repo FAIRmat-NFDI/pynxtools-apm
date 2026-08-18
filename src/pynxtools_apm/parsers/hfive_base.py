@@ -85,12 +85,13 @@ NXAPM_VOLATILE_NAMED_HDF_PATHS = (
     "/@file_update_time",
     "entry1/definition/@version",
     "entry1/profiling/program1/program/@version",
-    "entry1/profiling/template_filling_elapsed_time",
     "entry1/profiling/pynxtools_apm/template_filling_elapsed_time",
-    # "entry1/profiling/template_filling_elapsed_time/@units"
+    # "entry1/profiling/pynxtools_apm/template_filling_elapsed_time/@units"
 )
 NXAPM_VOLATILE_SUFFIX_HDF_PATHS = (
     "@axes",  # as these are stored as by default as byte objects variable length string array
+    "@default_slice",  # also a byte object, observed volatile for
+    # "entry1/atom_probe/reconstruction/naive_discretization/data/@default_slice",
     "file_name",  # if these include the full path the absolute path may differ between
     # test and production data
 )
