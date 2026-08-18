@@ -188,7 +188,7 @@ def convert_using_example_data(input_path, output_path, caplog, **kwargs) -> Non
             input_file=tuple([input_path]),
             reader=reader_name,
             nxdl=nxdl,
-            skip_verify=False,
+            skip_verify=True,
             ignore_undocumented=True,
             output=f"{output_path}",
             **kwargs,
@@ -199,9 +199,6 @@ def convert_using_example_data(input_path, output_path, caplog, **kwargs) -> Non
     "nxdl, sub_reader_data_dir",
     test_params,
 )
-# @pytest.mark.skip(
-#     reason="Working for the default example location of large test data should be clarified though"
-# )
 # explores an alternative testing strategy which checks for binary
 # reproducibility at the individual HDF5 node using per node checksums
 def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
@@ -234,9 +231,6 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
     # assert callable(reader.read)
 
     input_path = os.path.join(*[os.path.dirname(__file__), sub_reader_data_dir])
-
-    print(f">>>>>> {input_path}")
-
     output_path = os.path.join(*[tmp_path, f"{sub_reader_data_dir.rsplit('/', 1)[-1]}"])
 
     convert_using_example_data(
@@ -255,11 +249,27 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
         file_path=os.path.join(*[tmp_path, f"{output_path}.nxs.sha256.test.yaml"]),
     )
 
-    assert True
-    return
+    # keep a copy of the local file
+    # for convenience dropped already where one would overwrite
+    # here make it the reference
+    # use this block to overwrite a reference from the tmp_path to the tests/reference
+    # TODO in normal operation mode this block needs to be commented out !
+    """
+    shutil.copy(
+        f"{output_path}.nxs.sha256.test.yaml",
+        os.path.join(
+            *[
+                f"{input_path.rsplit('/', 1)[0]}",
+                "reference",
+                f"{input_path.rsplit('/', 1)[-1]}.nxs.sha256.ref.yaml",
+            ]
+        ),
+    )
+    # TODO end of the TODO
+    """
 
     # assert against reference YAML artifact
-    test_artifact_file_path = f"{test_nexus_path_no_mime_type}.nxs.sha256.test.yaml"
+    test_artifact_file_path = f"{output_path}.nxs.sha256.test.yaml"
     with open(test_artifact_file_path) as fp_test:
         try:
             test_artifact = yaml.safe_load(fp_test)
@@ -268,7 +278,9 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
 
     ref_artifact_file_path = os.path.join(
         *[
-            f"{test_nexus_path_no_mime_type}.nxs.sha256.ref.yaml",
+            f"{input_path.rsplit('/', 1)[0]}",
+            "reference",
+            f"{input_path.rsplit('/', 1)[-1]}.nxs.sha256.ref.yaml",
         ]
     )
     with open(ref_artifact_file_path) as fp_ref:

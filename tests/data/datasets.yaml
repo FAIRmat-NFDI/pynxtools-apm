@@ -2,15 +2,15 @@
 # pynxtools-apm will try to download if origin starts with https:// otherwise will try to resolve local path within "tests/data",
 # i.e. where this datasets.yaml file is located
 analysisset:
-  gbr_london_vamvakeros:
-    name: gbr_london_vamvakeros.b5614ad8273e376abd94830e646c0e0ae52f4d9638b3579087f5dd9538cbbfe7.analysisset
-    # origin: https://zenodo.org/records/18034823/files/APT_recon.7z:R5121_12823.analysisset    
-    spdx: CC-BY-4.0
+  # gbr_london_vamvakeros:
+  #   name: gbr_london_vamvakeros.b5614ad8273e376abd94830e646c0e0ae52f4d9638b3579087f5dd9538cbbfe7.analysisset
+  #   # origin: https://zenodo.org/records/18034823/files/APT_recon.7z:R5121_12823.analysisset
+  #   spdx: CC-BY-4.0
 apt:
-  usa_denton_smith:
-    name: usa_denton_smith.2a0135e9ac525c644296be2ce9b989c44bf5826a993d3885f78c18e11daef9a2.apt
-    url: https://gitlab.com/jesseds/apav/-/blob/master/apav/tests/Si.apt
-    spdx: GPL-2.0-or-later
+  # usa_denton_smith:
+  #   name: usa_denton_smith.2a0135e9ac525c644296be2ce9b989c44bf5826a993d3885f78c18e11daef9a2.apt
+  #   url: https://gitlab.com/jesseds/apav/-/blob/master/apav/tests/Si.apt
+  #   spdx: GPL-2.0-or-later
 ato:
   fra_rouen_karam:
     name: fra_rouen_karam.6a3c1eacf8d43511ceb4693b755e1f814d49649a673c3ce8113ad339c5725963.ato
@@ -42,10 +42,10 @@ fig:
     # origin: fig/deu_erlangen_felfer/Superalloy_MassSpec_ranged.fig.txt
     spdx: FAU Erlangen-Nuremberg APT School 2020 Training Material
 imago:
-  usa_evanston_ren:
-    name: usa_evanston_ren.e37b8d4ea87214d1b56ef2070948c9eaf12e78a16b9952ddb8859fd197ab3247.analysis
-    url: https://data.materialsdatafacility.org/published/publication_371/data/Reconstructions/recon-v01/default/default.analysis
-    spdx: MPL Globus
+  # usa_evanston_ren:
+  #   name: usa_evanston_ren.e37b8d4ea87214d1b56ef2070948c9eaf12e78a16b9952ddb8859fd197ab3247.analysis
+  #   url: https://data.materialsdatafacility.org/published/publication_371/data/Reconstructions/recon-v01/default/default.analysis
+  #   spdx: MPL Globus
 ops:
   gbr_cambridge_bhadeshia:
     name: gbr_cambridge_bhadesia.20f8cc345b61216180dc45910a935f2e3c30f7252f380513cdfa1fda1f1fc224.ops

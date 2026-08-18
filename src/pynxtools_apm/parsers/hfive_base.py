@@ -86,6 +86,7 @@ NXAPM_VOLATILE_NAMED_HDF_PATHS = (
     "entry1/definition/@version",
     "entry1/profiling/program1/program/@version",
     "entry1/profiling/template_filling_elapsed_time",
+    "entry1/profiling/pynxtools_apm/template_filling_elapsed_time",
     # "entry1/profiling/template_filling_elapsed_time/@units"
 )
 NXAPM_VOLATILE_SUFFIX_HDF_PATHS = (
