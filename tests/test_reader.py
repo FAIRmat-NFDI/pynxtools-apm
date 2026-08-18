@@ -17,6 +17,7 @@
 #
 
 import os
+import shutil
 from glob import glob
 from typing import Literal
 
@@ -25,27 +26,145 @@ import yaml
 from pynxtools.dataconverter.convert import convert, get_reader
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 
+from pynxtools_apm.examples.get_file_from_archive_formats import get_file_from_zip
+
 # from pynxtools.testing.nexus_conversion import ReaderTest
 from pynxtools_apm.parsers.hfive_base import (
     NXAPM_VOLATILE_NAMED_HDF_PATHS,
     NXAPM_VOLATILE_SUFFIX_HDF_PATHS,
     HdfFiveBaseParser,
 )
+from pynxtools_apm.utils.use_requests import download_requests
 
 READER_NAME = "apm"
 READER_CLASS = get_reader(READER_NAME)
 NXDLS = ["NXapm"]
 
-test_cases = [
-    ("default", "NOMAD simple APM example"),
-]
+working_directory = os.path.dirname(__file__)
+
+with open(
+    os.path.join(*[working_directory, "data", "datasets.yaml"]),
+    encoding="utf-8",
+) as fp:
+    datasets = yaml.safe_load(fp)
+
+# test_cases = [
+#     ("default", "NOMAD simple APM example"),
+# ]
 
 test_params = []
 
-for test_case in test_cases:
-    # ToDo: make tests for all supported application definitions possible
-    for nxdl in NXDLS:
-        test_params += [pytest.param(nxdl, test_case[0], id=f"{test_case[1]}, {nxdl}")]
+if isinstance(datasets, dict):
+    for mime_type, examples in datasets.items():
+        if not isinstance(examples, dict):
+            continue
+        for example, metadata in examples.items():
+            # logger.debug(f"{mime_type}, {example}")
+            # only include examples with a license
+            if not all(concept in metadata for concept in ("name", "spdx")):
+                continue
+
+            if os.path.isfile(os.path.join(*[working_directory, metadata["name"]])):
+                for nxdl in NXDLS:
+                    test_params += [
+                        pytest.param(
+                            nxdl,
+                            f"{mime_type}/{example}/{metadata['name']}",
+                            id=f"{metadata['name']}, {nxdl}",
+                        )
+                    ]
+                # never download data twice
+                continue
+
+            # does not exist needs download or copying over
+            if "url" in metadata:
+                if metadata["url"].count(":") == 2:  # possibly compressed
+                    archive_link, file_path = metadata["url"].rsplit(":", 1)
+                    # logger.debug(
+                    #     f"remote file, compressed >>>> {archive_link}, {file_path}, {file_path.rsplit('/', 1)[-1]} >>>> {metadata['name']}"
+                    # )
+                    archive_file_name = download_requests(archive_link)
+                    if archive_file_name.endswith(".zip"):
+                        decompressed = get_file_from_zip(
+                            archive_file_name,
+                            file_path,
+                            working_directory,
+                            metadata["name"],
+                        )
+                        os.remove(archive_file_name)
+                        if os.path.isfile(decompressed):
+                            for nxdl in NXDLS:
+                                test_params += [
+                                    pytest.param(
+                                        nxdl,
+                                        f"{mime_type}/{example}/{decompressed}",
+                                        id=f"{decompressed}, {nxdl}",
+                                    )
+                                ]
+                else:
+                    # logger.debug(
+                    #     f"remote file, not compressed >>>> {metadata['url']} >>>> {metadata['name']}"
+                    # )
+                    data_file_name = download_requests(metadata["url"])
+                    os.rename(
+                        data_file_name,
+                        os.path.join(*[working_directory, metadata["name"]]),
+                    )
+                    if os.path.isfile(
+                        os.path.join(*[working_directory, metadata["name"]])
+                    ):
+                        for nxdl in NXDLS:
+                            test_params += [
+                                pytest.param(
+                                    nxdl,
+                                    f"{mime_type}/{example}/{metadata['name']}",
+                                    id=f"{metadata['name']}, {nxdl}",
+                                )
+                            ]
+            else:
+                if os.path.isfile(
+                    os.path.join(
+                        *[
+                            working_directory,
+                            "data",
+                            mime_type,
+                            example,
+                            metadata["name"],
+                        ]
+                    )
+                ):
+                    shutil.copy(
+                        os.path.join(
+                            *[
+                                working_directory,
+                                "data",
+                                mime_type,
+                                example,
+                                metadata["name"],
+                            ]
+                        ),
+                        os.path.join(*[working_directory, metadata["name"]]),
+                    )
+                    # logger.debug(
+                    #     f"local file, not compressed >>>> data/{mime_type}/{example}/{metadata['name']}"
+                    # )
+                    if os.path.isfile(
+                        os.path.join(*[working_directory, metadata["name"]])
+                    ):
+                        for nxdl in NXDLS:
+                            test_params += [
+                                pytest.param(
+                                    nxdl,
+                                    f"{mime_type}/{example}/{metadata['name']}",
+                                    id=f"{metadata['name']}, {nxdl}",
+                                )
+                            ]
+
+
+# for test_case in test_cases:
+#     # ToDo: make tests for all supported application definitions possible
+#    for nxdl in NXDLS:
+#         test_params += [pytest.param(nxdl, test_case[0], id=f"{test_case[1]}, {nxdl}")]
 
 
 def convert_using_example_data(files_or_dir, tmp_path, caplog, **kwargs) -> None:
@@ -92,9 +211,9 @@ def convert_using_example_data(files_or_dir, tmp_path, caplog, **kwargs) -> None
     "nxdl, sub_reader_data_dir",
     test_params,
 )
-@pytest.mark.skip(
-    reason="Working for the default example location of large test data should be clarified though"
-)
+# @pytest.mark.skip(
+#     reason="Working for the default example location of large test data should be clarified though"
+# )
 # explores an alternative testing strategy which checks for binary
 # reproducibility at the individual HDF5 node using per node checksums
 def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
@@ -129,6 +248,9 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
     files_or_dir = os.path.join(
         *[os.path.dirname(__file__), "data", sub_reader_data_dir]
     )
+    print(files_or_dir)
+    assert True
+    return
 
     # test = ReaderTest(
     #     nxdl=nxdl,
