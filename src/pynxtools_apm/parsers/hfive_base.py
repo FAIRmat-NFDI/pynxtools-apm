@@ -87,7 +87,6 @@ NXAPM_VOLATILE_NAMED_HDF_PATHS = (
     "/@file_update_time",
     "entry1/definition/@version",
     "entry1/definition/@URL",
-    "entry1/profiling/program1/program/@version",
     "entry1/profiling/pynxtools_apm/template_filling_elapsed_time",
     "entry1/profiling/pynxtools_apm/operating_system",
     # "entry1/profiling/pynxtools_apm/template_filling_elapsed_time/@units"
