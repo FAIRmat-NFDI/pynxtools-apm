@@ -164,7 +164,7 @@ class HdfFiveBaseParser:
             self.h5r.close()
             self.h5r = None
 
-    def __call__(self, node_name, h5obj):
+    def __call__(self, node_name: str, h5obj: h5py.Dataset | h5py.Group):
         # only h5py datasets have dtype attribute, so we can search on this
         if isinstance(h5obj, h5py.Dataset):
             if node_name not in self.datasets:
@@ -381,7 +381,7 @@ class HdfFiveBaseParser:
         # if hasattr(h5obj, 'dtype') and not node_name in self.metadata:
         #     self.metadata[node_name] = ["dataset"]
 
-    def get_attribute_data_structure(self, prefix, src_dct):
+    def get_attribute_data_structure(self, prefix: str, src_dct: dict):
         # trg_dct is self.attributes
         for key, val in src_dct.items():
             if f"{prefix}/@{key}" not in self.attributes:
@@ -453,23 +453,29 @@ class HdfFiveBaseParser:
                         h5path, dict(self.h5r[h5path].attrs)
                     )
 
-    def store_hashes(self, blacklist_by_key: list, blacklist_by_suffix: list, **kwargs):
+    def store_hashes(
+        self,
+        blacklist_by_key: list[str] = [],
+        blacklist_by_suffix: list[str] = [],
+        **kwargs,
+    ):
         """Generate yaml file with sorted list of HDF5 grp, dst, and attrs
 
-        including their datatype and SHA256 checksum computed from the each nodes data.
+        including their datatype and SHA256 checksum computed from each nodes' data.
         This yaml file can be useful for unit tests of different NeXus files
         when differences in timestamps are expected but should not trigger
         the test to fail. The blacklist allows to exclude those HDF5 paths
         that should not be included in the yaml file."""
         hashes: dict[str, str] = {}
+        by_suffix = tuple(blacklist_by_suffix)
         for key, ifo in self.groups.items():
-            if key not in blacklist_by_key and not key.endswith(blacklist_by_suffix):
+            if key not in blacklist_by_key and not key.endswith(by_suffix):
                 hashes[key] = "grp"
         for key, ifo in self.datasets.items():
-            if key not in blacklist_by_key and not key.endswith(blacklist_by_suffix):
+            if key not in blacklist_by_key and not key.endswith(by_suffix):
                 hashes[key] = f"dst__{ifo[-2]}"
         for key, ifo in self.attributes.items():
-            if key not in blacklist_by_key and not key.endswith(blacklist_by_suffix):
+            if key not in blacklist_by_key and not key.endswith(by_suffix):
                 hashes[key] = f"att__{ifo[-1]}"
         with open(
             kwargs.get(
@@ -518,9 +524,9 @@ class HdfFiveBaseParser:
 
     def store_report(
         self,
-        store_instances=False,
-        store_instances_templatized=True,
-        store_templates=False,
+        store_instances: bool = False,
+        store_instances_templatized: bool = True,
+        store_templates: bool = False,
     ):
         if store_instances is True:
             logger.info(
@@ -560,7 +566,7 @@ class HdfFiveBaseParser:
                         f"type: {concept.dtype}, shape: {concept.shape}\n"
                     )
 
-    def get_attribute_value(self, h5path):
+    def get_attribute_value(self, h5path: str):
         if self.h5r is not None:
             if h5path in self.attributes:
                 trg, attribute_name = h5path.split("@")
@@ -572,7 +578,7 @@ class HdfFiveBaseParser:
                     return obj
         return None
 
-    def get_dataset_value(self, h5path):
+    def get_dataset_value(self, h5path: str):
         if self.h5r is not None:
             if h5path in self.datasets:
                 if self.datasets[h5path][0] == "IS_REGULAR_DATASET":
@@ -589,7 +595,7 @@ class HdfFiveBaseParser:
                 return obj.fields(h5path[h5path.rfind("#") + 1 :])[:]
             return None
 
-    def get_value(self, h5path):
+    def get_value(self, h5path: str):
         """Return tuple of normalized regular ndarray for h5path or None."""
         # h5path with exactly one @ after rfind("/") indicating an attribute
         # h5path with exactly one # after rfind("/") indicating a field name in compound type
