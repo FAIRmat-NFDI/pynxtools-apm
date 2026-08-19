@@ -137,6 +137,7 @@ apm_app = AppEntryPoint(
                             search_quantity="results.material.elements",
                         ),
                         # MenuItemHistogram(
+                        #     title="Number of Elements",
                         #     x="results.material.n_elements",
                         # ),
                     ],
@@ -179,7 +180,7 @@ apm_app = AppEntryPoint(
                         ),
                         MenuItemHistogram(
                             title="Elapsed Time",
-                            search_quantity=f"data.elapsed_time#{schema}",
+                            x=f"data.elapsed_time#{schema}",
                         ),
                         # MenuItemTerms(
                         #     title="Pulse Mode",
@@ -199,23 +200,23 @@ apm_app = AppEntryPoint(
                         ),
                         MenuItemHistogram(
                             title="Total Event Golden",
-                            search_quantity=f"data.atom_probe.hit_finding.total_event_golden#{schema}",
+                            x=f"data.atom_probe.hit_finding.total_event_golden#{schema}",
                         ),
                         # MenuItemHistogram(
                         #     title="Total Event Incomplete",
-                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_incomplete#{schema}",
+                        #     x=f"data.atom_probe.hit_finding.total_event_incomplete#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Total Event Multiple",
-                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_multiple#{schema}",
+                        #     x=f"data.atom_probe.hit_finding.total_event_multiple#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Total Event Partials",
-                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_partials#{schema}",
+                        #     x=f"data.atom_probe.hit_finding.total_event_partials#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Total Event Record",
-                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_record#{schema}",
+                        #     x=f"data.atom_probe.hit_finding.total_event_record#{schema}",
                         # ),
                     ],
                 ),
@@ -239,43 +240,43 @@ apm_app = AppEntryPoint(
                         ),
                         MenuItemHistogram(
                             title="Image Compression",
-                            search_quantity=f"data.atom_probe.reconstruction.config.image_compression#{schema}",
+                            x=f"data.atom_probe.reconstruction.config.image_compression#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Kfactor",
-                            search_quantity=f"data.atom_probe.reconstruction.config.kfactor#{schema}",
+                            x=f"data.atom_probe.reconstruction.config.kfactor#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Volume",
-                            search_quantity=f"data.atom_probe.reconstruction.volume#{schema}",
+                            x=f"data.atom_probe.reconstruction.volume#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Efficiency",
-                            search_quantity=f"data.atom_probe.reconstruction.config.efficiency#{schema}",
+                            x=f"data.atom_probe.reconstruction.config.efficiency#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Evaporation Field",
-                            search_quantity=f"data.atom_probe.reconstruction.config.evaporation_field#{schema}",
+                            x=f"data.atom_probe.reconstruction.config.evaporation_field#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Flight Path",
-                            search_quantity=f"data.atom_probe.reconstruction.config.flight_path#{schema}",
+                            x=f"data.atom_probe.reconstruction.config.flight_path#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Shank Angle",
-                            search_quantity=f"data.atom_probe.reconstruction.config.shank_angle#{schema}",
+                            x=f"data.atom_probe.reconstruction.config.shank_angle#{schema}",
                         ),
                         # MenuItemHistogram(
                         #     title="Tip Radius",
-                        #     search_quantity=f"data.atom_probe.reconstruction.config.tip_radius#{schema}",
+                        #     x=f"data.atom_probe.reconstruction.config.tip_radius#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Tip Radius Zero",
-                        #     search_quantity=f"data.atom_probe.reconstruction.config.tip_radius_zero#{schema}",
+                        #     x=f"data.atom_probe.reconstruction.config.tip_radius_zero#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Voltage Zero",
-                        #     search_quantity=f"data.atom_probe.reconstruction.config.voltage_zero#{schema}",
+                        #     x=f"data.atom_probe.reconstruction.config.voltage_zero#{schema}",
                         # ),
                     ],
                 ),
