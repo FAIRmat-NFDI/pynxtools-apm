@@ -15,36 +15,306 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-"""Entry points for APM apps."""
+"""
+APM app backed by the generated Python metainfo (nexus_parser_v2).
 
-try:
-    from nomad.config.models.plugins import AppEntryPoint
-    from nomad.config.models.ui import App, Column, Columns, SearchQuantities
-except ImportError as exc:
-    raise ImportError(
-        "Could not import nomad package. Please install the package 'nomad-lab'."
-    ) from exc
+The app targets the ``Apm`` application definition.
+Design app targets for ``Apm_paraprobe*`` or ``Apm_compositionspace*`` similarly.
 
-schema = "pynxtools.nomad.schema.Root"
+Search depth
+------------
+NOMAD registers dynamically mapped quantities only down to a fixed sub-section
+depth for allow-listed NeXus AppDefs.
+"""
+
+from nomad.config.models.plugins import AppEntryPoint
+from nomad.config.models.ui import (
+    App,
+    Column,
+    Menu,
+    MenuItemHistogram,
+    MenuItemPeriodicTable,
+    MenuItemTerms,
+    MenuSizeEnum,
+    SearchQuantities,
+)
+
+schema = "pynxtools.nomad.metainfo.applications.Apm"
+
+# sub-sections that repeat, i.e. that the archive stores as a list. Only these
+# take a JMESPath projection in a column; the rest must not, or the cell
+# resolves to null. Listed here rather than read from the section definitions,
+# because importing the schema package from an app module is circular: the
+# plugin machinery loads app entry points while the schema is still
+# initializing. `test_as_column_matches_metainfo_repeats` asserts that this
+# stays in sync with the generated metainfo.
+REPEATING_SUB_SECTIONS = frozenset(
+    {
+        "ionID",
+        "citeID",
+        "userID",
+        "eventID",
+    }
+)
+
+
+def as_column(quantity: str) -> str:
+    """Turn a filter quantity name into one usable as a results table column.
+
+    Menu items aggregate over the search index and address a quantity by its
+    plain name. Table cells instead extract a value from the returned archive
+    data with JMESPath, which cannot step into a list implicitly. The projection
+    must therefore match the schema exactly, in both directions::
+
+        data.userID.name        -> null   (userID repeats, so it is a list)
+        data.userID[*].name     -> ["..."]
+
+    Some sub-sections repeat - ``citeID``, ``userID``, ``ionID``.
+    A projection is inserted at every segment named in `REPEATING_SUB_SECTIONS`
+    and nowhere else, at whatever depth it occurs.
+
+    The projection is dropped again when the name is turned into an API request
+    (``parseJMESPath`` in the GUI keeps only the field names), so filtering and
+    sorting are unaffected. Names without a schema are returned unchanged.
+    """
+    path, separator, schema_suffix = quantity.partition("#")
+    if not separator or not path.startswith("data."):
+        return quantity
+
+    segments = [
+        f"{part}[*]" if part in REPEATING_SUB_SECTIONS else part
+        for part in path.split(".")
+    ]
+    return f"{'.'.join(segments)}{separator}{schema_suffix}"
+
 
 apm_app = AppEntryPoint(
-    name="APM App",
-    description="App for APM data.",
+    name="ApmApp",
+    description="A Generic NOMAD App for Atom Probe Tomography.",
     app=App(
+        # basic configuration
         label="APM",
-        path="apmapp",
+        path="apm_app",
         category="Experiment",
+        description="A search app customized for atom probe experiments.",
         search_quantities=SearchQuantities(
             include=[f"*#{schema}"],
         ),
-        filters_locked={
-            f"data.ENTRY.definition__field#{schema}": ["atom probe"],
-        },
-        columns=Columns(
-            selected=["entry_id"],
-            options={
-                "entry_id": Column(),
-            },
+        # controls which columns are shown in the results table
+        columns=[
+            Column(title="Entry ID", search_quantity="entry_type", selected=True),
+            Column(
+                title="Definition",
+                search_quantity=as_column(f"data.definition#{schema}"),
+                selected=True,
+            ),
+            Column(
+                title="Start Time",
+                search_quantity=as_column(f"data.start_time#{schema}"),
+                selected=True,
+            ),
+            # Column(title="File Name", search_quantity=as_column(f"data.file_name"), selected=True),
+            Column(
+                title="Description",
+                search_quantity=as_column(f"data.description#{schema}"),
+                selected=True,
+            ),
+        ],
+        # only entries to show
+        filters_locked={"section_defs.definition_qualified_name": [schema]},
+        # controls the menu on the left-hand side
+        menu=Menu(
+            title="Filters",
+            size=MenuSizeEnum.SM,
+            show_header=True,
+            items=[
+                Menu(
+                    title="Elements",
+                    size=MenuSizeEnum.XXL,
+                    show_header=True,
+                    items=[
+                        MenuItemPeriodicTable(
+                            search_quantity="results.material.elements",
+                        ),
+                        # MenuItemHistogram(
+                        #     x="results.material.n_elements",
+                        # ),
+                    ],
+                ),
+                Menu(
+                    title="Experiment",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Definition",
+                            search_quantity=f"data.definition#{schema}",
+                        ),
+                        MenuItemTerms(
+                            title="Project Name",
+                            search_quantity=f"data.project.name#{schema}",
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="Specimen",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Name",
+                            search_quantity=f"data.specimen.name#{schema}",
+                        ),
+                        # MenuItemTerms(
+                        #     title="Project Name",
+                        #     search_quantity=f"data.specimen.is_simulation#{schema}",
+                        # ),
+                    ],
+                ),
+                Menu(
+                    title="Acquisition",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Run Number",
+                            search_quantity=f"data.run_number#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Elapsed Time",
+                            search_quantity=f"data.elapsed_time#{schema}",
+                        ),
+                        # MenuItemTerms(
+                        #     title="Pulse Mode",
+                        #     search_quantity=f"data.measurement.eventID.instrument.pulser.pulse_mode#{schema}",
+                        # ),
+                        MenuItemTerms(
+                            title="Local Electrode",
+                            search_quantity=f"data.measurement.instrument.local_electrode.name#{schema}",
+                        ),
+                        MenuItemTerms(
+                            title="Instrument Type",
+                            search_quantity=f"data.measurement.instrument.type#{schema}",
+                        ),
+                        MenuItemTerms(
+                            title="Instrument Serial Number",
+                            search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Total Event Golden",
+                            search_quantity=f"data.atom_probe.hit_finding.total_event_golden#{schema}",
+                        ),
+                        # MenuItemHistogram(
+                        #     title="Total Event Incomplete",
+                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_incomplete#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Total Event Multiple",
+                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_multiple#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Total Event Partials",
+                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_partials#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Total Event Record",
+                        #     search_quantity=f"data.atom_probe.hit_finding.total_event_record#{schema}",
+                        # ),
+                    ],
+                ),
+                Menu(
+                    title="Ranging",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Ion Name",
+                            search_quantity=f"data.atom_probe.ranging.peak_identification.ionID.name#{schema}",
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="Reconstruction",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Primary Element",
+                            search_quantity=f"data.atom_probe.reconstruction.config.primary_element#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Image Compression",
+                            search_quantity=f"data.atom_probe.reconstruction.config.image_compression#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Kfactor",
+                            search_quantity=f"data.atom_probe.reconstruction.config.kfactor#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Volume",
+                            search_quantity=f"data.atom_probe.reconstruction.volume#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Efficiency",
+                            search_quantity=f"data.atom_probe.reconstruction.config.efficiency#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Evaporation Field",
+                            search_quantity=f"data.atom_probe.reconstruction.config.evaporation_field#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Flight Path",
+                            search_quantity=f"data.atom_probe.reconstruction.config.flight_path#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Shank Angle",
+                            search_quantity=f"data.atom_probe.reconstruction.config.shank_angle#{schema}",
+                        ),
+                        # MenuItemHistogram(
+                        #     title="Tip Radius",
+                        #     search_quantity=f"data.atom_probe.reconstruction.config.tip_radius#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Tip Radius Zero",
+                        #     search_quantity=f"data.atom_probe.reconstruction.config.tip_radius_zero#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Voltage Zero",
+                        #     search_quantity=f"data.atom_probe.reconstruction.config.voltage_zero#{schema}",
+                        # ),
+                    ],
+                ),
+                Menu(
+                    title="Authors",
+                    show_header=True,
+                    items=[
+                        # MenuItemTerms(
+                        #     title="User Name",
+                        #     search_quantity=f"data.userID.name#{schema}",
+                        # )
+                    ],
+                ),
+            ],
         ),
+        # controls the free area on the right-hand side for interactive search widgets
+        dashboard={
+            "widgets": [
+                {
+                    "type": "periodic_table",
+                    "scale": "linear",
+                    "title": "Periodic Table",
+                    "quantity": "results.material.elements",
+                    "layout": {
+                        "xxl": {
+                            "minH": 3,
+                            "minW": 3,
+                            "h": 11,
+                            "w": 16,
+                            "y": 0,
+                            "x": 16,
+                        },
+                        "xl": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0},
+                        "lg": {"minH": 3, "minW": 3, "h": 8, "w": 18, "y": 0, "x": 0},
+                        "md": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0},
+                        "sm": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0},
+                    },
+                },
+            ],
+        },
     ),
 )

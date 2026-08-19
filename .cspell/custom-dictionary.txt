@@ -75,6 +75,7 @@ blosc
 camecaroot
 cand
 caplog
+compositionspace
 creationtime
 csv
 dataconverter

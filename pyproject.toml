@@ -51,7 +51,7 @@ docs = [
     "pymdown-extensions",
     "mkdocs-click"
 ]
-nomad = ["nomad-lab[infrastructure]>=1.4.2"]
+nomad = ["nomad-lab[infrastructure]>=1.4.3"]
 ipynb = [
     "jupyter",
     "jupyterlab",
@@ -70,12 +70,13 @@ batch = [
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools-apm/issues"
+
 [project.entry-points.'pynxtools.reader']
 apm = "pynxtools_apm.reader:APMReader"
 
 [project.entry-points.'nomad.plugin']
-# apm_app = "pynxtools_apm.nomad.apps:apm_app"
 apm_example_upload = "pynxtools_apm.nomad.example_uploads:apm_example_upload"
+apm_app = "pynxtools_apm.nomad.apps:apm_app"
 
 [tool.uv]
 extra-index-url = [
