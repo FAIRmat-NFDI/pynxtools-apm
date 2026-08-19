@@ -28,7 +28,7 @@ jobs:
       - name: Install package
         run: |
           # Editable install is necessary for coveralls to work
-          uv pip install -e ".[dev]"
+          uv pip install -e ".[dev,batch]"
           uv pip install coverage coveralls
       - name: Install pynxtools master branch
         run: |

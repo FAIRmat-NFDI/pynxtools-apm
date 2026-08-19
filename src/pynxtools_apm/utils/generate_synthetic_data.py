@@ -389,7 +389,7 @@ class ApmCreateExampleData:
                 if (symbol in chemical_symbols) & (symbol != "X"):
                     unique_elements.add(str(symbol))
         logger.debug(f"Unique elements are: {list(unique_elements)}")
-        template[f"{trg}atom_types"] = ", ".join(list(unique_elements))
+        template[f"{trg}atom_types"] = ", ".join(sorted(list(unique_elements)))
 
         specimen_name = str(
             f"Mocked atom probe specimen {np.random.choice(1000, 1)[0]}"

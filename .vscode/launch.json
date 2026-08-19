@@ -6,10 +6,15 @@
     "configurations": [
         {
             "name": "pynx-apm debug",
-            "type": "python",  //"debugpy",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "../../.py3.13.12/bin/dataconverter",
+            "program": "${workspaceFolder}/../.py3.12.3/bin/dataconverter",
+            "python": "${workspaceFolder}/../.py3.12.3/bin/python",
+            "console": "integratedTerminal",
+            "env": {
+                "PYDEVD_CONTAINER_RANDOM_ACCESS_MAX_ITEMS": "10000"
+            },
             "args": [//"aus_sydney_bilal.0.oasis.specific.yaml",
                      //"aus_sydney_bilal.0.4.012706a5c5e11b32e5266f38262036e5fc8ed2cdeaaec94abcfa88fdbac9c94a.rrng",
                      //"../../CENEM_NOMAD/CorMic/szpzc11/apt/shank/Shank.apt",
