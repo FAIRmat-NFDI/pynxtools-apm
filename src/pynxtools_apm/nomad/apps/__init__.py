@@ -105,18 +105,18 @@ apm_app = AppEntryPoint(
             Column(title="Entry ID", search_quantity="entry_type", selected=True),
             Column(
                 title="Definition",
-                search_quantity=as_column(f"data.definition#{schema}"),
+                search_quantity=f"data.definition#{schema}",
                 selected=True,
             ),
+            Column(title="File Name", search_quantity="mainfile", selected=True),
             Column(
                 title="Start Time",
-                search_quantity=as_column(f"data.start_time#{schema}"),
+                search_quantity=f"data.start_time#{schema}",
                 selected=True,
             ),
-            # Column(title="File Name", search_quantity=as_column(f"data.file_name"), selected=True),
             Column(
                 title="Description",
-                search_quantity=as_column(f"data.description#{schema}"),
+                search_quantity=f"data.description#{schema}",
                 selected=True,
             ),
         ],
@@ -174,10 +174,11 @@ apm_app = AppEntryPoint(
                     title="Acquisition",
                     show_header=True,
                     items=[
-                        MenuItemTerms(
-                            title="Run Number",
-                            search_quantity=f"data.run_number#{schema}",
-                        ),
+                        # TODO: NXapm make run_number an NX_CHAR
+                        # MenuItemHistogram(
+                        #     title="Run Number",
+                        #     search_quantity=f"data.run_number#{schema}",
+                        # ),
                         MenuItemHistogram(
                             title="Elapsed Time",
                             x=f"data.elapsed_time#{schema}",
@@ -200,23 +201,23 @@ apm_app = AppEntryPoint(
                         ),
                         MenuItemHistogram(
                             title="Total Event Golden",
-                            x=f"data.atom_probe.hit_finding.total_event_golden#{schema}",
+                            x=f"data.atom_probeID[*].hit_finding.total_event_golden#{schema}",
                         ),
                         # MenuItemHistogram(
                         #     title="Total Event Incomplete",
-                        #     x=f"data.atom_probe.hit_finding.total_event_incomplete#{schema}",
+                        #     x=f"data.atom_probeID[*].hit_finding.total_event_incomplete#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Total Event Multiple",
-                        #     x=f"data.atom_probe.hit_finding.total_event_multiple#{schema}",
+                        #     x=f"data.atom_probeID[*].hit_finding.total_event_multiple#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Total Event Partials",
-                        #     x=f"data.atom_probe.hit_finding.total_event_partials#{schema}",
+                        #     x=f"data.atom_probeID[*].hit_finding.total_event_partials#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Total Event Record",
-                        #     x=f"data.atom_probe.hit_finding.total_event_record#{schema}",
+                        #     x=f"data.atom_probeID[*].hit_finding.total_event_record#{schema}",
                         # ),
                     ],
                 ),
@@ -226,7 +227,7 @@ apm_app = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Ion Name",
-                            search_quantity=f"data.atom_probe.ranging.peak_identification.ionID.name#{schema}",
+                            search_quantity=f"data.atom_probeID[*].ranging.peak_identification.ionID[*].name#{schema}",
                         ),
                     ],
                 ),
@@ -236,47 +237,47 @@ apm_app = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Primary Element",
-                            search_quantity=f"data.atom_probe.reconstruction.config.primary_element#{schema}",
+                            search_quantity=f"data.atom_probeID[*].reconstruction.config.primary_element#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Image Compression",
-                            x=f"data.atom_probe.reconstruction.config.image_compression#{schema}",
+                            x=f"data.atom_probeID[*].reconstruction.config.image_compression#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Kfactor",
-                            x=f"data.atom_probe.reconstruction.config.kfactor#{schema}",
+                            x=f"data.atom_probeID[*].reconstruction.config.kfactor#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Volume",
-                            x=f"data.atom_probe.reconstruction.volume#{schema}",
+                            x=f"data.atom_probeID[*].reconstruction.volume#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Efficiency",
-                            x=f"data.atom_probe.reconstruction.config.efficiency#{schema}",
+                            x=f"data.atom_probeID[*].reconstruction.config.efficiency#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Evaporation Field",
-                            x=f"data.atom_probe.reconstruction.config.evaporation_field#{schema}",
+                            x=f"data.atom_probeID[*].reconstruction.config.evaporation_field#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Flight Path",
-                            x=f"data.atom_probe.reconstruction.config.flight_path#{schema}",
+                            x=f"data.atom_probeID[*].reconstruction.config.flight_path#{schema}",
                         ),
                         MenuItemHistogram(
                             title="Shank Angle",
-                            x=f"data.atom_probe.reconstruction.config.shank_angle#{schema}",
+                            x=f"data.atom_probeID[*].reconstruction.config.shank_angle#{schema}",
                         ),
                         # MenuItemHistogram(
                         #     title="Tip Radius",
-                        #     x=f"data.atom_probe.reconstruction.config.tip_radius#{schema}",
+                        #     x=f"data.atom_probeID[*].reconstruction.config.tip_radius#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Tip Radius Zero",
-                        #     x=f"data.atom_probe.reconstruction.config.tip_radius_zero#{schema}",
+                        #     x=f"data.atom_probeID[*].reconstruction.config.tip_radius_zero#{schema}",
                         # ),
                         # MenuItemHistogram(
                         #     title="Voltage Zero",
-                        #     x=f"data.atom_probe.reconstruction.config.voltage_zero#{schema}",
+                        #     x=f"data.atom_probeID[*].reconstruction.config.voltage_zero#{schema}",
                         # ),
                     ],
                 ),
@@ -286,7 +287,7 @@ apm_app = AppEntryPoint(
                     items=[
                         # MenuItemTerms(
                         #     title="User Name",
-                        #     search_quantity=f"data.userID.name#{schema}",
+                        #     search_quantity=f"data.userID[*].name#{schema}",
                         # )
                     ],
                 ),
