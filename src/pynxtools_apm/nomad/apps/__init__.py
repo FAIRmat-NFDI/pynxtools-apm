@@ -165,7 +165,7 @@ apm_app = AppEntryPoint(
                             search_quantity=f"data.specimen.name#{schema}",
                         ),
                         # MenuItemTerms(
-                        #     title="Project Name",
+                        #     title="Experiment or Simulation",
                         #     search_quantity=f"data.specimen.is_simulation#{schema}",
                         # ),
                     ],
@@ -195,10 +195,10 @@ apm_app = AppEntryPoint(
                             title="Instrument Type",
                             search_quantity=f"data.measurement.instrument.type#{schema}",
                         ),
-                        MenuItemTerms(
-                            title="Instrument Serial Number",
-                            search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
-                        ),
+                        # MenuItemTerms(
+                        #     title="Instrument Serial Number",
+                        #     search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
+                        # ),
                         MenuItemHistogram(
                             title="Total Event Golden",
                             x=f"data.atom_probeID[*].hit_finding.total_event_golden#{schema}",
@@ -235,6 +235,7 @@ apm_app = AppEntryPoint(
                     title="Reconstruction",
                     show_header=True,
                     items=[
+                        """
                         MenuItemTerms(
                             title="Primary Element",
                             search_quantity=f"data.atom_probeID[*].reconstruction.config.primary_element#{schema}",
@@ -279,6 +280,7 @@ apm_app = AppEntryPoint(
                         #     title="Voltage Zero",
                         #     x=f"data.atom_probeID[*].reconstruction.config.voltage_zero#{schema}",
                         # ),
+                        """
                     ],
                 ),
                 Menu(
