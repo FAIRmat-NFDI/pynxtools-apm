@@ -317,10 +317,10 @@ apm_app = AppEntryPoint(
                     "quantity": "results.material.elements",
                     "layout": {
                         "xxl": {"minH": 3, "minW": 3, "h": 8, "w": 12, "y": 0, "x": 0},
-                        "xl": {"minH": 3, "minW": 3, "h": 8, "w": 12, "y": 4, "x": 0},
+                        "xl": {"minH": 3, "minW": 3, "h": 8, "w": 12, "y": 0, "x": 0},
                         "lg": {"minH": 3, "minW": 3, "h": 8, "w": 12, "y": 0, "x": 0},
                         "md": {"minH": 3, "minW": 3, "h": 8, "w": 12, "y": 0, "x": 0},
-                        "sm": {"minH": 3, "minW": 3, "h": 8, "w": 12, "y": 4, "x": 0},
+                        "sm": {"minH": 3, "minW": 3, "h": 8, "w": 12, "y": 0, "x": 0},
                     },
                 },
             ],
