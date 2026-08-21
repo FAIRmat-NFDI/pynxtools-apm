@@ -27,17 +27,22 @@ NOMAD registers dynamically mapped quantities only down to a fixed sub-section
 depth for allow-listed NeXus AppDefs.
 """
 
-from nomad.config.models.plugins import AppEntryPoint
-from nomad.config.models.ui import (
-    App,
-    Column,
-    Menu,
-    MenuItemHistogram,
-    MenuItemPeriodicTable,
-    MenuItemTerms,
-    MenuSizeEnum,
-    SearchQuantities,
-)
+try:
+    from nomad.config.models.plugins import AppEntryPoint
+    from nomad.config.models.ui import (
+        App,
+        Column,
+        Menu,
+        MenuItemHistogram,
+        MenuItemPeriodicTable,
+        MenuItemTerms,
+        MenuSizeEnum,
+        SearchQuantities,
+    )
+except ImportError as exc:
+    raise ImportError(
+        "Could not import nomad package. Please install the package 'nomad-lab'."
+    ) from exc
 
 schema = "pynxtools.nomad.metainfo.applications.Apm"
 
