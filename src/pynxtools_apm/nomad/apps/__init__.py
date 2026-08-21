@@ -116,8 +116,13 @@ apm_app = AppEntryPoint(
             ),
             Column(
                 title="Description",
-                search_quantity=f"data.description#{schema}",
+                search_quantity=f"data.experiment_description#{schema}",
                 selected=True,
+            ),
+            Column(
+                title="Description",
+                search_quantity=f"data.description#{schema}",
+                selected=False,
             ),
         ],
         # only entries to show
@@ -316,7 +321,7 @@ apm_app = AppEntryPoint(
                         },
                         "xl": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0},
                         "lg": {"minH": 3, "minW": 3, "h": 8, "w": 18, "y": 0, "x": 0},
-                        "md": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0},
+                        "md": {"minH": 3, "minW": 3, "h": 7, "w": 18, "y": 0, "x": 0},
                         "sm": {"minH": 3, "minW": 3, "h": 4, "w": 12, "y": 4, "x": 0},
                     },
                 },
