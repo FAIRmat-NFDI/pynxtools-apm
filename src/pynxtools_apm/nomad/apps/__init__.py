@@ -221,36 +221,6 @@ apm_app = AppEntryPoint(
                         # ),
                     ],
                 ),
-                Menu(
-                    title="Ranging",
-                    show_header=True,
-                    items=[
-                        MenuItemTerms(
-                            title="Ion Name",
-                            search_quantity=f"data.atom_probeID[*].ranging.peak_identification.ionID[*].name#{schema}",
-                        ),
-                    ],
-                ),
-                Menu(
-                    title="Reconstruction",
-                    show_header=True,
-                    items=[
-                        MenuItemTerms(
-                            title="Primary Element",
-                            search_quantity=f"data.atom_probeID[*].reconstruction.config.primary_element#{schema}",
-                        ),
-                    ],
-                ),
-                Menu(
-                    title="Authors",
-                    show_header=True,
-                    items=[
-                        MenuItemTerms(
-                            title="User Name",
-                            search_quantity=f"data.userID[*].name#{schema}",
-                        ),
-                    ],
-                ),
             ],
         ),
         # controls the free area on the right-hand side for interactive search widgets
