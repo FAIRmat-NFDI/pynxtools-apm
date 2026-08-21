@@ -187,10 +187,10 @@ apm_app = AppEntryPoint(
                         #     title="Pulse Mode",
                         #     search_quantity=f"data.measurement.eventID.instrument.pulser.pulse_mode#{schema}",
                         # ),
-                        # MenuItemTerms(
-                        #     title="Local Electrode",
-                        #     search_quantity=f"data.measurement.instrument.local_electrode.name#{schema}",
-                        # ),
+                        MenuItemTerms(
+                            title="Local Electrode",
+                            search_quantity=f"data.measurement.instrument.local_electrode.name#{schema}",
+                        ),
                         MenuItemTerms(
                             title="Instrument Type",
                             search_quantity=f"data.measurement.instrument.type#{schema}",
