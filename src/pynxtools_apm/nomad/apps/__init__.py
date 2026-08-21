@@ -235,11 +235,11 @@ apm_app = AppEntryPoint(
                     title="Reconstruction",
                     show_header=True,
                     items=[
-                        """
                         MenuItemTerms(
                             title="Primary Element",
                             search_quantity=f"data.atom_probeID[*].reconstruction.config.primary_element#{schema}",
                         ),
+                        """
                         MenuItemHistogram(
                             title="Image Compression",
                             x=f"data.atom_probeID[*].reconstruction.config.image_compression#{schema}",
@@ -280,17 +280,17 @@ apm_app = AppEntryPoint(
                         #     title="Voltage Zero",
                         #     x=f"data.atom_probeID[*].reconstruction.config.voltage_zero#{schema}",
                         # ),
-                        """
+                        """,
                     ],
                 ),
                 Menu(
                     title="Authors",
                     show_header=True,
                     items=[
-                        # MenuItemTerms(
-                        #     title="User Name",
-                        #     search_quantity=f"data.userID[*].name#{schema}",
-                        # )
+                        MenuItemTerms(
+                            title="User Name",
+                            search_quantity=f"data.userID[*].name#{schema}",
+                        ),
                     ],
                 ),
             ],
