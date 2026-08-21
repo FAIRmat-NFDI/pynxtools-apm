@@ -192,18 +192,18 @@ apm_app = AppEntryPoint(
                         #     title="Pulse Mode",
                         #     search_quantity=f"data.measurement.eventID.instrument.pulser.pulse_mode#{schema}",
                         # ),
-                        MenuItemTerms(
-                            title="Local Electrode",
-                            search_quantity=f"data.measurement.instrument.local_electrode.name#{schema}",
-                        ),
+                        # MenuItemTerms(
+                        #     title="Local Electrode",
+                        #     search_quantity=f"data.measurement.instrument.local_electrode.name#{schema}",
+                        # ),
                         MenuItemTerms(
                             title="Instrument Type",
                             search_quantity=f"data.measurement.instrument.type#{schema}",
                         ),
-                        MenuItemTerms(
-                            title="Instrument Serial Number",
-                            search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
-                        ),
+                        # MenuItemTerms(
+                        #     title="Instrument Serial Number",
+                        #     search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
+                        # ),
                         MenuItemHistogram(
                             title="Total Event Golden",
                             x=f"data.atom_probeID.hit_finding.total_event_golden#{schema}",
@@ -243,38 +243,34 @@ apm_app = AppEntryPoint(
                             title="Volume",
                             x=f"data.atom_probeID.reconstruction.volume#{schema}",
                         ),
-                        MenuItemTerms(
-                            title="Primary Element",
-                            search_quantity=f"data.atom_probeID.reconstruction.config.primary_element#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Image Compression",
-                            x=f"data.atom_probeID.reconstruction.config.image_compression#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Kfactor",
-                            x=f"data.atom_probeID.reconstruction.config.kfactor#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Volume",
-                            x=f"data.atom_probeID.reconstruction.volume#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Efficiency",
-                            x=f"data.atom_probeID.reconstruction.config.efficiency#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Evaporation Field",
-                            x=f"data.atom_probeID.reconstruction.config.evaporation_field#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Flight Path",
-                            x=f"data.atom_probeID.reconstruction.config.flight_path#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Shank Angle",
-                            x=f"data.atom_probeID.reconstruction.config.shank_angle#{schema}",
-                        ),
+                        # MenuItemTerms(
+                        #     title="Primary Element",
+                        #     search_quantity=f"data.atom_probeID.reconstruction.config.primary_element#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Image Compression",
+                        #     x=f"data.atom_probeID.reconstruction.config.image_compression#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Kfactor",
+                        #     x=f"data.atom_probeID.reconstruction.config.kfactor#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Efficiency",
+                        #     x=f"data.atom_probeID.reconstruction.config.efficiency#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Evaporation Field",
+                        #     x=f"data.atom_probeID.reconstruction.config.evaporation_field#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Flight Path",
+                        #     x=f"data.atom_probeID.reconstruction.config.flight_path#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Shank Angle",
+                        #     x=f"data.atom_probeID.reconstruction.config.shank_angle#{schema}",
+                        # ),
                         # MenuItemHistogram(
                         #     title="Tip Radius",
                         #     x=f"data.atom_probeID.reconstruction.config.tip_radius#{schema}",
