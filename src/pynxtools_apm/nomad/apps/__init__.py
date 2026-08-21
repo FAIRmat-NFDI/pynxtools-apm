@@ -199,10 +199,10 @@ apm_app = AppEntryPoint(
                         #     title="Instrument Serial Number",
                         #     search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
                         # ),
-                        MenuItemHistogram(
-                            title="Total Event Golden",
-                            x=f"data.atom_probeID[*].hit_finding.total_event_golden#{schema}",
-                        ),
+                        # MenuItemHistogram(
+                        #    title="Total Event Golden",
+                        #     x=f"data.atom_probeID[*].hit_finding.total_event_golden#{schema}",
+                        # ),
                         # MenuItemHistogram(
                         #     title="Total Event Incomplete",
                         #     x=f"data.atom_probeID[*].hit_finding.total_event_incomplete#{schema}",
