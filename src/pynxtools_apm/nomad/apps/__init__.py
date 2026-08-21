@@ -236,16 +236,16 @@ apm_app = AppEntryPoint(
                         ),
                     ],
                 ),
-                Menu(
-                    title="Ranging",
-                    show_header=True,
-                    items=[
-                        MenuItemTerms(
-                            title="Ion Name",
-                            search_quantity=f"data.atom_probeID.ranging.peak_identification.ionID.name#{schema}",
-                        ),
-                    ],
-                ),
+                # Menu(
+                #     title="Ranging",
+                #     show_header=True,
+                #     items=[
+                #         MenuItemTerms(
+                #             title="Ion Name",
+                #             search_quantity=f"data.atom_probeID.ranging.peak_identification.ionID.name#{schema}",
+                #         ),
+                #     ],
+                # ),
                 Menu(
                     title="Reconstruction",
                     show_header=True,
