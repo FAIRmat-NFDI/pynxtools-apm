@@ -174,6 +174,11 @@ apm_app = AppEntryPoint(
                     title="Acquisition",
                     show_header=True,
                     items=[
+                        # TODO: note that currently https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR/-/blob/develop/nomad/metainfo/elasticsearch_extension.py#L592
+                        # restricts the traversal depth to at most four layers (3 + 1) e.g.
+                        # "data.atom_probeID.hit_finding.total_event_golden" gets into the index
+                        # "data.measurement.instrument.local_electrode.name#{schema}" gets not unless setting max_level = 4
+                        # NOTE THOUGH THAT increasing max_level non-linearly increases memory consumption and slows down startup!
                         # TODO: NXapm make run_number an NX_CHAR
                         # MenuItemHistogram(
                         #     title="Run Number",
@@ -195,32 +200,41 @@ apm_app = AppEntryPoint(
                             title="Instrument Type",
                             search_quantity=f"data.measurement.instrument.type#{schema}",
                         ),
-                        # MenuItemTerms(
-                        #     title="Instrument Serial Number",
-                        #     search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
-                        # ),
-                        # MenuItemHistogram(
-                        #    title="Total Event Golden",
-                        #     x=f"data.atom_probeID[*].hit_finding.total_event_golden#{schema}",
-                        # ),
-                        # MenuItemHistogram(
-                        #     title="Total Event Incomplete",
-                        #     x=f"data.atom_probeID[*].hit_finding.total_event_incomplete#{schema}",
-                        # ),
-                        # MenuItemHistogram(
-                        #     title="Total Event Multiple",
-                        #     x=f"data.atom_probeID[*].hit_finding.total_event_multiple#{schema}",
-                        # ),
-                        # MenuItemHistogram(
-                        #     title="Total Event Partials",
-                        #     x=f"data.atom_probeID[*].hit_finding.total_event_partials#{schema}",
-                        # ),
-                        # MenuItemHistogram(
-                        #     title="Total Event Record",
-                        #     x=f"data.atom_probeID[*].hit_finding.total_event_record#{schema}",
-                        # ),
+                        MenuItemTerms(
+                            title="Instrument Serial Number",
+                            search_quantity=f"data.measurement.instrument.fabrication.serial_number#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Total Event Golden",
+                            x=f"data.atom_probeID.hit_finding.total_event_golden#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Total Event Incomplete",
+                            x=f"data.atom_probeID.hit_finding.total_event_incomplete#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Total Event Multiple",
+                            x=f"data.atom_probeID.hit_finding.total_event_multiple#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Total Event Partials",
+                            x=f"data.atom_probeID.hit_finding.total_event_partials#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Total Event Record",
+                            x=f"data.atom_probeID.hit_finding.total_event_record#{schema}",
+                        ),
                     ],
                 ),
+                # Menu(
+                #     title="Ranging",
+                #     show_header=True,
+                #     items=[
+                #         MenuItemTerms(
+                #             title="Ion Name",
+                #             search_quantity=f"data.atom_probeID.ranging.peak_identification.ionID.name#{schema}",
+                #         ),
+                #     ],
                 Menu(
                     title="Reconstruction",
                     show_header=True,
@@ -229,6 +243,50 @@ apm_app = AppEntryPoint(
                             title="Volume",
                             x=f"data.atom_probeID.reconstruction.volume#{schema}",
                         ),
+                        MenuItemTerms(
+                            title="Primary Element",
+                            search_quantity=f"data.atom_probeID.reconstruction.config.primary_element#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Image Compression",
+                            x=f"data.atom_probeID.reconstruction.config.image_compression#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Kfactor",
+                            x=f"data.atom_probeID.reconstruction.config.kfactor#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Volume",
+                            x=f"data.atom_probeID.reconstruction.volume#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Efficiency",
+                            x=f"data.atom_probeID.reconstruction.config.efficiency#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Evaporation Field",
+                            x=f"data.atom_probeID.reconstruction.config.evaporation_field#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Flight Path",
+                            x=f"data.atom_probeID.reconstruction.config.flight_path#{schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Shank Angle",
+                            x=f"data.atom_probeID.reconstruction.config.shank_angle#{schema}",
+                        ),
+                        # MenuItemHistogram(
+                        #     title="Tip Radius",
+                        #     x=f"data.atom_probeID.reconstruction.config.tip_radius#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Tip Radius Zero",
+                        #     x=f"data.atom_probeID.reconstruction.config.tip_radius_zero#{schema}",
+                        # ),
+                        # MenuItemHistogram(
+                        #     title="Voltage Zero",
+                        #     x=f"data.atom_probeID.reconstruction.config.voltage_zero#{schema}",
+                        # ),
                     ],
                 ),
                 Menu(
