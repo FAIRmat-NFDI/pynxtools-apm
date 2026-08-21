@@ -239,48 +239,6 @@ apm_app = AppEntryPoint(
                             title="Primary Element",
                             search_quantity=f"data.atom_probeID[*].reconstruction.config.primary_element#{schema}",
                         ),
-                        """
-                        MenuItemHistogram(
-                            title="Image Compression",
-                            x=f"data.atom_probeID[*].reconstruction.config.image_compression#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Kfactor",
-                            x=f"data.atom_probeID[*].reconstruction.config.kfactor#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Volume",
-                            x=f"data.atom_probeID[*].reconstruction.volume#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Efficiency",
-                            x=f"data.atom_probeID[*].reconstruction.config.efficiency#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Evaporation Field",
-                            x=f"data.atom_probeID[*].reconstruction.config.evaporation_field#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Flight Path",
-                            x=f"data.atom_probeID[*].reconstruction.config.flight_path#{schema}",
-                        ),
-                        MenuItemHistogram(
-                            title="Shank Angle",
-                            x=f"data.atom_probeID[*].reconstruction.config.shank_angle#{schema}",
-                        ),
-                        # MenuItemHistogram(
-                        #     title="Tip Radius",
-                        #     x=f"data.atom_probeID[*].reconstruction.config.tip_radius#{schema}",
-                        # ),
-                        # MenuItemHistogram(
-                        #     title="Tip Radius Zero",
-                        #     x=f"data.atom_probeID[*].reconstruction.config.tip_radius_zero#{schema}",
-                        # ),
-                        # MenuItemHistogram(
-                        #     title="Voltage Zero",
-                        #     x=f"data.atom_probeID[*].reconstruction.config.voltage_zero#{schema}",
-                        # ),
-                        """,
                     ],
                 ),
                 Menu(
