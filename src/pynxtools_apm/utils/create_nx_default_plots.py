@@ -123,8 +123,8 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     template[f"{trg}@signal"] = "intensity"
     template[f"{trg}@default_slice"] = [
         ".",
-        f"{icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
         ".",
+        f"{icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
     ]
     # there is an issue lately with H5Web in how it reads default_slice
     # both options, the above-mentioned and this one should work but with
