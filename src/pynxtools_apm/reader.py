@@ -33,7 +33,7 @@ from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
 from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
 from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
-from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
+from pynxtools_apm.utils.default_plot import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
 from pynxtools_apm.utils.profiling import simple_profiling

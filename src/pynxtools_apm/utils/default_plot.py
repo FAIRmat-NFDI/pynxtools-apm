@@ -49,13 +49,6 @@ def decorate_path_to_default_plot(template: dict, nxpath: str) -> dict:
     return template
 
 
-def iedge(imi, imx, resolution):
-    """Generate linearly-spaced support positions."""
-    return np.linspace(
-        imi, imx, num=int(np.ceil((imx - imi) / resolution)) + 1, endpoint=True
-    )
-
-
 def icenter(imi, imx, resolution):
     """Generate approximate center of linearly-spaced support positions."""
     return int(np.ceil((imx - imi) / resolution) / 2) + 1
@@ -76,15 +69,14 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         "yedge": None,
         "zedge": None,
     }
-    col = 0
+
     logger.debug("reconstruction aabb3d")
-    for dim in ["x", "y", "z"]:
-        aabb[f"{dim}"] = [np.min(xyz[:, col]), np.max(xyz[:, col])]
-        logger.debug(f"\t{dim}: {aabb[f'''{dim}''']}")
-        imi = np.floor(aabb[f"{dim}"][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
-        imx = np.ceil(aabb[f"{dim}"][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
-        aabb[f"{dim}edge"] = iedge(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
-        col += 1
+    for col, dim in enumerate(["x", "y", "z"]):
+        aabb[dim] = [np.min(xyz[:, col]), np.max(xyz[:, col])]
+        logger.debug(f"\t{dim}: {aabb[dim]}")
+        imi = np.floor(aabb[dim][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
+        imx = np.ceil(aabb[dim][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
+        aabb[f"{dim}edge"] = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)) + 1, endpoint=True)
 
     # the aabb[f"{dim}edge"] works directly on reconstructed position data if these
     # proper very vast edges the resulting grid may end up with too many support points
@@ -99,7 +91,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         )
         return template
 
-    hist3d = np.histogramdd(
+    hist3d, edges = np.histogramdd(
         (xyz[:, 0], xyz[:, 1], xyz[:, 2]),
         bins=(aabb["xedge"], aabb["yedge"], aabb["zedge"]),
     )
@@ -121,9 +113,10 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     template[f"{trg}title"] = "Discretized reconstruction space"
     # template[f"{trg}@long_name"] = "Discretized reconstruction space"
     template[f"{trg}@signal"] = "intensity"
+    slicing_position = int((0.5 * np.ceil(np.ceil(aabb['y'][1] + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude) - np.floor(aabb['y'][0] - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude))) / NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude) + 1
     template[f"{trg}@default_slice"] = [
         ".",
-        f"{icenter(np.floor(aabb['y'][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude, np.ceil(aabb['y'][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
+        f"{slicing_position} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
         ".",
     ]
     # there is an issue lately with H5Web in how it reads default_slice
@@ -141,8 +134,8 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     axes = []
     for col, dim in enumerate(dims):
         axes.append(f"axis_{dim}")
-        template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = 2 - np.uint32(col)
-    template[f"{trg}@axes"] = ["z", "y", "x"]
+        template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = np.uint32(col)  # 2 - np.uint32(col)
+    template[f"{trg}@axes"] = axes
 
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the application definition
