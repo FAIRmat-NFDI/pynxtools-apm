@@ -123,8 +123,8 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     template[f"{trg}@signal"] = "intensity"
     template[f"{trg}@default_slice"] = [
         ".",
+        f"{icenter(np.floor(aabb['y'][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude, np.ceil(aabb['y'][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
         ".",
-        f"{icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
     ]
     # there is an issue lately with H5Web in how it reads default_slice
     # both options, the above-mentioned and this one should work but with
@@ -141,7 +141,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     axes = []
     for col, dim in enumerate(dims):
         axes.append(f"axis_{dim}")
-        template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = np.uint32(col)
+        template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = 2 - np.uint32(col)
     template[f"{trg}@axes"] = axes
 
     # mind that histogram does not follow Cartesian conventions so a transpose
