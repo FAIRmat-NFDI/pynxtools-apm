@@ -142,7 +142,7 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     for col, dim in enumerate(dims):
         axes.append(f"axis_{dim}")
         template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = 2 - np.uint32(col)
-    template[f"{trg}@axes"] = axes
+    template[f"{trg}@axes"] = ["z", "y", "x"]
 
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the application definition
