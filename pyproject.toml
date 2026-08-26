@@ -29,7 +29,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "mypy",
+    "mypy>=1.20.2",
     "ruff>=0.15",
     "pytest",
     "pytest-cov",
@@ -40,6 +40,7 @@ dev = [
     "types-requests",
     "pre-commit",
     "cruft",
+    "requests",
     # "py-cpuinfo",
 ]
 docs = [
@@ -50,7 +51,7 @@ docs = [
     "pymdown-extensions",
     "mkdocs-click"
 ]
-nomad = ["nomad-lab[infrastructure]>=1.4.2"]
+nomad = ["nomad-lab[infrastructure]>=1.4.3"]
 ipynb = [
     "jupyter",
     "jupyterlab",
@@ -63,18 +64,19 @@ batch = [
     "pycountry",
     "rarfile",
     "py7zr<1.0.0",
-    "requests"
+    "requests",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools-apm/issues"
+
 [project.entry-points.'pynxtools.reader']
 apm = "pynxtools_apm.reader:APMReader"
 
 [project.entry-points.'nomad.plugin']
-# apm_app = "pynxtools_apm.nomad.apps:apm_app"
 apm_example_upload = "pynxtools_apm.nomad.example_uploads:apm_example_upload"
+apm_app = "pynxtools_apm.nomad.apps:apm_app"
 
 [tool.uv]
 extra-index-url = [
@@ -129,6 +131,9 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"**/*.py" = ["PLR0917"]
 
 [tool.mypy]
 strict = false

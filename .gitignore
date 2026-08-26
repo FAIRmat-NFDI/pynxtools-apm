@@ -192,7 +192,7 @@ cython_debug/
 
 
 # Custom settings
-
+*.nxs
 .mypy_cache/
 .pyenv
 *.pyc
@@ -204,7 +204,24 @@ debug/
 dbg/
 tests/run_tests.sh
 .virtual_documents
-tests/data
+tests/*.analysisset
+tests/*.env
+tests/*.csv
+tests/*.pos
+tests/*.h5
+tests/*.ato
+tests/*.hdf5
+tests/*.apt
+tests/*.analysis
+tests/*.ops
+tests/*.rng
+tests/*.rrng
+tests/*.raw
+# !tests
+# !tests/data
+!tests/data/env
+!tests/data/env/nor_trondheim_hatzeglou
+!tests/data/env/nor_trondheim_hatzeglou/nor_trondheim_hatzeglou.dee6cee52f7e8510fa88b5bcd82754a3e151e3ef45248d1336b562c3d42f43f2.env
 tests/prod
 examples/oasisb/openalex/
 examples/oasisb/batch_script.sh
