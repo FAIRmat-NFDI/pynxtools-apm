@@ -76,7 +76,12 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         logger.debug(f"\t{dim}: {aabb[dim]}")
         imi = np.floor(aabb[dim][0]) - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
         imx = np.ceil(aabb[dim][1]) + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
-        aabb[f"{dim}edge"] = np.linspace(imi, imx, num=int(np.ceil((imx - imi) / NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)) + 1, endpoint=True)
+        aabb[f"{dim}edge"] = np.linspace(
+            imi,
+            imx,
+            num=int(np.ceil((imx - imi) / NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)) + 1,
+            endpoint=True,
+        )
 
     # the aabb[f"{dim}edge"] works directly on reconstructed position data if these
     # proper very vast edges the resulting grid may end up with too many support points
@@ -91,17 +96,18 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
         )
         return template
 
-    hist3d, edges = np.histogramdd(
+    hist3d = np.histogramdd(
         (xyz[:, 0], xyz[:, 1], xyz[:, 2]),
         bins=(aabb["xedge"], aabb["yedge"], aabb["zedge"]),
     )
     del xyz
-    if isinstance(hist3d[0], np.ndarray) is False or len(np.shape(hist3d[0])) != 3:
+    if (
+        isinstance(hist3d[0], np.ndarray) is False
+        or len(np.shape(hist3d[0])) != 3
+        or not all([np.shape(hist3d[0])[col] for col in (0, 1, 2)])
+    ):
         logger.warning("Hist3d computation from the reconstruction failed")
         return template
-    for idx in [0, 1, 2]:
-        if np.shape(hist3d[0])[idx] == 0:
-            raise ValueError(f"Dimensions {idx} has no length")
 
     trg = f"/ENTRY[entry{entry_id}]/atom_probeID[atom_probe]/reconstruction/naive_discretization/"
     template[f"{trg}programID[program1]/program"] = "pynxtools-apm"
@@ -113,7 +119,19 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     template[f"{trg}title"] = "Discretized reconstruction space"
     # template[f"{trg}@long_name"] = "Discretized reconstruction space"
     template[f"{trg}@signal"] = "intensity"
-    slicing_position = int((0.5 * np.ceil(np.ceil(aabb['y'][1] + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude) - np.floor(aabb['y'][0] - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude))) / NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude) + 1
+    slicing_position = (
+        int(
+            (
+                0.5
+                * np.ceil(
+                    np.ceil(aabb["y"][1] + NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
+                    - np.floor(aabb["y"][0] - NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
+                )
+            )
+            / NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude
+        )
+        + 1
+    )
     template[f"{trg}@default_slice"] = [
         ".",
         f"{slicing_position} {NAIVE_GRID_DEFAULT_VOXEL_SIZE.units}",
@@ -130,23 +148,30 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     #         icenter(imi, imx, NAIVE_GRID_DEFAULT_VOXEL_SIZE.magnitude)
     #     )
 
-    dims = ["x", "y", "z"]
+    dims = ["z", "y", "x"]
     axes = []
     for col, dim in enumerate(dims):
         axes.append(f"axis_{dim}")
-        template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = np.uint32(col)  # 2 - np.uint32(col)
+        # indices are redundant for this example but we make it explicit
+        template[f"{trg}@AXISNAME_indices[@axis_{dim}_indices]"] = np.uint32(col)
     template[f"{trg}@axes"] = axes
 
     # mind that histogram does not follow Cartesian conventions so a transpose
     # might be necessary, for now we implement the transpose in the application definition
+    zyx_storage = np.array(hist3d[0], np.uint32).transpose(2, 1, 0)
+    # TODO: transpose is to align with the NXapm constraint (n_z, n_y, n_x) on ../axes concept
+    # importantly, this will display the reconstruction axis upright while in <=0.5.3
+    # versions they the display was aligned horizontally, the latter fits better
+    # the wide screen display of NOMAD, but the hard constrain (n_z, n_y, n_x) on axis
+    # correctly is reported inconsistent in validation when rendered without transpose,
+    # i.e. (n_x, n_y, n_z), whereby the display would be as with <=0.5.3 versions
     template[f"{trg}intensity"] = {
-        "compress": np.asarray(hist3d[0], np.uint32),
+        "compress": zyx_storage,
         "filter": FAST_COMPRESSION_FILTER,
         "strength": DEFAULT_COMPRESSION_LEVEL,
-        "chunks": prioritized_axes_heuristic(
-            np.asarray(hist3d[0], np.uint32), (0, 1, 2)
-        ),
+        "chunks": prioritized_axes_heuristic(zyx_storage, (0, 1, 2)),
     }
+    dims = ["x", "y", "z"]
     for col, dim in enumerate(dims):
         template[f"{trg}AXISNAME[axis_{dim}]"] = {
             "compress": np.asarray(hist3d[1][col][1::], np.float32),
