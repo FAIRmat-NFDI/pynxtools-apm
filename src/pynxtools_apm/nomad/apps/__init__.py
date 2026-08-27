@@ -44,7 +44,7 @@ except ImportError as exc:
         "Could not import nomad package. Please install the package 'nomad-lab'."
     ) from exc
 
-schema = "pynxtools.nomad.metainfo.applications.Apm"
+apm_schema = "pynxtools.nomad.metainfo.applications.Apm"
 
 # sub-sections that repeat, i.e. that the archive stores as a list. Only these
 # take a JMESPath projection in a column; the rest must not, or the cell
@@ -95,7 +95,7 @@ def as_column(quantity: str) -> str:
 
 apm_app = AppEntryPoint(
     name="ApmApp",
-    description="A Generic NOMAD App for Atom Probe Tomography.",
+    description="A NOMAD App for Atom Probe Tomography.",
     app=App(
         # basic configuration
         label="APM",
@@ -103,35 +103,35 @@ apm_app = AppEntryPoint(
         category="Experiment",
         description="A search app customized for atom probe experiments.",
         search_quantities=SearchQuantities(
-            include=[f"*#{schema}"],
+            include=[f"*#{apm_schema}"],
         ),
         # controls which columns are shown in the results table
         columns=[
             Column(title="Entry ID", search_quantity="entry_type", selected=True),
             Column(
                 title="Definition",
-                search_quantity=f"data.definition#{schema}",
+                search_quantity=f"data.definition#{apm_schema}",
                 selected=True,
             ),
             Column(title="File Name", search_quantity="mainfile", selected=True),
             Column(
                 title="Start Time",
-                search_quantity=f"data.start_time#{schema}",
+                search_quantity=f"data.start_time#{apm_schema}",
                 selected=True,
             ),
             Column(
                 title="Experiment Description",
-                search_quantity=f"data.experiment_description#{schema}",
+                search_quantity=f"data.experiment_description#{apm_schema}",
                 selected=True,
             ),
             Column(
                 title="Description",
-                search_quantity=f"data.description#{schema}",
+                search_quantity=f"data.description#{apm_schema}",
                 selected=False,
             ),
         ],
         # only entries to show
-        filters_locked={"section_defs.definition_qualified_name": [schema]},
+        filters_locked={"section_defs.definition_qualified_name": [apm_schema]},
         # controls the menu on the left-hand side
         menu=Menu(
             title="Filters",
@@ -158,11 +158,11 @@ apm_app = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Definition",
-                            search_quantity=f"data.definition#{schema}",
+                            search_quantity=f"data.definition#{apm_schema}",
                         ),
                         MenuItemTerms(
                             title="Project Name",
-                            search_quantity=f"data.project.name#{schema}",
+                            search_quantity=f"data.project.name#{apm_schema}",
                         ),
                     ],
                 ),
@@ -172,7 +172,7 @@ apm_app = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="Name",
-                            search_quantity=f"data.specimen.name#{schema}",
+                            search_quantity=f"data.specimen.name#{apm_schema}",
                         ),
                         # MenuItemTerms(
                         #     title="Experiment or Simulation",
@@ -196,7 +196,7 @@ apm_app = AppEntryPoint(
                         # ),
                         MenuItemHistogram(
                             title="Elapsed Time",
-                            x=f"data.elapsed_time#{schema}",
+                            x=f"data.elapsed_time#{apm_schema}",
                         ),
                         # MenuItemTerms(
                         #     title="Pulse Mode",
@@ -208,7 +208,7 @@ apm_app = AppEntryPoint(
                         # ),
                         MenuItemTerms(
                             title="Instrument Type",
-                            search_quantity=f"data.measurement.instrument.type#{schema}",
+                            search_quantity=f"data.measurement.instrument.type#{apm_schema}",
                         ),
                         # MenuItemTerms(
                         #     title="Instrument Serial Number",
@@ -216,23 +216,23 @@ apm_app = AppEntryPoint(
                         # ),
                         MenuItemHistogram(
                             title="Total Event Golden",
-                            x=f"data.atom_probeID.hit_finding.total_event_golden#{schema}",
+                            x=f"data.atom_probeID.hit_finding.total_event_golden#{apm_schema}",
                         ),
                         MenuItemHistogram(
                             title="Total Event Incomplete",
-                            x=f"data.atom_probeID.hit_finding.total_event_incomplete#{schema}",
+                            x=f"data.atom_probeID.hit_finding.total_event_incomplete#{apm_schema}",
                         ),
                         MenuItemHistogram(
                             title="Total Event Multiple",
-                            x=f"data.atom_probeID.hit_finding.total_event_multiple#{schema}",
+                            x=f"data.atom_probeID.hit_finding.total_event_multiple#{apm_schema}",
                         ),
                         MenuItemHistogram(
                             title="Total Event Partials",
-                            x=f"data.atom_probeID.hit_finding.total_event_partials#{schema}",
+                            x=f"data.atom_probeID.hit_finding.total_event_partials#{apm_schema}",
                         ),
                         MenuItemHistogram(
                             title="Total Event Record",
-                            x=f"data.atom_probeID.hit_finding.total_event_record#{schema}",
+                            x=f"data.atom_probeID.hit_finding.total_event_record#{apm_schema}",
                         ),
                     ],
                 ),
@@ -251,7 +251,7 @@ apm_app = AppEntryPoint(
                     items=[
                         MenuItemHistogram(
                             title="Volume",
-                            x=f"data.atom_probeID.reconstruction.volume#{schema}",
+                            x=f"data.atom_probeID.reconstruction.volume#{apm_schema}",
                         ),
                         # MenuItemTerms(
                         #     title="Primary Element",
@@ -301,7 +301,7 @@ apm_app = AppEntryPoint(
                     items=[
                         MenuItemTerms(
                             title="User Name",
-                            search_quantity=f"data.userID.name#{schema}",
+                            search_quantity=f"data.userID.name#{apm_schema}",
                         ),
                     ],
                 ),
@@ -325,5 +325,191 @@ apm_app = AppEntryPoint(
                 },
             ],
         },
+    ),
+)
+
+
+prefix = "pynxtools.nomad.metainfo"
+# schema = f"{prefix}.base_classes.Entry"
+tool_cfg_schema = f"{prefix}.applications.ApmParaprobeToolConfig"
+tool_res_schema = f"{prefix}.applications.ApmParaprobeToolResults"
+ranger_cfg_schema = f"{prefix}.applications.ApmParaprobeRangerConfig"
+ranger_res_schema = f"{prefix}.applications.ApmParaprobeRangerResults"
+selector_cfg_schema = f"{prefix}.applications.ApmParaprobeSelectorConfig"
+selector_res_schema = f"{prefix}.applications.ApmParaprobeSelectorResults"
+surfacer_cfg_schema = f"{prefix}.applications.ApmParaprobeSurfacerConfig"
+surfacer_res_schema = f"{prefix}.applications.ApmParaprobeSurfacerResults"
+distancer_cfg_schema = f"{prefix}.applications.ApmParaprobeDistancerConfig"
+distancer_res_schema = f"{prefix}.applications.ApmParaprobeDistancerResults"
+tessellator_cfg_schema = f"{prefix}.applications.ApmParaprobeTessellatorConfig"
+tessellator_res_schema = f"{prefix}.applications.ApmParaprobeTessellatorResults"
+spatstat_cfg_schema = f"{prefix}.applications.ApmParaprobeSpatstatConfig"
+spatstat_res_schema = f"{prefix}.applications.ApmParaprobeSpatstatResults"
+nanochem_cfg_schema = f"{prefix}.applications.ApmParaprobeNanochemConfig"
+nanochem_res_schema = f"{prefix}.applications.ApmParaprobeNanochemResults"
+intersector_cfg_schema = f"{prefix}.applications.ApmParaprobeIntersectorConfig"
+intersector_res_schema = f"{prefix}.applications.ApmParaprobeIntersectorResults"
+clusterer_cfg_schema = f"{prefix}.applications.ApmParaprobeClustererConfig"
+clusterer_res_schema = f"{prefix}.applications.ApmParaprobeClustererResults"
+
+
+paraprobe_app = AppEntryPoint(
+    name="ParaprobeToolboxApp",
+    description="A NOMAD App for paraprobe-toolbox.",
+    app=App(
+        # basic configuration
+        label="PARAPROBE",
+        path="paraprobe_app",
+        category="Experiment",
+        description="A search app customized for paraprobe-toolbox.",
+        search_quantities=SearchQuantities(
+            include=[
+                # f"*#{base_schema}",
+                f"*#{tool_cfg_schema}",
+                f"*#{tool_res_schema}",
+                f"*#{ranger_cfg_schema}",
+                f"*#{ranger_res_schema}",
+                f"*#{selector_cfg_schema}",
+                f"*#{selector_res_schema}",
+                f"*#{surfacer_cfg_schema}",
+                f"*#{surfacer_res_schema}",
+                f"*#{distancer_cfg_schema}",
+                f"*#{distancer_res_schema}",
+                f"*#{tessellator_cfg_schema}",
+                f"*#{tessellator_res_schema}",
+                f"*#{spatstat_cfg_schema}",
+                f"*#{spatstat_res_schema}",
+                f"*#{nanochem_cfg_schema}",
+                f"*#{nanochem_res_schema}",
+                f"*#{intersector_cfg_schema}",
+                f"*#{intersector_res_schema}",
+                f"*#{clusterer_cfg_schema}",
+                f"*#{clusterer_res_schema}",
+            ],
+        ),
+        # controls which columns are shown in the results table
+        columns=[
+            Column(title="Entry ID", search_quantity="entry_type", selected=True),
+            # Column(
+            #     title="Definition",
+            #     search_quantity=f"data.definition#{schema}",
+            #     selected=True,
+            # ),
+            Column(title="File Name", search_quantity="mainfile", selected=True),
+            # Column(
+            #     title="Start Time",
+            #     search_quantity=f"data.start_time#{_schema}",
+            #     selected=True,
+            # ),
+            # Column(
+            #     title="Experiment Description",
+            #     search_quantity=f"data.experiment_description#{paraprobe_schema}",
+            #     selected=True,
+            # ),
+            # Column(
+            #     title="Description",
+            #     search_quantity=f"data.description#{paraprobe_schema}",
+            #     selected=False,
+            # ),
+        ],
+        # only entries to show
+        filters_locked={
+            "section_defs.definition_qualified_name": [
+                tool_cfg_schema,
+                tool_res_schema,
+                ranger_cfg_schema,
+                ranger_res_schema,
+                selector_cfg_schema,
+                selector_res_schema,
+                surfacer_cfg_schema,
+                surfacer_res_schema,
+                distancer_cfg_schema,
+                distancer_res_schema,
+                tessellator_cfg_schema,
+                tessellator_res_schema,
+                spatstat_cfg_schema,
+                spatstat_res_schema,
+                nanochem_cfg_schema,
+                nanochem_res_schema,
+                intersector_cfg_schema,
+                intersector_res_schema,
+            ]
+        },
+        # controls the menu on the left-hand side
+        menu=Menu(
+            title="Filters",
+            size=MenuSizeEnum.SM,
+            show_header=True,
+            items=[
+                Menu(
+                    title="paraprobe-ranger config",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Ranging Definitions Checksum",
+                            search_quantity=f"data.rangeID.ranging.checksum#{ranger_cfg_schema}",
+                        ),
+                        MenuItemTerms(
+                            title="Ranging Definitions File Name",
+                            search_quantity=f"data.rangeID.ranging.file_name#{ranger_cfg_schema}",
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="paraprobe-ranger result",
+                    show_header=True,
+                    items=[
+                        MenuItemHistogram(
+                            title="Charge State",
+                            x=f"data.iontypesID.ionID.charge_state#{ranger_res_schema}",
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="paraprobe-surfacer config",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Preprocessing Method",
+                            search_quantity=f"data.surface_meshingID.preprocessing.method#{surfacer_cfg_schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Preprocessing Kernel Width",
+                            x=f"data.surface_meshingID.preprocessing.kernel_width#{surfacer_cfg_schema}",
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="paraprobe-surfacer result",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Type",
+                            search_quantity=f"data.point_set_wrappingID.alpha_complexID.type#{surfacer_res_schema}",
+                        ),
+                        MenuItemHistogram(
+                            title="Alpha",
+                            x=f"data.point_set_wrappingID.alpha_complexID.alpha#{surfacer_res_schema}",
+                        ),
+                    ],
+                ),
+                Menu(
+                    title="paraprobe-nanochem results",
+                    show_header=True,
+                    items=[
+                        MenuItemTerms(
+                            title="Delocalized and Normalized By",
+                            search_quantity=f"data.delocalizationID.grid.normalization#{nanochem_res_schema}",
+                        ),
+                        # this does not work with tool_cfg_schema!
+                        # MenuItemHistogram(
+                        #     title="Iso-Surface Value",
+                        #     x=f"data.delocalizationID.grid.iso_surfaceID.isovalue#{nanochem_res_schema}",
+                        # ),
+                    ],
+                ),
+            ],
+        ),
+        # controls the free area on the right-hand side for interactive search widgets
     ),
 )

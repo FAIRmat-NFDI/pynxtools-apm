@@ -77,6 +77,7 @@ apm = "pynxtools_apm.reader:APMReader"
 [project.entry-points.'nomad.plugin']
 apm_example_upload = "pynxtools_apm.nomad.example_uploads:apm_example_upload"
 apm_app = "pynxtools_apm.nomad.apps:apm_app"
+paraprobe_app = "pynxtools_apm.nomad.apps:paraprobe_app"
 
 [tool.uv]
 extra-index-url = [
