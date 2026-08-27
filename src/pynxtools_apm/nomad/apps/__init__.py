@@ -459,6 +459,10 @@ paraprobe_app = AppEntryPoint(
                     title="paraprobe-ranger result",
                     show_header=True,
                     items=[
+                        MenuItemTerms(
+                            title="Ion Name",
+                            search_quantity=f"data.iontypesID.ionID.name#{ranger_res_schema}",
+                        ),
                         MenuItemHistogram(
                             title="Charge State",
                             x=f"data.iontypesID.ionID.charge_state#{ranger_res_schema}",
