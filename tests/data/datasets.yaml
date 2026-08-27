@@ -1,0 +1,88 @@
+# a collection of atom probe datasets in different reporting formats for (most for programmatic download given their size) to test the parser
+# pynxtools-apm will try to download if origin starts with https:// otherwise will try to resolve local path within "tests/data",
+# i.e. where this datasets.yaml file is located
+analysisset:
+  # gbr_london_vamvakeros:
+  #   name: gbr_london_vamvakeros.b5614ad8273e376abd94830e646c0e0ae52f4d9638b3579087f5dd9538cbbfe7.analysisset
+  #   # origin: https://zenodo.org/records/18034823/files/APT_recon.7z:R5121_12823.analysisset
+  #   spdx: CC-BY-4.0
+apt:
+  # usa_denton_smith:
+  #   name: usa_denton_smith.2a0135e9ac525c644296be2ce9b989c44bf5826a993d3885f78c18e11daef9a2.apt
+  #   url: https://gitlab.com/jesseds/apav/-/blob/master/apav/tests/Si.apt
+  #   spdx: GPL-2.0-or-later
+ato:
+  fra_rouen_karam:
+    name: fra_rouen_karam.6a3c1eacf8d43511ceb4693b755e1f814d49649a673c3ce8113ad339c5725963.ato
+    url: https://zenodo.org/records/8382828/files/Experimental%20Analysis%20of%20LaB6%20;%20Negative%20Pulse%20%20;%20DC%20Voltage%206.6%20kV%20;%20Amplitudes%202.5%20kV%20and%203%20kV.ato
+    spdx: CC-BY-4.0
+cameca:
+  usa_cameca_ulfig:
+    name: usa_cameca_ulfig.c94c6b3197bf3617b59ef712fcdf50d726efcc74020203ca8b1d11617e88c1e9.hdf5
+    url: https://data.materialsdatafacility.org/mdf_open/6114d6c9-6c76-497f-bf4b-f1033c4b1679/1.0/R69_152985-v01%20Top%20Level%20ROI.hdf5
+    spdx: CC-BY-4.0
+csv:
+  deu_duesseldorf_li:
+    name: deu_duesseldorf_li.6fdf439186dee3b83c529414dbfad2aebc2a6d9536fd1c510dad580e49b968b6.csv
+    url: https://ndownloader.figshare.com/files/42742570
+    spdx: CC-BY-4.0
+env:
+  nor_trondheim_hatzeglou:
+    name: nor_trondheim_hatzeglou.dee6cee52f7e8510fa88b5bcd82754a3e151e3ef45248d1336b562c3d42f43f2.env
+    # origin: env/nor_trondheim_hatzeglou/nor_trondheim_hatzeglou.0.4.dee6cee52f7e8510fa88b5bcd82754a3e151e3ef45248d1336b562c3d42f43f2.env
+    spdx: FAU Erlangen-Nuremberg APT School 2020 Training Material
+epos:
+  deu_erlangen_ott_tiapt:
+    name: deu_erlangen_ott_tiapt.603c445946cc256cc945a79662427735f8ef052ea2408f20ce5b49071a920007.epos
+    # origin: https://zenodo.org/records/17831869/files/2417_Mar-05-2025_12-18_NiC6_Pd109_reconstruction.epos
+    spdx: CC-BY-4.0
+fig:
+  deu_erlangen_felfer:
+    name: deu_erlangen_felfer.26683c3aa1bed77e4c8ec2fff829a444e2dfa337ed7701b10efe24b349c636a0.fig.txt
+    # origin: fig/deu_erlangen_felfer/Superalloy_MassSpec_ranged.fig.txt
+    spdx: FAU Erlangen-Nuremberg APT School 2020 Training Material
+imago:
+  # usa_evanston_ren:
+  #   name: usa_evanston_ren.e37b8d4ea87214d1b56ef2070948c9eaf12e78a16b9952ddb8859fd197ab3247.analysis
+  #   url: https://data.materialsdatafacility.org/published/publication_371/data/Reconstructions/recon-v01/default/default.analysis
+  #   spdx: MPL Globus
+ops:
+  # gbr_cambridge_bhadeshia:
+  #   name: gbr_cambridge_bhadesia.20f8cc345b61216180dc45910a935f2e3c30f7252f380513cdfa1fda1f1fc224.ops
+  #   url: https://www.repository.cam.ac.uk/bitstreams/341b677d-2d46-483e-85c1-049019c2830d/download:2017-ATOMPROBE-data/PoSAP-data/wu5f.dat.ops
+  #   spdx: CC-BY-4.0
+pos:
+  deu_duesseldorf_lilensten:
+    name: deu_duesseldorf_lilensten.7f260eec83013a021497f8189407a892729d3e92431e706114216442ecc39b43.pos
+    url: https://ndownloader.figshare.com/files/21601377
+    spdx: CC-BY-4.0
+pyccapt:
+  deu_erlangen_ott_tiapt:
+    name: deu_erlangen_ott_tiapt.92d3be5e81b71901fef1a642fd2ef4b991bba97408bcc4243549c2d3b70eff7e.h5
+    url: https://zenodo.org/records/17831869/files/2417_Mar-05-2025_12-18_NiC6_Pd109.h5
+    spdx: CC-BY-4.0
+  deu_erlangen_monajem_al_recon:   # reconstruction ?
+    name: deu_erlangen_monajem_al_recon.7fc843f12e4d8fd9788ddc1244a67bf9aa3b06c281e81fe12ba838ef64d084e3.h5
+    url: https://zenodo.org/records/10131887/files/1748_Al.h5
+    spdx: CC-BY-4.0
+  deu_erlangen_monajem_al_range:
+    name: deu_erlangen_monajem_al_range.c9e15951743cf0d4c4ce4c256a76e15de69daa8ea472e8984cc6329549f3db5d.h5
+    url: https://zenodo.org/records/10131887/files/1748_Al_range_.h5
+    spdx: CC-BY-4.0
+rng:
+  aus_sydney_lafontaine:
+    name: aus_sydney_lafontaine.c73818db520be0964dfebfac3a739342558f019f3fd8c1bacc6d21a0a48c8c5a.rng
+    # origin: Shared data- Zircon round robin.zip:Shared data- Zircon round robin/Round 1-Unconstrained/87-D/87D_1.rng
+    # origin: rng/aus_sydney_lafontaine/aus_sydney_lafontaine.14.4.c73818db520be0964dfebfac3a739342558f019f3fd8c1bacc6d21a0a48c8c5a.rng
+    spdx: CC-BY-4.0
+rrng:
+  deu_aachen_saelker:
+    name: deu_aachen_saelker.e043b3a0924eade48fc44cec88c53457c4b1a68bda1832861033ab15f7252664.rrng
+    # origin: https://zenodo.org/records/7788883/files/VAlN_film_plan-view_700C.zip:VAlN_film_plan-view_700C.rrng
+    # origin: rrng/deu_aachen_saelker/deu_aachen_saelker.2.4.e043b3a0924eade48fc44cec88c53457c4b1a68bda1832861033ab15f7252664.rrng
+    spdx: CC-BY-4.0
+stuttgart:
+  deu_stuttgart_eich_tap:
+    name: deu_stuttgart_eich_tap.b449187252004939ab9b4691f579bcdef00185fb2fa7c2a29f8be8252175654f.raw
+    # origin: stuttgart/deu_stuttgart_eich_tap/apyt_W_calibration_tap_01_trimmed.raw
+    spdx: AGPL-3.0-only

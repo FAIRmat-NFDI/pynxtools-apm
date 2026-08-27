@@ -396,10 +396,15 @@ class IfesRangingDefinitionsParser:
             unique_elements.add(chemical_symbols[atom_number])
         logger.info(f"Unique elements are: {list(unique_elements)}")
 
-        atom_types_str = ", ".join(list(unique_elements))
+        atom_types_str = ", ".join(sorted(list(unique_elements)))
         if atom_types_str != "":
             trg = f"/ENTRY[entry{self.meta['entry_id']}]/specimen/"
             template[f"{trg}atom_types"] = atom_types_str
+            # test_reader.py probes if the results are reproducible exactly in binary
+            # (probed by computing SHA256 checksums of the HDF5 dataset's payload)
+            # this showed that the list of unique_elements sometimes has a different
+            # order although it contains the same entries, currently unclear
+            # what causes this non-determinism, that's why we sort here for now
 
         return template
 

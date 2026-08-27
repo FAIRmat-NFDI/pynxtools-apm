@@ -363,7 +363,7 @@ class NxApmCustomElnCamecaRoot:
                     MAX_NUMBER_OF_ATOMS_PER_ION
                 )
 
-                atom_types_str = ", ".join(list(unique_elements))
+                atom_types_str = ", ".join(sorted(list(unique_elements)))
                 if atom_types_str != "":
                     trg = f"/ENTRY[entry{self.entry_id}]/specimen/"
                     template[f"{trg}is_simulation"] = False
