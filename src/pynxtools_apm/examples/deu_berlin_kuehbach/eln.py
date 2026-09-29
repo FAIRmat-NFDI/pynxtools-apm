@@ -21,7 +21,7 @@ import os
 import flatdict as fd
 import yaml
 
-from pynxtools_apm.examples.oasisb.oasisb_bibliography import (
+from pynxtools_apm.examples.deu_berlin_kuehbach.bibliography import (
     get_bibliographical_metadata,
 )
 

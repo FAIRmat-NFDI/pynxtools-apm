@@ -11,9 +11,8 @@ authors = [
 description = "pynxtools-apm is a pynxtools reader plugin for atom probe microscopy (APM) data."
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -29,8 +28,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "mypy>=1.20.2",
-    "ruff>=0.15",
+    "mypy",
+    "ruff>=0.16",
     "pytest",
     "pytest-cov",
     "pytest-timeout",

@@ -227,4 +227,5 @@ examples/oasisb/openalex/
 examples/oasisb/batch_script.sh
 examples/oasisb/old
 !examples/oasisb/05_visualize_nexus_file.ipynb
-
+examples/deu_berlin_kuehbach/openalex/A*
+examples/deu_berlin_kuehbach/openalex/D*

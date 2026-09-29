@@ -47,8 +47,8 @@ from ifes_apt_tc_data_modeling.utils.utils import (
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
 from pynxtools_apm import (
-    DEFAULT_COMPRESSION_FILTER,
-    DEFAULT_COMPRESSION_LEVEL,
+    COMPRESSION_FILTER,
+    COMPRESSION_LEVEL,
     MAKE_RANGING_DEFINITIONS_UNIQUE,
     get_pynxtools_apm_version,
 )
@@ -65,8 +65,8 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     ivec = create_nuclide_hash([])
     template[f"{trg}nuclide_hash"] = {
         "compress": np.asarray(ivec, np.uint16),
-        "filter": DEFAULT_COMPRESSION_FILTER,
-        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "filter": COMPRESSION_FILTER,
+        "strength": COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(np.asarray(ivec, np.uint16), (0,)),
     }
     template[f"{trg}charge_state"] = np.int8(0)
@@ -77,8 +77,8 @@ def add_unknown_iontype(template: dict, entry_id: int) -> dict:
     nuclide_list = nuclide_hash_to_nuclide_list(ivec)
     template[f"{trg}nuclide_list"] = {
         "compress": np.asarray(nuclide_list, np.uint16),
-        "filter": DEFAULT_COMPRESSION_FILTER,
-        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "filter": COMPRESSION_FILTER,
+        "strength": COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(nuclide_list, np.uint16), (0, 1)
         ),
@@ -99,8 +99,8 @@ def add_standardize_molecular_ions(
         path = f"{trg}ionID[ion{ion_id}]/"
         template[f"{path}nuclide_hash"] = {
             "compress": np.asarray(ion.nuclide_hash, np.uint16),
-            "filter": DEFAULT_COMPRESSION_FILTER,
-            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "filter": COMPRESSION_FILTER,
+            "strength": COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(ion.nuclide_hash, np.uint16),
                 (0,),
@@ -113,8 +113,8 @@ def add_standardize_molecular_ions(
         template[f"{path}mass_to_charge_range/@units"] = f"{ion.ranges.units}"
         template[f"{path}nuclide_list"] = {
             "compress": np.asarray(ion.nuclide_list, np.uint16),
-            "filter": DEFAULT_COMPRESSION_FILTER,
-            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "filter": COMPRESSION_FILTER,
+            "strength": COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(ion.nuclide_list, np.uint16),
                 (0, 1),
@@ -149,8 +149,8 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["nuclide_hash"], np.uint16
                     ),
-                    "filter": DEFAULT_COMPRESSION_FILTER,
-                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "filter": COMPRESSION_FILTER,
+                    "strength": COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
                         (0, 1),  # for a charge state model a 2d matrix not a 1d vector!
@@ -173,8 +173,8 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["nuclide_hash"], np.uint16
                     ),
-                    "filter": DEFAULT_COMPRESSION_FILTER,
-                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "filter": COMPRESSION_FILTER,
+                    "strength": COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["nuclide_hash"], np.uint16),
                         (0, 1),
@@ -184,8 +184,8 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["charge_state"], np.int8
                     ),
-                    "filter": DEFAULT_COMPRESSION_FILTER,
-                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "filter": COMPRESSION_FILTER,
+                    "strength": COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["charge_state"], np.int8),
                         (0,),
@@ -193,8 +193,8 @@ def add_standardize_molecular_ions(
                 }
                 template[f"{path}mass"] = {
                     "compress": np.asarray(ion.charge_state_model["mass"], np.float64),
-                    "filter": DEFAULT_COMPRESSION_FILTER,
-                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "filter": COMPRESSION_FILTER,
+                    "strength": COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(ion.charge_state_model["mass"], np.float64), (0,)
                     ),
@@ -204,8 +204,8 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["natural_abundance_product"], np.float64
                     ),
-                    "filter": DEFAULT_COMPRESSION_FILTER,
-                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "filter": COMPRESSION_FILTER,
+                    "strength": COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(
                             ion.charge_state_model["natural_abundance_product"],
@@ -218,8 +218,8 @@ def add_standardize_molecular_ions(
                     "compress": np.asarray(
                         ion.charge_state_model["shortest_half_life"], np.float64
                     ),
-                    "filter": DEFAULT_COMPRESSION_FILTER,
-                    "strength": DEFAULT_COMPRESSION_LEVEL,
+                    "filter": COMPRESSION_FILTER,
+                    "strength": COMPRESSION_LEVEL,
                     "chunks": prioritized_axes_heuristic(
                         np.asarray(
                             ion.charge_state_model["shortest_half_life"], np.float64

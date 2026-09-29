@@ -21,7 +21,6 @@ import logging
 import os
 import shutil
 import sys
-from typing import cast
 
 import pandas as pd
 import yaml
@@ -215,7 +214,7 @@ def prepare_parsing(
         # no duplicates possible inside an individual (sub)directory,
         # irrespective if that content is compressed or not cuz for each project
         # line.path encodes file paths
-        path_to_size[f"{line.path}"] = cast(int, line.size)
+        path_to_size[f"{line.path}"] = int(line.size)
     del df_hash
 
     # no ignoring of duplicates for NOMAD as config_file_path contains already the

@@ -19,7 +19,7 @@
 import logging
 import re
 
-from pynxtools_apm.examples.oasisb.oasisb_utils import snake_case_to_camel_case
+from pynxtools_apm.examples.deu_berlin_kuehbach.utils import snake_case_to_camel_case
 
 logger = logging.getLogger("pynxtools-apm")
 

@@ -23,7 +23,7 @@ import os
 import requests
 from requests.exceptions import HTTPError
 
-from pynxtools_apm.examples.oasisb.oasisb_bibliography import is_valid_doi
+from pynxtools_apm.examples.deu_berlin_kuehbach.bibliography import is_valid_doi
 
 logger = logging.getLogger("pynxtools-apm")
 

@@ -21,8 +21,8 @@ import numpy as np
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
 from pynxtools_apm import (
-    DEFAULT_COMPRESSION_LEVEL,
-    FAST_COMPRESSION_FILTER,
+    COMPRESSION_LEVEL,
+    COMPRESSION_FILTER,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_MAX_SIZE,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
@@ -167,16 +167,16 @@ def create_default_plot_reconstruction(template: dict, entry_id: int) -> dict:
     # i.e. (n_x, n_y, n_z), whereby the display would be as with <=0.5.3 versions
     template[f"{trg}intensity"] = {
         "compress": zyx_storage,
-        "filter": FAST_COMPRESSION_FILTER,
-        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "filter": COMPRESSION_FILTER,
+        "strength": COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(zyx_storage, (0, 1, 2)),
     }
     dims = ["x", "y", "z"]
     for col, dim in enumerate(dims):
         template[f"{trg}AXISNAME[axis_{dim}]"] = {
             "compress": np.asarray(hist3d[1][col][1::], np.float32),
-            "filter": FAST_COMPRESSION_FILTER,
-            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "filter": COMPRESSION_FILTER,
+            "strength": COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(
                 np.asarray(hist3d[1][col][1::], np.float32), (0,)
             ),
@@ -246,14 +246,14 @@ def create_default_plot_mass_spectrum(template: dict, entry_id: int) -> dict:
     template[f"{trg}@AXISNAME_indices[@axis_mass_to_charge_indices]"] = np.uint32(0)
     template[f"{trg}DATA[intensity]"] = {
         "compress": np.asarray(hist1d[0], np.uint32),
-        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "strength": COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(np.asarray(hist1d[0], np.uint32), (0,)),
     }
     template[f"{trg}DATA[intensity]/@long_name"] = "Intensity (1)"  # Counts (1)"
     template[f"{trg}AXISNAME[axis_mass_to_charge]"] = {
         "compress": np.asarray(hist1d[1][1::], np.float32),
-        "filter": FAST_COMPRESSION_FILTER,
-        "strength": DEFAULT_COMPRESSION_LEVEL,
+        "filter": COMPRESSION_FILTER,
+        "strength": COMPRESSION_LEVEL,
         "chunks": prioritized_axes_heuristic(
             np.asarray(hist1d[1][1::], np.float32), (0,)
         ),

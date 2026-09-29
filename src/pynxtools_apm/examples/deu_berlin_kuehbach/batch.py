@@ -47,8 +47,8 @@ try:
 except (ImportError, ModuleNotFoundError):
     USE_WORKING_CAMECAROOT_PLUGIN = False
 
-from pynxtools_apm.examples.oasisb.oasisb_eln import generate_oasis_specific_yaml
-from pynxtools_apm.examples.oasisb.oasisb_utils import (
+from pynxtools_apm.examples.deu_berlin_kuehbach.eln import generate_oasis_specific_yaml
+from pynxtools_apm.examples.deu_berlin_kuehbach.utils import (
     APT_MIME_TYPES,
     CAMECA_ROOT_MIME_TYPES,
     CSV_HEADER_FOR_HASH_FILE,
@@ -76,26 +76,30 @@ def process_project(
     project_name : name of the legacy atom probe project for which this function processes all entries,
         e.g. "deu_duesseldorf_kuehbach" is a project-specific such name
     config_file : spreadsheet file (currently ods) that identifies which atom probe files (pos, rrng, ...)
-        from the project should be combined into one entry in one NeXus/HDF5 file
+        from the project should be combined into one entry in one NeXus/HDF5 file (see puzzling ipynb)
     bib_file : bibtex bibliography file that resolves project-name-specific CitationKeys like
         D_DeuDuesseldorfKuehbach or A_DeuDuesseldorfKuehbach to populate NXcitation instances
-    hash_file : csv file which stores the hash and original file name of each file from a project
-    source_directory : location of atom probe files that the parser should convert
+    hash_file : csv file which stores the SHA256 hash and original file name of each file of a project
+    source_directory : location of atom probe files that the parser should convert, the input
     target_directory : location where generated NeXus/HDF5 and log files should be stored
     openalex_file : (optional) project-name-specific JSON file, retrieved from OpenAlex
         to provide additional metadata context to a project, e.g. D_DeuDuesseldorfKuehbach.json
-    logger_file_path_suffix : suffix to add to the name of the log file
+    logger_file_path_suffix : suffix to add to the name of the log file for project-specific light performance analyses
     """
 
     config: dict[str, str] = {
         "python_version": f"{sys.version}",
         "working_directory": f"{os.getcwd()}",
-        "project_name": project_name,
-        "config_file": config_file,
-        "bib_file": bib_file,
-        "source_directory": source_directory,
-        "target_directory": target_directory,
-        "openalex_file": openalex_file,
+        "project_id": f"{project_id}",
+        "project_name": f"{project_name}",
+        "config_file": f"{config_file}",
+        "bib_file": f"{bib_file}",
+        "hash_file": f"{hash_file}",
+        "source_directory": f"{source_directory}",
+        "target_directory": f"{target_directory}",
+        "openalex_file": f"{openalex_file}",
+        "logger_file_path_suffix": f"{logger_file_path_suffix}",
+        "nomad_project_name": f"{nomad_project_name}",
         "pynxtools_version": f"{get_pynxtools_version()}",
         "ifes_apt_tc_data_modeling_version": f"{get_ifes_apt_tc_data_modeling_version()}",
         "pynxtools_apm_version": f"{get_pynxtools_apm_version()}",
@@ -103,7 +107,7 @@ def process_project(
     if USE_WORKING_CAMECAROOT_PLUGIN:
         config["pynxtools_camecaroot_version"] = f"{get_pynxtools_camecaroot_version()}"
     else:
-        config["pynxtools_camecaroot_version"] = "unknown_version or not_available"
+        config["pynxtools_camecaroot_version"] = "unknown_version"
 
     # buffer = io.StringIO()
     custom_formatter = ISO8601Formatter(
@@ -129,7 +133,7 @@ def process_project(
         logger.info(f"{key};{original_path}")
 
     nxdl = "NXapm"
-    nxdl_root, nxdl_file = get_nxdl_root_and_path(nxdl)
+    _, nxdl_file = get_nxdl_root_and_path(nxdl)
     if not os.path.exists(nxdl_file):
         logger.error(f"Unable to load {nxdl_file}")
         return
@@ -205,21 +209,23 @@ def process_project(
     # one NeXus file per row, compositing from at least one atom probe file surplus
     # f"{project_name}.{row_idx}.oasis_specific.yaml ELN
     # this YAML ELN file is currently used for injecting citation references and the
-    # file name aliasing, it can be used for injecting other metadata as well
+    # file name aliasing, it can be used for injecting other metadata that are not
+    # stored in the typical atom probe file formats (i.e. not in RHIT, APT, POS, etc.)
     # metadata collected with different systems like APSuite, eLabFTW, or alike,
-    # could also be injected here
-
+    # should also be injected here
     # we opted for a spreadsheet-based approach as this would also allow
     # to inject further metadata although we do not currently take advantage of it
+
+    # go row-by-row through the projects' file combinations, check which rows have something
     for row_idx in range(0, spread_sheet_of_project.shape[0]):
         has_input: bool = False
         for col_idx in range(1, 6):
             # resolves to one of these
-            # camecaroot specific
+            # camecaroot specific files (requires pynxtools-camecaroot)
             # 0, str_rraw, ignore
             # 1, rhit_hits
             # 2, root
-            # open formats
+            # open formats (covered just by ifes-apt-tc-data-modeling)
             # 3, pos_epos_apt_ato_csv
             # 4, rng_rrng_fig_env
             # 5, hdf_xml_nxs_raw_ops
@@ -232,7 +238,8 @@ def process_project(
             logger.warning(f"No content to parse for row {row_idx}")
             continue
 
-        # define the name of the NeXus file
+        # define the name of the NeXus/HDF5 file where to combine all for the row into
+        # one row means one entry, each NeXus/HDF5 file a single entry
         output_file_path = (
             f"{target_directory}{os.sep}{project_id}.{project_name}.{row_idx}.nxs"
         )
@@ -245,7 +252,7 @@ def process_project(
         alias_to_original: dict[str, str] = {}
         ranging_from_root: bool = False
         for col_idx in range(1, 6):  # ignore str_rraw
-            if col_idx < 3 and not USE_WORKING_CAMECAROOT_PLUGIN:
+            if USE_WORKING_CAMECAROOT_PLUGIN is False and col_idx < 3:
                 continue
             original_path = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
             if original_path != "":
@@ -256,23 +263,24 @@ def process_project(
                         f"{file_to_hash[original_path]}."  # type: ignore
                         f"{original_path.rsplit('.', 1)[1].lower()}"  # type: ignore
                     )
-                    if col_idx == 2:  # ranging definitions from root take precedence
+                    if col_idx == 2:  # ranging definitions from root files take precedence
                         ranging_from_root = True
                     elif col_idx == 4 and ranging_from_root:
-                        # ranging definitions from root take precedence, so
-                        # no ".rrng", ".rng", etc. files will be parsed if a ".root" file
+                        # ranging definitions from root take precedence, so no content from
+                        # ".rrng", ".rng" in the row will be parsed if a ".root" file
                         # is present
                         continue
                     alias_to_original[alias_path] = original_path
 
         logger.info(
-            f"File name aliasing is switched off, alias_to_original has {len(alias_to_original)} entries"
+            f"File name aliasing dictionary alias_to_original has {len(alias_to_original)} entries"
         )
         if len(alias_to_original) == 0:
+            logger.warning(f"Unable to find file name aliases")
             continue
 
         # okay, there is at least some content that we wish to parse for the row
-        # collect all external metadata that is not stored in any atom probe specific file
+        # collect all external metadata that is not stored in any atom-probe-specific file
         eln_file_path = generate_oasis_specific_yaml(
             target_directory,
             project_id,
@@ -292,8 +300,8 @@ def process_project(
 
         pynx_root_input_files: list[str] = []
         if USE_WORKING_CAMECAROOT_PLUGIN:
-            # if True, first run pynxtools-camecaroot generating the NeXus file
-            # secondly, run pynxtools-apm appending if something to parse remains
+            # if True, will first run pynxtools-camecaroot to generate the NeXus file
+            #     thereafter will run pynxtools-apm in append mode provide some non_root content remains
             # if False, just run pynxtools-apm generating the NeXus file
             for col_idx in range(1, 3):  # ignore str_rraw and open formats
                 original_path = spread_sheet_of_project.iat[row_idx, col_idx]  # type: ignore
@@ -310,6 +318,7 @@ def process_project(
                         logger.error(f"Unable to find hash for {row_idx}.{col_idx}")
                         pynx_root_input_files = []
 
+            logger.info(f"pynx_root_input_files {len(pynx_root_input_files)}")
             if len(pynx_root_input_files) > 0:
                 pynx_root_input_files.append(eln_file_path)
 
@@ -356,8 +365,10 @@ def process_project(
                     # a.zip:b.pos but not necessarily a prefix
                 else:
                     logger.error(f"Unable to find hash for {row_idx}.{col_idx}")
+                    pynx_open_input_files = []
 
-        if not os.path.isfile(output_file_path):  # camecaroot did not ran or threw
+        if not os.path.isfile(output_file_path):
+            # pynxtools-camecaroot did not ran or threw before it could write a NeXus/HDF5 file
             if len(pynx_open_input_files) == 0:
                 logger.warning(
                     f"Not generating a NeXus file that would solely include ELN YAML metadata"
