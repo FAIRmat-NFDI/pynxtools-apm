@@ -223,9 +223,7 @@ tests/*.raw
 !tests/data/env/nor_trondheim_hatzeglou
 !tests/data/env/nor_trondheim_hatzeglou/nor_trondheim_hatzeglou.dee6cee52f7e8510fa88b5bcd82754a3e151e3ef45248d1336b562c3d42f43f2.env
 tests/prod
-examples/oasisb/openalex/
-examples/oasisb/batch_script.sh
-examples/oasisb/old
-!examples/oasisb/05_visualize_nexus_file.ipynb
+examples/deu_berlin_kuehbach/config.yaml
+!examples/deu_berlin_kuehbach/05_visualize_nexus_file.ipynb
 examples/deu_berlin_kuehbach/openalex/A*
 examples/deu_berlin_kuehbach/openalex/D*
