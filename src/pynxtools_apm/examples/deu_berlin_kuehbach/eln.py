@@ -49,7 +49,7 @@ def generate_oasis_specific_yaml(
 
     eln_data["citation"] = []
     data, article = get_bibliographical_metadata(bibliography, project_name)
-    for entry, mapping in [
+    for entry, comment in [
         (data, "Reference to the original dataset publication"),
         (
             article,
@@ -60,9 +60,16 @@ def generate_oasis_specific_yaml(
             if "author" in bibliography[entry] and "doi" in bibliography[entry]:
                 cite_dict = {}
                 cite_dict["author"] = f"{bibliography[entry]['author']}"
-                cite_dict["description"] = mapping
-                cite_dict["doi"] = f"{bibliography[entry]['doi']}"
-                cite_dict["url"] = f"https://doi.org/{bibliography[entry]['doi']}"
+                cite_dict["description"] = comment
+                if "doi" in bibliography[entry]:
+                    if (
+                        f"{bibliography[entry]['doi']}" != ""
+                        and f"{bibliography[entry]['doi']}" != "unpublished"
+                    ):
+                        cite_dict["doi"] = f"{bibliography[entry]['doi']}"
+                        cite_dict["url"] = (
+                            f"https://doi.org/{bibliography[entry]['doi']}"
+                        )
                 if "title" in bibliography[entry]:
                     cite_dict["title"] = f"{bibliography[entry]['title']}"
 

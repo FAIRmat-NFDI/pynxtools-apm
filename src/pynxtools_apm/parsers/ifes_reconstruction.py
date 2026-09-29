@@ -39,7 +39,7 @@ from ifes_apt_tc_data_modeling.stuttgart.raw_reader import (
 )
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
-from pynxtools_apm import COMPRESSION_LEVEL, COMPRESSION_FILTER, SEPARATOR
+from pynxtools_apm import COMPRESSION_FILTER, COMPRESSION_LEVEL, SEPARATOR
 from pynxtools_apm.utils.custom_logging import logger
 from pynxtools_apm.utils.io_case_logic import VALID_FILE_NAME_SUFFIX_RECON
 
@@ -405,8 +405,8 @@ def extract_data_from_apt_file(file_path: str, prefix: str, template: dict) -> d
         )
         template[f"{trg}AXISNAME[axis_id]"] = {
             "compress": ids,
-            "filter": FAST_COMPRESSION_FILTER,
-            "strength": DEFAULT_COMPRESSION_LEVEL,
+            "filter": COMPRESSION_FILTER,
+            "strength": COMPRESSION_LEVEL,
             "chunks": prioritized_axes_heuristic(ids, (0,)),
         }
         template[f"{trg}AXISNAME[axis_id]/@long_name"] = "Id"  # TODO

@@ -34,7 +34,7 @@ APM_PYNX_TO_NEXUS: dict[str, Any] = {
         ("programID[program1]/program/@version", get_pynxtools_apm_version()),
         ("programID[program2]/program", "pynxtools"),
         ("programID[program2]/program/@version", get_pynxtools_version()),
-        ("programID[program3]/program", "ifes_apt_tc_data_modeling"),
+        ("programID[program3]/program", "ifes-apt-tc-data-modeling"),
         (
             "programID[program3]/program/@version",
             get_ifes_apt_tc_data_modeling_version(),
