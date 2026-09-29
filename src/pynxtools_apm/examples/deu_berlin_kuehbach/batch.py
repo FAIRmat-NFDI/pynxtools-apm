@@ -263,7 +263,9 @@ def process_project(
                         f"{file_to_hash[original_path]}."  # type: ignore
                         f"{original_path.rsplit('.', 1)[1].lower()}"  # type: ignore
                     )
-                    if col_idx == 2:  # ranging definitions from root files take precedence
+                    if (
+                        col_idx == 2
+                    ):  # ranging definitions from root files take precedence
                         ranging_from_root = True
                     elif col_idx == 4 and ranging_from_root:
                         # ranging definitions from root take precedence, so no content from

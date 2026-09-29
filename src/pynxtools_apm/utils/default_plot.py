@@ -21,8 +21,8 @@ import numpy as np
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
 from pynxtools_apm import (
-    COMPRESSION_LEVEL,
     COMPRESSION_FILTER,
+    COMPRESSION_LEVEL,
     MASS_SPECTRUM_DEFAULT_BINNING,
     NAIVE_GRID_DEFAULT_MAX_SIZE,
     NAIVE_GRID_DEFAULT_VOXEL_SIZE,
