@@ -51,10 +51,11 @@ def generate_oasis_specific_yaml(
     data, article = get_bibliographical_metadata(bibliography, project_name)
     for entry, comment in [
         (data, "Reference to the original dataset publication"),
-        (
-            article,
-            "Reference to an article that the authors associated with the dataset publication",
-        ),
+        # do not report an article, only where the data where coming from!
+        # (
+        #     article,
+        #     "Reference to an article that the authors associated with the dataset publication",
+        # ),
     ]:
         if entry in bibliography and entry != "":
             if "author" in bibliography[entry] and "doi" in bibliography[entry]:
