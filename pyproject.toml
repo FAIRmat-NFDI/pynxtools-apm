@@ -21,8 +21,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools>=0.14.1",
-    "ifes_apt_tc_data_modeling>=0.4.3",
+    "pynxtools>=0.16.0",
+    "ifes_apt_tc_data_modeling>=0.5.0",
     "pytz",
 ]
 
