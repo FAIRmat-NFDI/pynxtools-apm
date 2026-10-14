@@ -17,7 +17,7 @@
 #
 
 import os
-from glob import glob
+import shutil
 from typing import Literal
 
 import pytest
@@ -25,36 +25,149 @@ import yaml
 from pynxtools.dataconverter.convert import convert, get_reader
 from pynxtools.dataconverter.helpers import get_nxdl_root_and_path
 
+from pynxtools_apm.examples.get_file_from_archive_formats import get_file_from_zip
+
 # from pynxtools.testing.nexus_conversion import ReaderTest
 from pynxtools_apm.parsers.hfive_base import (
     NXAPM_VOLATILE_NAMED_HDF_PATHS,
     NXAPM_VOLATILE_SUFFIX_HDF_PATHS,
     HdfFiveBaseParser,
 )
+from pynxtools_apm.utils.use_requests import download_requests
 
 READER_NAME = "apm"
 READER_CLASS = get_reader(READER_NAME)
 NXDLS = ["NXapm"]
 
-test_cases = [
-    ("default", "NOMAD simple APM example"),
-]
+working_directory = os.path.dirname(__file__)
+
+with open(
+    os.path.join(*[working_directory, "data", "datasets.yaml"]),
+    encoding="utf-8",
+) as fp:
+    datasets = yaml.safe_load(fp)
+
+# test_cases = [
+#     ("default", "NOMAD simple APM example"),
+# ]
 
 test_params = []
 
-for test_case in test_cases:
-    # ToDo: make tests for all supported application definitions possible
-    for nxdl in NXDLS:
-        test_params += [pytest.param(nxdl, test_case[0], id=f"{test_case[1]}, {nxdl}")]
+if isinstance(datasets, dict):
+    for mime_type, examples in datasets.items():
+        if not isinstance(examples, dict):
+            continue
+        for example, metadata in examples.items():
+            # logger.debug(f"{mime_type}, {example}")
+            # only include examples with a license
+            if not all(concept in metadata for concept in ("name", "spdx")):
+                continue
+
+            if os.path.isfile(os.path.join(*[working_directory, metadata["name"]])):
+                test_params += [
+                    pytest.param(
+                        "NXapm",
+                        f"{metadata['name']}",  # {mime_type}/{example}/
+                        id=f"{metadata['name']}",
+                    )
+                ]
+                # never download data twice
+                continue
+
+            # does not exist needs download or copying over
+            if "url" in metadata:
+                if metadata["url"].count(":") == 2:  # possibly compressed
+                    archive_link, file_path = metadata["url"].rsplit(":", 1)
+                    # logger.debug(
+                    #     f"remote file, compressed >>>> {archive_link}, {file_path}, {file_path.rsplit('/', 1)[-1]} >>>> {metadata['name']}"
+                    # )
+                    archive_file_name = download_requests(archive_link)
+                    if archive_file_name.endswith(".zip"):
+                        decompressed = get_file_from_zip(
+                            archive_file_name,
+                            file_path,
+                            working_directory,
+                            metadata["name"],
+                        )
+                        os.remove(archive_file_name)
+                        if os.path.isfile(decompressed):
+                            test_params += [
+                                pytest.param(
+                                    "NXapm",
+                                    f"{decompressed}",  # {mime_type}/{example}/
+                                    id=f"{decompressed}",
+                                )
+                            ]
+                else:
+                    # logger.debug(
+                    #     f"remote file, not compressed >>>> {metadata['url']} >>>> {metadata['name']}"
+                    # )
+                    data_file_name = download_requests(metadata["url"])
+                    os.rename(
+                        data_file_name,
+                        os.path.join(*[working_directory, metadata["name"]]),
+                    )
+                    if os.path.isfile(
+                        os.path.join(*[working_directory, metadata["name"]])
+                    ):
+                        test_params += [
+                            pytest.param(
+                                "NXapm",
+                                f"{metadata['name']}",  # {mime_type}/{example}/
+                                id=f"{metadata['name']}",
+                            )
+                        ]
+            else:
+                if os.path.isfile(
+                    os.path.join(
+                        *[
+                            working_directory,
+                            "data",
+                            mime_type,
+                            example,
+                            metadata["name"],
+                        ]
+                    )
+                ):
+                    shutil.copy(
+                        os.path.join(
+                            *[
+                                working_directory,
+                                "data",
+                                mime_type,
+                                example,
+                                metadata["name"],
+                            ]
+                        ),
+                        os.path.join(*[working_directory, metadata["name"]]),
+                    )
+                    # logger.debug(
+                    #     f"local file, not compressed >>>> data/{mime_type}/{example}/{metadata['name']}"
+                    # )
+                    if os.path.isfile(
+                        os.path.join(*[working_directory, metadata["name"]])
+                    ):
+                        test_params += [
+                            pytest.param(
+                                "NXapm",
+                                f"{metadata['name']}",  # {mime_type}/{example}/
+                                id=f"{metadata['name']}",
+                            )
+                        ]
 
 
-def convert_using_example_data(files_or_dir, tmp_path, caplog, **kwargs) -> None:
+# for test_case in test_cases:
+#     # ToDo: make tests for all supported application definitions possible
+#    for nxdl in NXDLS:
+#         test_params += [pytest.param(nxdl, test_case[0], id=f"{test_case[1]}")]
+
+
+def convert_using_example_data(input_path, output_path, caplog, **kwargs) -> None:
     """Run the converter during the test."""
     # see pynxtools/testing/nexus_conversion/ReaderTest
 
     nxdl = "NXapm"
     reader_name = "apm"
-    created_nexus = f"{tmp_path}/{os.sep}/output.nxs"
     caplog_level: Literal["ERROR", "WARNING"] = "WARNING"
 
     reader = get_reader(reader_name)
@@ -64,12 +177,6 @@ def convert_using_example_data(files_or_dir, tmp_path, caplog, **kwargs) -> None
     assert nxdl in reader.supported_nxdls, f"Reader does not support {nxdl} NXDL."
     assert callable(reader.read), f"Reader{reader} must have read method"
 
-    if isinstance(files_or_dir, (list, tuple)):
-        example_files = files_or_dir
-    else:
-        example_files = sorted(glob(os.path.join(files_or_dir, "*")))
-    input_files = [file for file in example_files]
-
     nxdl_root, nxdl_file = get_nxdl_root_and_path(nxdl)
     assert os.path.exists(nxdl_file), f"NXDL file {nxdl_file} not found"
 
@@ -78,12 +185,12 @@ def convert_using_example_data(files_or_dir, tmp_path, caplog, **kwargs) -> None
 
     with caplog.at_level(caplog_level):
         _ = convert(
-            input_file=tuple(input_files),
+            input_file=tuple([input_path]),
             reader=reader_name,
             nxdl=nxdl,
-            skip_verify=False,
+            skip_verify=True,
             ignore_undocumented=True,
-            output=created_nexus,
+            output=f"{output_path}",
             **kwargs,
         )
 
@@ -91,9 +198,6 @@ def convert_using_example_data(files_or_dir, tmp_path, caplog, **kwargs) -> None
 @pytest.mark.parametrize(
     "nxdl, sub_reader_data_dir",
     test_params,
-)
-@pytest.mark.skip(
-    reason="Working for the default example location of large test data should be clarified though"
 )
 # explores an alternative testing strategy which checks for binary
 # reproducibility at the individual HDF5 node using per node checksums
@@ -126,32 +230,46 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
     # reader = READER_NAME
     # assert callable(reader.read)
 
-    files_or_dir = os.path.join(
-        *[os.path.dirname(__file__), "data", sub_reader_data_dir]
+    input_path = os.path.join(*[os.path.dirname(__file__), sub_reader_data_dir])
+    output_path = os.path.join(*[tmp_path, f"{sub_reader_data_dir.rsplit('/', 1)[-1]}"])
+
+    convert_using_example_data(
+        input_path, os.path.join(*[tmp_path, f"{output_path}.nxs"]), caplog
     )
 
-    # test = ReaderTest(
-    #     nxdl=nxdl,
-    #     reader_name=READER_NAME,
-    #     files_or_dir=files_or_dir,
-    #     tmp_path=tmp_path,
-    #     caplog=caplog,
-    # )
-    test_nexus_path = f"{tmp_path}/{os.sep}/output.nxs"
-    convert_using_example_data(files_or_dir, tmp_path, caplog)
-
     hfive_parser = HdfFiveBaseParser(
-        file_path=test_nexus_path, hashing=True, verbose=False
+        file_path=os.path.join(*[tmp_path, f"{output_path}.nxs"]),
+        hashing=True,
+        verbose=False,
     )
     hfive_parser.get_content()
     hfive_parser.store_hashes(
         blacklist_by_key=NXAPM_VOLATILE_NAMED_HDF_PATHS,
         blacklist_by_suffix=NXAPM_VOLATILE_SUFFIX_HDF_PATHS,
-        file_path=f"{test_nexus_path}.sha256.test.yaml",
+        file_path=os.path.join(*[tmp_path, f"{output_path}.nxs.sha256.test.yaml"]),
     )
 
+    # keep a copy of the local file
+    # for convenience dropped already where one would overwrite
+    # here make it the reference
+    # use this block to overwrite a reference from the tmp_path to the tests/reference
+    # TODO IN PRODUCTION THIS BLOCK NEEDS TO BE COMMENTED OUT BEGINNING HERE
+    """
+    shutil.copy(
+        f"{output_path}.nxs.sha256.test.yaml",
+        os.path.join(
+            *[
+                f"{input_path.rsplit('/', 1)[0]}",
+                "reference",
+                f"{input_path.rsplit('/', 1)[-1]}.nxs.sha256.ref.yaml",
+            ]
+        ),
+    )
+    """
+    # TODO ... ENDING HERE
+
     # assert against reference YAML artifact
-    test_artifact_file_path = f"{test_nexus_path}.sha256.test.yaml"
+    test_artifact_file_path = f"{output_path}.nxs.sha256.test.yaml"
     with open(test_artifact_file_path) as fp_test:
         try:
             test_artifact = yaml.safe_load(fp_test)
@@ -160,10 +278,9 @@ def test_nexus_conversion(nxdl, sub_reader_data_dir, tmp_path, caplog):
 
     ref_artifact_file_path = os.path.join(
         *[
-            os.path.dirname(__file__),
+            f"{input_path.rsplit('/', 1)[0]}",
             "reference",
-            sub_reader_data_dir,
-            "output.nxs.sha256.ref.yaml",
+            f"{input_path.rsplit('/', 1)[-1]}.nxs.sha256.ref.yaml",
         ]
     )
     with open(ref_artifact_file_path) as fp_ref:

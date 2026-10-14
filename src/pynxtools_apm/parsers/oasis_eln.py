@@ -128,7 +128,7 @@ class NxApmNomadOasisElnSchemaParser:
                 # silently ignoring all incorrect user input
             if len(unique_elements) > 0:
                 template[f"/ENTRY[entry{self.entry_id}]/specimen/atom_types"] = (
-                    ", ".join(list(unique_elements))
+                    ", ".join(sorted(list(unique_elements)))
                 )
         return template
 

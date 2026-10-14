@@ -47,7 +47,7 @@ OASISCFG_APM_TO_NEXUS = {
     "use": [
         (
             "start_time",
-            f"{dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00', 'Z')}",
+            f"{dt.datetime.now(dt.UTC).isoformat().replace('+00:00', 'Z')}",
         ),
     ],
 }

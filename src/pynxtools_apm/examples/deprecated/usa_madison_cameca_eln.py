@@ -32,7 +32,7 @@ from ifes_apt_tc_data_modeling.utils.nx_ion import NxIon
 from ifes_apt_tc_data_modeling.utils.utils import create_nuclide_hash
 from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 
-from pynxtools_apm import DEFAULT_COMPRESSION_FILTER, DEFAULT_COMPRESSION_LEVEL
+from pynxtools_apm import COMPRESSION_FILTER, COMPRESSION_LEVEL
 from pynxtools_apm.concepts.mapping_functors_pint import add_specific_metadata_pint
 from pynxtools_apm.configurations.cameca_cfg import APM_CAMECA_TO_NEXUS
 from pynxtools_apm.utils.custom_logging import logger
@@ -286,8 +286,8 @@ class NxApmCustomElnCamecaRoot:
                                 "compress": np.asarray(
                                     ion.charge_state_model["nuclide_hash"], np.uint16
                                 ),
-                                "filter": DEFAULT_COMPRESSION_FILTER,
-                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "filter": COMPRESSION_FILTER,
+                                "strength": COMPRESSION_LEVEL,
                                 "chunks": prioritized_axes_heuristic(
                                     np.asarray(
                                         ion.charge_state_model["nuclide_hash"],
@@ -300,8 +300,8 @@ class NxApmCustomElnCamecaRoot:
                                 "compress": np.asarray(
                                     ion.charge_state_model["charge_state"], np.int8
                                 ),
-                                "filter": DEFAULT_COMPRESSION_FILTER,
-                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "filter": COMPRESSION_FILTER,
+                                "strength": COMPRESSION_LEVEL,
                                 "chunks": prioritized_axes_heuristic(
                                     np.asarray(
                                         ion.charge_state_model["charge_state"], np.int8
@@ -313,8 +313,8 @@ class NxApmCustomElnCamecaRoot:
                                 "compress": np.asarray(
                                     ion.charge_state_model["mass"], np.float64
                                 ),
-                                "filter": DEFAULT_COMPRESSION_FILTER,
-                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "filter": COMPRESSION_FILTER,
+                                "strength": COMPRESSION_LEVEL,
                                 "chunks": prioritized_axes_heuristic(
                                     np.asarray(
                                         ion.charge_state_model["mass"], np.float64
@@ -328,8 +328,8 @@ class NxApmCustomElnCamecaRoot:
                                     ion.charge_state_model["natural_abundance_product"],
                                     np.float64,
                                 ),
-                                "filter": DEFAULT_COMPRESSION_FILTER,
-                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "filter": COMPRESSION_FILTER,
+                                "strength": COMPRESSION_LEVEL,
                                 "chunks": prioritized_axes_heuristic(
                                     np.asarray(
                                         ion.charge_state_model[
@@ -345,8 +345,8 @@ class NxApmCustomElnCamecaRoot:
                                     ion.charge_state_model["shortest_half_life"],
                                     np.float64,
                                 ),
-                                "filter": DEFAULT_COMPRESSION_FILTER,
-                                "strength": DEFAULT_COMPRESSION_LEVEL,
+                                "filter": COMPRESSION_FILTER,
+                                "strength": COMPRESSION_LEVEL,
                                 "chunks": prioritized_axes_heuristic(
                                     np.asarray(
                                         ion.charge_state_model["shortest_half_life"],
@@ -363,7 +363,7 @@ class NxApmCustomElnCamecaRoot:
                     MAX_NUMBER_OF_ATOMS_PER_ION
                 )
 
-                atom_types_str = ", ".join(list(unique_elements))
+                atom_types_str = ", ".join(sorted(list(unique_elements)))
                 if atom_types_str != "":
                     trg = f"/ENTRY[entry{self.entry_id}]/specimen/"
                     template[f"{trg}is_simulation"] = False

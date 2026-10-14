@@ -1,0 +1,106 @@
+1:
+  custom_id: W_calibration_tap_01_trimmed
+  device: tap
+  file: apyt_W_calibration_tap_01_trimmed.raw
+  parameters:
+    data_filter:
+      detector_radius: 60.0
+      mass_charge_range:
+      - 59.0
+      - 64.0
+    reconstruction:
+      background: false
+      beta: 3.3
+      classic:
+        E_0: 30.0
+      efficiency: 0.5
+      export_volumes: true
+      image_compression: 1.43
+      module: classic
+      split_charge: false
+      split_molecules:
+      - false
+      - false
+      taper:
+        alpha:
+          fixed: false
+          value: 10.0
+        beta:
+          fixed: true
+        field_align:
+          E_0: 30.0
+          max: 1.0
+          min: 0.0
+        r_0:
+          fixed: false
+          value: 60.0
+    spectrum_fit:
+      errors:
+        I_W_3: 626.6029597128098
+        base: 12.253431285202392
+        γ: 0
+        τ: 1.544739829418233e-05
+      info:
+        function: error-expDecay
+        version: 0.3.0
+      peaks:
+        W:
+          '3':
+          - abundance: 0.0012
+            charge: 3
+            element: W
+            is_max: false
+            mass_charge_ratio: 59.982237766666664
+            volume: 0.0158
+          - abundance: 0.265
+            charge: 3
+            element: W
+            is_max: false
+            mass_charge_ratio: 60.649401866666665
+            volume: 0.0158
+          - abundance: 0.1431
+            charge: 3
+            element: W
+            is_max: false
+            mass_charge_ratio: 60.983408133333334
+            volume: 0.0158
+          - abundance: 0.3064
+            charge: 3
+            element: W
+            is_max: true
+            mass_charge_ratio: 61.31697773333334
+            volume: 0.0158
+          - abundance: 0.2843
+            charge: 3
+            element: W
+            is_max: false
+            mass_charge_ratio: 61.98478836666666
+            volume: 0.0158
+      stats:
+        R-squared: 0.9932889385074686
+        chi-square: 544507.5384568346
+        redchi: 1093.388631439427
+      values:
+        I_W_3: 139935.41274642496
+        base: 14.87415764775121
+        γ: 0.5
+        τ: 0.0028133058159751645
+    spectrum_params:
+      L_0: 305.0
+      alpha: 0.925599992275238
+      bin_width: 0.01
+      detector_voltage: 0.0
+      flight_coeffs:
+      - - 1.0
+        - 3.800659396802075e-05
+        - -3.115042318313499e-06
+      - - -6.956178549444303e-05
+        - -1.6774532696217648e-07
+        - 0.0
+      - - -2.806575821523438e-06
+        - 0.0
+        - 0.0
+      pulse_coupling: 1.0
+      t_0: -8.803999900817871
+      voltage_coeffs:
+      - 2.0636656284332275

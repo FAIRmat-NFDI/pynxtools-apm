@@ -40,8 +40,8 @@ from pynxtools.dataconverter.chunk import prioritized_axes_heuristic
 # from ifes_apt_tc_data_modeling.utils.nist_isotope_data \
 #     import isotopes
 from pynxtools_apm import (
-    DEFAULT_COMPRESSION_FILTER,
-    DEFAULT_COMPRESSION_LEVEL,
+    COMPRESSION_FILTER,
+    COMPRESSION_LEVEL,
     get_pynxtools_apm_version,
 )
 from pynxtools_apm.utils.custom_logging import logger
@@ -389,7 +389,7 @@ class ApmCreateExampleData:
                 if (symbol in chemical_symbols) & (symbol != "X"):
                     unique_elements.add(str(symbol))
         logger.debug(f"Unique elements are: {list(unique_elements)}")
-        template[f"{trg}atom_types"] = ", ".join(list(unique_elements))
+        template[f"{trg}atom_types"] = ", ".join(sorted(list(unique_elements)))
 
         specimen_name = str(
             f"Mocked atom probe specimen {np.random.choice(1000, 1)[0]}"
@@ -634,7 +634,7 @@ class ApmCreateExampleData:
             trg = f"{prefix}reconstruction/"
             template[f"{trg}reconstructed_positions"] = {
                 "compress": np.asarray(self.xyz, np.float32),
-                "strength": DEFAULT_COMPRESSION_LEVEL,
+                "strength": COMPRESSION_LEVEL,
                 "chunks": prioritized_axes_heuristic(
                     np.asarray(self.xyz, np.float32), (0, 1)
                 ),
@@ -644,8 +644,8 @@ class ApmCreateExampleData:
             trg = f"{prefix}mass_to_charge_conversion/"
             template[f"{trg}mass_to_charge"] = {
                 "compress": np.asarray(self.m_z, np.float32),
-                "filter": DEFAULT_COMPRESSION_FILTER,
-                "strength": DEFAULT_COMPRESSION_LEVEL,
+                "filter": COMPRESSION_FILTER,
+                "strength": COMPRESSION_LEVEL,
                 "chunks": prioritized_axes_heuristic(
                     np.asarray(self.m_z, np.float32), (0,)
                 ),

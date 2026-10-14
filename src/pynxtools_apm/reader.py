@@ -21,7 +21,6 @@ import os
 from time import perf_counter_ns
 from typing import Any
 
-import flatdict as fd
 from pynxtools.dataconverter.readers.base.reader import BaseReader
 
 from pynxtools_apm import SEPARATOR
@@ -34,8 +33,8 @@ from pynxtools_apm.parsers.ifes_ranging import IfesRangingDefinitionsParser
 from pynxtools_apm.parsers.ifes_reconstruction import IfesReconstructionParser
 from pynxtools_apm.parsers.oasis_config import NxApmNomadOasisConfigParser
 from pynxtools_apm.parsers.oasis_eln import NxApmNomadOasisElnSchemaParser
-from pynxtools_apm.utils.create_nx_default_plots import apm_default_plot_generator
 from pynxtools_apm.utils.custom_logging import logger
+from pynxtools_apm.utils.default_plot import apm_default_plot_generator
 from pynxtools_apm.utils.io_case_logic import ApmUseCaseSelector
 from pynxtools_apm.utils.profiling import simple_profiling
 from pynxtools_apm.utils.remove_uninstantiated import remove_uninstantiated_sensors
@@ -78,7 +77,7 @@ class APMReader(BaseReader):
 
         if len(case.cfg) == 1:
             logger.debug("Parse (meta)data coming from a custom NOMAD OASIS RDM...")
-            nx_apm_cfg = NxApmNomadOasisConfigParser(case.cfg[0], entry_id, False)
+            nx_apm_cfg = NxApmNomadOasisConfigParser(case.cfg[0], entry_id)
             nx_apm_cfg.parse(template)
 
         if len(case.eln) == 1:
@@ -86,11 +85,12 @@ class APMReader(BaseReader):
             nx_apm_eln = NxApmNomadOasisElnSchemaParser(case.eln[0], entry_id)
             nx_apm_eln.parse(template)
 
-        case.report_workflow(
-            template,
-            entry_id,
-            nx_apm_cfg.flat_metadata if nx_apm_cfg else fd.FlatDict({}, "/"),
-        )
+        # TODO reactivate!
+        # case.report_workflow(
+        #     template,
+        #     entry_id,
+        #     nx_apm_cfg.flat_metadata if nx_apm_cfg else fd.FlatDict({}, "/"),
+        # )
 
         logger.debug("Parse NeXus application definition-specific content...")
         nxs = NxApmAppDef(entry_id)

@@ -28,7 +28,7 @@ jobs:
           python-version: ${{ env.python-version }}
       - name: Install pynxtools-apm
         run: |
-          uv pip install ".[dev]"
+          uv pip install ".[dev,batch]"
           uv pip install coverage coveralls
       - name: Install nomad
         run: |

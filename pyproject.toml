@@ -11,9 +11,8 @@ authors = [
 description = "pynxtools-apm is a pynxtools reader plugin for atom probe microscopy (APM) data."
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -22,15 +21,15 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pynxtools>=0.14.1",
-    "ifes_apt_tc_data_modeling>=0.4.3",
+    "pynxtools>=0.16.0",
+    "ifes_apt_tc_data_modeling>=0.5.0",
     "pytz",
 ]
 
 [project.optional-dependencies]
 dev = [
     "mypy",
-    "ruff>=0.15",
+    "ruff>=0.16",
     "pytest",
     "pytest-cov",
     "pytest-timeout",
@@ -40,6 +39,7 @@ dev = [
     "types-requests",
     "pre-commit",
     "cruft",
+    "requests",
     # "py-cpuinfo",
 ]
 docs = [
@@ -50,7 +50,7 @@ docs = [
     "pymdown-extensions",
     "mkdocs-click"
 ]
-nomad = ["nomad-lab[infrastructure]>=1.4.2"]
+nomad = ["nomad-lab[infrastructure]>=1.4.3"]
 ipynb = [
     "jupyter",
     "jupyterlab",
@@ -63,18 +63,20 @@ batch = [
     "pycountry",
     "rarfile",
     "py7zr<1.0.0",
-    "requests"
+    "requests",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/FAIRmat-NFDI/pynxtools-apm"
 "Bug Tracker" = "https://github.com/FAIRmat-NFDI/pynxtools-apm/issues"
+
 [project.entry-points.'pynxtools.reader']
 apm = "pynxtools_apm.reader:APMReader"
 
 [project.entry-points.'nomad.plugin']
-# apm_app = "pynxtools_apm.nomad.apps:apm_app"
 apm_example_upload = "pynxtools_apm.nomad.example_uploads:apm_example_upload"
+apm_app = "pynxtools_apm.nomad.apps:apm_app"
+paraprobe_app = "pynxtools_apm.nomad.apps:paraprobe_app"
 
 [tool.uv]
 extra-index-url = [
@@ -129,6 +131,9 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"**/*.py" = ["PLR0917"]
 
 [tool.mypy]
 strict = false
